@@ -13,13 +13,13 @@ class HttpMD5Util(object):
     def __init__(self):
         self.session = requests.sessions.Session()
 
-
-    def httpGet(self, url, resource, params=''):
+    def httpGet(self, url, params='', jsonify=True):
         resp = self.session.request('GET', url, params, timeout=10)
-        print(resp)
-        data = resp._content
-        print(data)
-        return json.loads(data)
+        if jsonify:
+            return json.loads(resp._content)
+        else:
+            return resp._content
+
 
 def buildMySign(params, secretKey):
     sign = ''

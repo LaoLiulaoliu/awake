@@ -16,20 +16,19 @@ class OKCoinSpot(object):
 
     def get_server_time(self):
         endpoint = '/api/general/v3/time'
-        params = ''
-        data = self.http.httpGet(self.__url, endpoint, params)
+        data = self.http.httpGet(self.__url + endpoint)
         print(data)
 
-    #获取OKCOIN现货行情信息
     def ticker(self, symbol = ''):
+        """获取OKCOIN现货行情信息
+        """
         TICKER_RESOURCE = "/api/spot/v3/instruments/ticker"
         params=''
         if symbol:
             params = 'symbol=%(symbol)s' %{'symbol':symbol}
-        print(self.__url + TICKER_RESOURCE)
-        return self.http.httpGet(self.__url + TICKER_RESOURCE,params)
+        return self.http.httpGet(self.__url + TICKER_RESOURCE, params)
 
 if __name__ == '__main__':
     client = OKCoinSpot(BASE_URL, API_KEY, SECRET_KEY)
+    #client.get_server_time()
     client.ticker('btc_usd')
-    client.get_server_time()
