@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 # Author: Yuande Liu <miraclecome (at) gmail.com>
 
-from secret import *
-
 from HttpUtil import HttpUtil
 
 class OKCoinSpot(object):
