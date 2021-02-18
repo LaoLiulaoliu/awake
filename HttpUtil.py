@@ -1,16 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import http.client
-import urllib
-import json
-import hashlib
-
 import requests
 import datetime
 import hmac
 import base64
+import json
 
+from retrying import retry
 from secret import *
 
 CONTENT_TYPE = 'Content-Type'
@@ -59,6 +56,7 @@ class HttpUtil(object):
             url = url + str(key) + '=' + str(value) + '&'
         return url[0:-1]
 
+    @retry(stop_max_attempt_number=3)
     def httpGet(self, endpoint, data=None):
         if data:
             endpoint = endpoint + self.parse_params_to_str(data)
@@ -68,29 +66,16 @@ class HttpUtil(object):
         headers = self.get_header(signature, timestamp)
         print(self.__url + endpoint)
 
-        resp = self.session.request('GET', self.__url + endpoint, headers=headers, timeout=10)
-        return resp.json()
+        response = self.session.request('GET', self.__url + endpoint, headers=headers, timeout=10)
+        return response.json()
 
+    @retry(stop_max_attempt_number=3)
+    def httpPost(self, endpoint, data):
+        body = json.dumps(data)
+        timestamp = self.timestamp()
+        signature = self.signature(timestamp, 'POST', endpoint, body)
+        headers = self.get_header(signature, timestamp)
 
-
-def buildMySign(params, secretKey):
-    sign = ''
-    for key in sorted(params.keys()):
-        sign += key + '=' + str(params[key]) +'&'
-    data = sign+'secret_key='+secretKey
-    return  hashlib.md5(data.encode("utf8")).hexdigest().upper()
-
-
-def httpPost(url, resource, params):
-     headers = {
-            "Content-type" : "application/x-www-form-urlencoded",
-     }
-     conn = http.client.HTTPSConnection(url, timeout=10)
-     temp_params = urllib.parse.urlencode(params)
-     conn.request("POST", resource, temp_params, headers)
-     response = conn.getresponse()
-     data = response.read().decode('utf-8')
-     params.clear()
-     conn.close()
-     return data
+        response = self.session.request('POST', self.__url + endpoint, headers=headers, data=body)
+        return response.json()
 
