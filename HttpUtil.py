@@ -9,6 +9,7 @@ import json
 
 from retrying import retry
 from secret import *
+from tradesecret import *
 
 CONTENT_TYPE = 'Content-Type'
 APPLICATION_JSON = 'application/json'
@@ -24,9 +25,9 @@ WS_URL = 'wss://real.okex.com:8443/ws/v3'
 class HttpUtil(object):
     def __init__(self):
         self.__url = BASE_URL
-        self.__apikey = API_KEY
+        self.__apikey = apikey
+        self.__secretkey = secretkey
         self.__passphrase = PASS_PHRASE
-        self.__secretkey = SECRET_KEY
 
         self.session = requests.sessions.Session()
 
