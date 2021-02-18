@@ -22,9 +22,8 @@ class OKCoinSpot(object):
         """获取OKCOIN现货行情信息
         """
         endpoint = '/api/spot/v3/instruments/ticker'
-        params=''
         if symbol:
-            params = 'symbol=%(symbol)s' %{'symbol':symbol}
+            params = {'symbol': symbol}
 
         return self.http.httpGet(endpoint, params)
 

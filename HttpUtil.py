@@ -5,13 +5,13 @@ import http.client
 import urllib
 import json
 import hashlib
-import time
 
 import requests
 import datetime
 import hmac
 import base64
 
+from secret import *
 
 CONTENT_TYPE = 'Content-Type'
 APPLICATION_JSON = 'application/json'
@@ -24,7 +24,7 @@ BASE_URL = 'https://www.okex.com'
 # WS_URL = 'ws://echo.websocket.org/'
 WS_URL = 'wss://real.okex.com:8443/ws/v3'
 
-class HttpMD5Util(object):
+class HttpUtil(object):
     def __init__(self):
         self.__url = BASE_URL
         self.__apikey = API_KEY
