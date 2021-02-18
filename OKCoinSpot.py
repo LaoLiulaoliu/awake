@@ -70,7 +70,7 @@ class OKCoinSpot(object):
         path = '/api/spot/v3/orders'
         params = {'type': 'limit', 'side': side, 'instrument_id': instrument_id, 'size': amount, 'price': price,
                   'margin_trading': 1}
-        return self.httpPost(path, params)
+        return self.http.httpPost(path, params)
 
     def order(self, instrument_id, orderid):
         path = '/api/spot/v3/orders/' + orderid
@@ -92,6 +92,10 @@ class OKCoinSpot(object):
         return self.http.httpPost(path, params)
 
     def account(self, instrument_id):
+        """ instrument_id
+        BTC: {'frozen': '0', 'hold': '0', 'id': '', 'currency': 'BTC', 'balance': '0.0067287', 'available': '0.0067287', 'holds': '0'}
+        USDT: {'frozen': '0', 'hold': '0', 'id': '', 'currency': 'USDT', 'balance': '0.00027828', 'available': '0.00027828', 'holds': '0'}
+        """
         path = '/api/spot/v3/accounts/' + instrument_id
         return self.http.httpGet(path)
 
@@ -100,4 +104,4 @@ if __name__ == '__main__':
     #client.get_server_time()
     # print(client.tickers())
     #print( client.ticker('BTC-USDT') )
-    print(client.account())
+    print(client.orders())
