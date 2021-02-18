@@ -52,6 +52,17 @@ class OKCoinSpot(object):
         return self.http.httpGet(path)
 
     def instruments(self):
+        """ lots of this kind of data
+		{
+		  "base_currency": "BTC",
+		  "category": "1",
+		  "instrument_id": "BTC-USDT",
+		  "min_size": "0.0001",
+		  "quote_currency": "USDT",
+		  "size_increment": "0.00000001",
+		  "tick_size": "0.1"
+		}
+        """
         path = '/api/spot/v3/instruments'
         return self.http.httpGet(path)
 
@@ -75,18 +86,18 @@ class OKCoinSpot(object):
         params = {'granularity': interval, 'start': start, 'end': end}
         return self.http.httpGet(path, params)
 
-    def account(self, instrument_id):
-        path = '/api/spot/v3/accounts/' + instrument_id
-        return self.http.httpGet(path)
-
     def cancel_order(self, instrument_id, orderid):
         path = '/api/spot/v3/cancel_orders/' + orderid
         params = {'instrument_id': instrument_id}
         return self.http.httpPost(path, params)
+
+    def account(self, instrument_id):
+        path = '/api/spot/v3/accounts/' + instrument_id
+        return self.http.httpGet(path)
 
 if __name__ == '__main__':
     client = OKCoinSpot()
     #client.get_server_time()
     # print(client.tickers())
     #print( client.ticker('BTC-USDT') )
-    print(client.instruments())
+    print(client.account())
