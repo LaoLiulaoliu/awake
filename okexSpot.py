@@ -12,6 +12,9 @@ class OKCoinSpot(object):
         self.http = HttpUtil()
 
     def get_server_time(self):
+        """
+        {'iso': '2021-02-18T08:50:44.924Z', 'epoch': '1613638244.924'}
+        """
         endpoint = '/api/general/v3/time'
         data = self.http.httpGet(endpoint)
         print(data)
@@ -101,6 +104,5 @@ class OKCoinSpot(object):
 
 if __name__ == '__main__':
     client = OKCoinSpot()
-    print(client.get_server_time())
-    #print( client.ticker('BTC-USDT') )
+    print( client.ticker('BTC-USDT') )
     print(client.orders())
