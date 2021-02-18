@@ -69,7 +69,7 @@ class HttpUtil(object):
         print(self.__url + endpoint)
 
         resp = self.session.request('GET', self.__url + endpoint, headers=headers, timeout=10)
-        return json.loads(resp._content)
+        return resp.json()
 
 
 
