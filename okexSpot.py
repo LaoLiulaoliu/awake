@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Author: Yuande Liu <miraclecome (at) gmail.com>
 
 from HttpUtil import HttpUtil
+INSTRUMENT = 'btc-usdt'
 
 class OkexSpot(object):
     """ 币币api
@@ -50,7 +50,7 @@ class OkexSpot(object):
 
         return self.http.httpGet(endpoint, params)
 
-    def ticker(self, instrument_id='BTC-USDT'):
+    def ticker(self, instrument_id=INSTRUMENT):
         """
 		{
 		  "best_ask": "51846.7",
@@ -76,34 +76,50 @@ class OkexSpot(object):
         path = '/api/spot/v3/instruments/{}/ticker'.format(instrument_id)
         return self.http.httpGet(path)
 
-    def trade(self, side, instrument_id, price, amount):
+    def place_order(self, side, instrument_id, price, size):
         path = '/api/spot/v3/orders'
-        params = {'type': 'limit', 'side': side, 'instrument_id': instrument_id, 'size': amount, 'price': price,
+        params = {'type': 'limit', 'side': side, 'instrument_id': instrument_id, 'size': size, 'price': price,
                   'margin_trading': 1}
         return self.http.httpPost(path, params)
 
-    def order(self, instrument_id, orderid):
+    def batch_orders(self, orders):
+        """ orders is an List of dict, dict e.g.: {'instrument_id': 'btc-usdt', 'side': side, 'size': size, 'price': price}
+        """
+        path = '/api/spot/v3/batch_orders'
+        params = [{'type': 'limit', 'instrument_id': order['instrument_id'], 'side': order['side'], 'size': order['size'], 'price': order['price']}
+            for order in orders]
+        return self.http.httpPost(path, params)
+            
+    def cancel_order(self, orderid, instrument_id=INSTRUMENT):
+        path = '/api/spot/v3/cancel_orders/' + orderid
+        params = {'instrument_id': instrument_id}
+        return self.http.httpPost(path, params)
+
+    def cancel_multiple_orders(self, instrument_id=INSTRUMENT):
+        path = '/api/spot/v3/cancel_batch_orders'
+        params = [{'instrument_id': instrument_id}]
+        return self.http.httpPost(path, params)
+
+    def order_details(self, orderid, instrument_id=INSTRUMENT):
         path = '/api/spot/v3/orders/' + orderid
         params = {'instrument_id': instrument_id}
         return self.http.httpGet(path, params)
 
-    def orders(self):
+    def open_orders(self, instrument_id=INSTRUMENT):
+        """This retrieves the list of your current open orders.
+        """
         path = '/api/spot/v3/orders_pending'
-        return self.http.httpGet(path)
+        return self.http.httpGet(path, {'instrument_id': instrument_id})
 
     def kline(self, instrument_id, interval, start='', end=''):
         path = '/api/spot/v3/instruments/{}/candles'.format(instrument_id)
         params = {'granularity': interval, 'start': start, 'end': end}
         return self.http.httpGet(path, params)
 
-    def cancel_order(self, instrument_id, orderid):
-        path = '/api/spot/v3/cancel_orders/' + orderid
-        params = {'instrument_id': instrument_id}
-        return self.http.httpPost(path, params)
-
-
+    def trad_fee(self, instrument_id=INSTRUMENT):
+        path = '/api/spot/v3/trade_fee'
+        return self.http.httpGet(path)
 
 if __name__ == '__main__':
     client = OkexSpot()
     print( client.ticker('BTC-USDT') )
-    print(client.orders())
