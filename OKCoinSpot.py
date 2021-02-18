@@ -17,7 +17,7 @@ class OKCoinSpot(object):
         print(data)
 
     def tickers(self, symbol=None):
-        """获取OKCOIN现货行情信息
+        """OKCOIN all currency conversion current bid data
         """
         endpoint = '/api/spot/v3/instruments/ticker'
         params = {'symbol': symbol} if symbol else None
@@ -87,6 +87,6 @@ class OKCoinSpot(object):
 if __name__ == '__main__':
     client = OKCoinSpot()
     #client.get_server_time()
-    print(client.tickers())
+    # print(client.tickers())
     #print( client.ticker('BTC-USDT') )
-    #print(client.instruments())
+    print(client.instruments())
