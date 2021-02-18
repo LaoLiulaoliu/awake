@@ -16,17 +16,38 @@ class OKCoinSpot(object):
         data = self.http.httpGet(endpoint)
         print(data)
 
-    def tickers(self, symbol=''):
+    def tickers(self, symbol=None):
         """获取OKCOIN现货行情信息
         """
         endpoint = '/api/spot/v3/instruments/ticker'
-        if symbol:
-            params = {'symbol': symbol}
+        params = {'symbol': symbol} if symbol else None
 
         return self.http.httpGet(endpoint, params)
 
 
-    def ticker(self, instrument_id):
+    def ticker(self, instrument_id='BTC-USDT'):
+        """
+		{
+		  "best_ask": "51846.7",
+		  "best_bid": "51846.6",
+		  "instrument_id": "BTC-USDT",
+		  "open_utc0": "52116",
+		  "open_utc8": "51150.3",
+		  "product_id": "BTC-USDT",
+		  "last": "51840.1",
+		  "last_qty": "0.0006",
+		  "ask": "51846.7",
+		  "best_ask_size": "0.04177949",
+		  "bid": "51846.6",
+		  "best_bid_size": "0.00943893",
+		  "open_24h": "50610.7",
+		  "high_24h": "52617.9",
+		  "low_24h": "50522.9",
+		  "base_volume_24h": "8952.40823458",
+		  "timestamp": "2021-02-18T07:15:38.435Z",
+		  "quote_volume_24h": "461411588.69765782"
+		}
+        """
         path = '/api/spot/v3/instruments/{}/ticker'.format(instrument_id)
         return self.http.httpGet(path)
 
@@ -66,5 +87,6 @@ class OKCoinSpot(object):
 if __name__ == '__main__':
     client = OKCoinSpot()
     #client.get_server_time()
-    #client.tickers('btc_usd')
-    print( client.ticker('BTC-USDT') )
+    print(client.tickers())
+    #print( client.ticker('BTC-USDT') )
+    #print(client.instruments())
