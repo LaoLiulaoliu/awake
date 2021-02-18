@@ -66,4 +66,5 @@ class OKCoinSpot(object):
 if __name__ == '__main__':
     client = OKCoinSpot()
     #client.get_server_time()
-    client.tickers('btc_usd')
+    #client.tickers('btc_usd')
+    print( client.ticker('BTC-USDT') )
