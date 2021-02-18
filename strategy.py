@@ -1,5 +1,8 @@
 from okexSpot import OkexSpot
 
-def test1():
+def test():
     client = OkexSpot()
-    client.trade('buy', 'BTC-USDT', 1000, 1)
+    r = client.trade('buy', 'BTC-USDT', 1000, 1)
+    print(r)
+
+test()
