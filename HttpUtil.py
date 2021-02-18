@@ -26,6 +26,7 @@ WS_URL = 'wss://real.okex.com:8443/ws/v3'
 
 class HttpMD5Util(object):
     def __init__(self):
+        self.__url = BASE_URL
         self.__apikey = API_KEY
         self.__passphrase = PASS_PHRASE
         self.__secretkey = SECRET_KEY
@@ -46,30 +47,30 @@ class HttpMD5Util(object):
         return timestamp[0:-3] + 'Z' 
 
     def signature(self, timestamp, method, request_path, body):
-        if str(body) == '{}' or str(body) == 'None':
+        if body is None or body == {}:
             body = ''
         message = str(timestamp) + str.upper(method) + request_path + str(body)
-        mac = hmac.new(bytes(self.__secretkey, encoding='utf8'), bytes(message, encoding='utf-8'), digestmod='sha256')
-        d = mac.digest()
-        return base64.b64encode(d)
-
-    def httpGet(self, url, jsonify=True):
-        timestamp = self.timestamp()
-        signature = self.signature(timestamp, 'GET', endpoint, '')
-        headers = self.get_header(signature, timestamp)
-
-        resp = self.session.request('GET', url, headers=headers, timeout=10)
-
-        if jsonify:
-            return json.loads(resp._content)
-        else:
-            return resp._content
+        mac = hmac.new(bytes(self.__secretkey, encoding='utf8'), bytes(message, encoding='utf-8'), digestmod='sha256').digest()
+        return base64.b64encode(mac)
 
     def parse_params_to_str(self, params):
         url = '?'
         for key, value in params.items():
             url = url + str(key) + '=' + str(value) + '&'
         return url[0:-1]
+
+    def httpGet(self, endpoint, data=None):
+        if data:
+            endpoint = endpoint + self.parse_params_to_str(data)
+
+        timestamp = self.timestamp()
+        signature = self.signature(timestamp, 'GET', endpoint, '')
+        headers = self.get_header(signature, timestamp)
+
+        resp = self.session.request('GET', self.__url + endpoint, headers=headers, timeout=10)
+        return json.loads(resp._content)
+
+
 
 def buildMySign(params, secretKey):
     sign = ''

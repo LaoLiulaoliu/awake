@@ -4,14 +4,14 @@
 
 from secret import *
 
-from HttpMD5Util import HttpMD5Util
+from HttpUtil import HttpUtil
 
 class OKCoinSpot(object):
     """ 币币api
     """
 
     def __init__(self):
-        self.http = HttpMD5Util()
+        self.http = HttpUtil()
 
     def get_server_time(self):
         endpoint = '/api/general/v3/time'
@@ -27,6 +27,7 @@ class OKCoinSpot(object):
             params = 'symbol=%(symbol)s' %{'symbol':symbol}
 
         return self.http.httpGet(endpoint, params)
+
 
     def ticker(self, instrument_id):
         path = '/api/spot/v3/instruments/{}/ticker'.format(instrument_id)
@@ -68,4 +69,4 @@ class OKCoinSpot(object):
 if __name__ == '__main__':
     client = OKCoinSpot()
     #client.get_server_time()
-    client.ticker('btc_usd')
+    client.tickers('btc_usd')
