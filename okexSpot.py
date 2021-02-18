@@ -4,7 +4,7 @@
 
 from HttpUtil import HttpUtil
 
-class OKCoinSpot(object):
+class OkexSpot(object):
     """ 币币api
     """
 
@@ -19,6 +19,29 @@ class OKCoinSpot(object):
         data = self.http.httpGet(endpoint)
         print(data)
 
+    def instruments(self):
+        """ lots of this kind of data
+		{
+		  "base_currency": "BTC",
+		  "category": "1",
+		  "instrument_id": "BTC-USDT",
+		  "min_size": "0.0001",
+		  "quote_currency": "USDT",
+		  "size_increment": "0.00000001",
+		  "tick_size": "0.1"
+		}
+        """
+        path = '/api/spot/v3/instruments'
+        return self.http.httpGet(path)
+
+    def account(self, currency=None):
+        """ instrument_id
+        BTC: {'frozen': '0', 'hold': '0', 'id': '', 'currency': 'BTC', 'balance': '0.0067287', 'available': '0.0067287', 'holds': '0'}
+        USDT: {'frozen': '0', 'hold': '0', 'id': '', 'currency': 'USDT', 'balance': '0.00027828', 'available': '0.00027828', 'holds': '0'}
+        """
+        path = '/api/spot/v3/accounts/' + currency if currency else '/api/spot/v3/accounts/'
+        return self.http.httpGet(path)
+
     def tickers(self, symbol=None):
         """OKCOIN all currency conversion current bid data
         """
@@ -26,7 +49,6 @@ class OKCoinSpot(object):
         params = {'symbol': symbol} if symbol else None
 
         return self.http.httpGet(endpoint, params)
-
 
     def ticker(self, instrument_id='BTC-USDT'):
         """
@@ -54,21 +76,6 @@ class OKCoinSpot(object):
         path = '/api/spot/v3/instruments/{}/ticker'.format(instrument_id)
         return self.http.httpGet(path)
 
-    def instruments(self):
-        """ lots of this kind of data
-		{
-		  "base_currency": "BTC",
-		  "category": "1",
-		  "instrument_id": "BTC-USDT",
-		  "min_size": "0.0001",
-		  "quote_currency": "USDT",
-		  "size_increment": "0.00000001",
-		  "tick_size": "0.1"
-		}
-        """
-        path = '/api/spot/v3/instruments'
-        return self.http.httpGet(path)
-
     def trade(self, side, instrument_id, price, amount):
         path = '/api/spot/v3/orders'
         params = {'type': 'limit', 'side': side, 'instrument_id': instrument_id, 'size': amount, 'price': price,
@@ -94,15 +101,9 @@ class OKCoinSpot(object):
         params = {'instrument_id': instrument_id}
         return self.http.httpPost(path, params)
 
-    def account(self, instrument_id):
-        """ instrument_id
-        BTC: {'frozen': '0', 'hold': '0', 'id': '', 'currency': 'BTC', 'balance': '0.0067287', 'available': '0.0067287', 'holds': '0'}
-        USDT: {'frozen': '0', 'hold': '0', 'id': '', 'currency': 'USDT', 'balance': '0.00027828', 'available': '0.00027828', 'holds': '0'}
-        """
-        path = '/api/spot/v3/accounts/' + instrument_id
-        return self.http.httpGet(path)
+
 
 if __name__ == '__main__':
-    client = OKCoinSpot()
+    client = OkexSpot()
     print( client.ticker('BTC-USDT') )
     print(client.orders())
