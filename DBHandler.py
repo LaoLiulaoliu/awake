@@ -55,3 +55,7 @@ class DBHandler(object):
         for k in self.db.RangeIter(include_value = False, reverse = True):
             b.Delete(k)
         self.db.Write(b)
+
+if __name__ == '__main__':
+    db = DBHandler('2021-02-19T03-20-36')
+    db.display()
