@@ -22,8 +22,9 @@ def save(name=None):
     while (True):
         t = time.time()
         r = spot.ticker(INSTRUMENT)
-        db.put(r['timestamp'], {'last': r['last'], 'high_24h': r['high_24h'], 'low_24h': r['low_24h']})
-        print(time.time() - t)
+        if r:
+            db.put(r['timestamp'], {'last': r['last'], 'high_24h': r['high_24h'], 'low_24h': r['low_24h']})
+            print(time.time() - t)
 
 if __name__ == '__main__':
     save('2021-02-19T07-15-37')

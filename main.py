@@ -18,6 +18,7 @@ def main(argv):
             print('python main.py -s leveldb_name -t')
             sys.exit()
         elif opt in ('-s', '--save'):
+            # '2021-02-19T12-17-16'
             arg = arg if arg else None
             save(arg)
         elif opt in ('-t', '--test'):

@@ -79,6 +79,7 @@ class OkexSpot(object):
         except Exception as e:
             print('exception is: ', e)
             self.http.break_and_connect()
+            return
 
     def place_order(self, side, instrument_id, price, size):
         path = '/api/spot/v3/orders'
