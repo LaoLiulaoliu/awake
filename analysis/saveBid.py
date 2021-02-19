@@ -3,6 +3,7 @@
 
 import time
 from datetime import datetime
+
 from analysis.DBHandler import DBHandler
 from runner.OkexSpot import OkexSpot, INSTRUMENT
 
