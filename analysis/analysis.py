@@ -18,13 +18,16 @@ def get_data():
     return data
 
 def draw_data(data):
+    """
+    need change Y to float, or else, it will disorder
+    """
     X = 'x'
     Y = 'y'
-    scale = 100
+    scale = 500
     draw = Draw()
     length = len(data[X])
     for i in range(length // scale):
-        draw.draw_plot_xy(data[X][i*scale:(i+1)*scale], data[Y][i*scale:(i+1)*scale])
+        draw.draw_plot_xy(data[X][i*scale:(i+1)*scale], list(map(float, data[Y][i*scale:(i+1)*scale])))
         print(i*scale, (i+1)*scale)
 
 
