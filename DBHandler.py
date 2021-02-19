@@ -40,9 +40,13 @@ class DBHandler(object):
         for key, value in self.db.RangeIter():
             print(key, value)
 
+    def iterator_kv(self):
+        for key, value in self.db.RangeIter():
+            yield key.decode(), value.decode()
+
     def iter_from_to(self, key_from, key_to, reverse=False):
         for key, value in self.db.RangeIter(key_from=key_from, key_to=key_to, reverse=reverse):
-            print(key, value)
+            yield key.decode(), value.decode()
 
     def iter_keys(self):
         for key in self.db.RangeIter(include_value=False):

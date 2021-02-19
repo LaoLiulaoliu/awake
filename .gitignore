@@ -6,6 +6,8 @@ __pycache__/
 tradesecret.py
 test/
 2021-*T*/
+.vscode/
+
 # C extensions
 *.so
 
