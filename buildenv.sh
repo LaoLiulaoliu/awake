@@ -2,3 +2,5 @@
 sudo apt update
 sudo apt install python3-pip
 pip3 install retrying
+pip3 install leveldb
+pip3 install gevent

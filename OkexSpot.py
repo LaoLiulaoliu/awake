@@ -121,5 +121,5 @@ class OkexSpot(object):
         return self.http.httpGet(path)
 
 if __name__ == '__main__':
-    client = OkexSpot()
-    print( client.ticker('BTC-USDT') )
+    spot = OkexSpot()
+    print( spot.ticker(INSTRUMENT) )

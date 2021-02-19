@@ -1,11 +1,11 @@
-from okexSpot import OkexSpot
+from OkexSpot import OkexSpot
 
 def test():
-    client = OkexSpot()
-    r = client.place_order('buy', 'BTC-USDT', 1000, 1)
+    spot = OkexSpot()
+    r = spot.place_order('buy', 'BTC-USDT', 1000, 1)
     print(r)
 
-    ret = client.ticker('BTC-USDT')
+    ret = spot.ticker('BTC-USDT')
     if 'best_ask' in ret:
         price = float( ret['best_ask'] )
 

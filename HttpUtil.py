@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import requests
-import datetime
 import hmac
 import base64
 import json
 
+from datetime import datetime
 from retrying import retry
 from secret import *
 from tradesecret import *
@@ -41,7 +41,7 @@ class HttpUtil(object):
         return header
 
     def timestamp(self):
-        timestamp = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')
+        timestamp = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')
         return timestamp[0:-3] + 'Z' 
 
     def signature(self, timestamp, method, request_path, body):
