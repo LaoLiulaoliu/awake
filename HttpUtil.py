@@ -57,7 +57,7 @@ class HttpUtil(object):
             url = url + str(key) + '=' + str(value) + '&'
         return url[0:-1]
 
-    @retry(stop_max_attempt_number=10)
+    @retry(stop_max_attempt_number=10, wait_exponential_multiplier=1000, wait_exponential_max=5000)
     def httpGet(self, endpoint, data=None):
         if data:
             endpoint = endpoint + self.parse_params_to_str(data)
