@@ -125,9 +125,10 @@ class OkexSpot(object):
         path = '/api/spot/v3/trade_fee'
         return self.http.httpGet(path)
 
-def error_handler(ret):
+def print_error_or_get_order_id(ret):
     if ret['error_code'] != '0':
         print(ret)
+        return
     else:
         return ret['order_id']
 
@@ -135,6 +136,6 @@ if __name__ == '__main__':
     spot = OkexSpot()
     print( spot.ticker(INSTRUMENT) )
 
-    # r = spot.place_order('buy', 'BTC-USDT', 1000, 1)
-    # order_id = error_handler(r)
+    # r = spot.place_order('buy', INSTRUMENT, 1000, 1)
+    # order_id = print_error_or_get_order_id(r)
     # spot.cancel_order('6486089829214208')

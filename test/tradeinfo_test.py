@@ -3,7 +3,7 @@
 
 from runner.TradeInfo import TradeInfo
 
-def test_tradeinfo(arg):
+def tradeinfo_test(arg):
     tradeinfo = TradeInfo('friend.txt', 3)
     tradeinfo.load()
     print(tradeinfo.data.status())

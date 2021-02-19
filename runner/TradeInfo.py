@@ -34,5 +34,3 @@ class TradeInfo(object):
         self.fp.seek(0, 0)
         for line in self.fp:
             self.data.append(line.split(self.sep))
-        
-trendinfo = {}

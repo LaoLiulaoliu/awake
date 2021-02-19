@@ -4,7 +4,7 @@
 import sys
 import getopt
 from analysis.saveBid import save
-from test.test_tradeinfo import test_tradeinfo
+from test.test_tradeinfo import tradeinfo_test
 
 def main(argv):
     try:
@@ -22,7 +22,7 @@ def main(argv):
             arg = arg if arg else None
             save(arg)
         elif opt in ('-t', '--test'):
-            test_tradeinfo(arg)
+            tradeinfo_test(arg)
         else:
             print(None)
 
