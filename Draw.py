@@ -5,8 +5,8 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# plt.style.use('ggplot')
-# plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+plt.style.use('ggplot')
+plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
 
 class Draw(object):
     def draw_scatter(self, data, x, y, color=None):
@@ -54,9 +54,18 @@ class Draw(object):
             sns.distplot(data[col])
             plt.show()
 
-    def draw_plot_xy(self, data, x, y, title='plot'):
+    def draw_plot_data_xy(self, data, x, y, title='plot'):
         plt.figure(figsize=(20, 8))
         plt.plot(data[x], data[y], color='blue', label='actual')
+        plt.legend()
+        plt.title(title)
+        plt.xlabel('time')
+        plt.ylabel('value')
+        plt.show()
+
+    def draw_plot_xy(self, x, y, title='plot'):
+        plt.figure(figsize=(20, 8))
+        plt.plot(x, y, color='blue', label='actual')
         plt.legend()
         plt.title(title)
         plt.xlabel('time')

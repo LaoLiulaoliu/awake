@@ -1,19 +1,42 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import json
 from Draw import Draw
-from DBHandler import DBHandler
+
 
 def get_data():
+    from DBHandler import DBHandler
     X = 'x'
     Y = 'y'
     data = {X: [], Y: []}
-    draw = Draw()
     db = DBHandler('2021-02-19T03-20-36')
     
     for k, v in db.iterator_kv():
         data[X].append(k)
-        data[Y].append(v)
-    draw.draw_plot_xy(data, X, Y)
+        data[Y].append(json.loads(v)['last'])
+    return data
 
-get_data()
+def draw_data(data):
+    X = 'x'
+    Y = 'y'
+    scale = 100
+    draw = Draw()
+    length = len(data[X])
+    for i in range(length // scale):
+        draw.draw_plot_xy(data[X][i*scale:(i+1)*scale], data[Y][i*scale:(i+1)*scale])
+        print(i*scale, (i+1)*scale)
+
+
+def dump_data():
+    data = get_data()
+    with open('a.txt', 'w') as fd:
+        json.dump(data, fd)
+
+def load_and_draw():
+    with open('a.txt', 'r') as fd:
+        data = json.load(fd)
+    draw_data(data)
+
+# dump_data()
+load_and_draw()
