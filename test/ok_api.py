@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Author: Yuande Liu <miraclecome (at) gmail.com>
 
 
 import base64
@@ -134,48 +133,6 @@ class OkAPI:
     def sf_cancel_order(self, instrument_id, client_oid):
         path = '/api/swap/v3/cancel_order/{}/{}'.format(instrument_id, client_oid)
         params = {'instrument_id': instrument_id, 'client_oid': client_oid}
-        return self.httpPost(path, params)
-
-    # -----------------------------币币api-----------------------------
-    def ticker(self, instrument_id):
-        path = '/api/spot/v3/instruments/{}/ticker'.format(instrument_id)
-        return self.httpGet(path)
-
-    def tickers(self):
-        path = '/api/spot/v3/instruments/ticker'
-        return self.httpGet(path)
-
-    def instruments(self):
-        path = '/api/spot/v3/instruments'
-        return self.httpGet(path)
-
-    def trade(self, side, instrument_id, price, amount):
-        path = '/api/spot/v3/orders'
-        params = {'type': 'limit', 'side': side, 'instrument_id': instrument_id, 'size': amount, 'price': price,
-                  'margin_trading': 1}
-        return self.httpPost(path, params)
-
-    def order(self, instrument_id, orderid):
-        path = '/api/spot/v3/orders/' + orderid
-        params = {'instrument_id': instrument_id}
-        return self.httpGet(path, params)
-
-    def orders(self):
-        path = '/api/spot/v3/orders_pending'
-        return self.httpGet(path)
-
-    def kline(self, instrument_id, interval, start='', end=''):
-        path = '/api/spot/v3/instruments/{}/candles'.format(instrument_id)
-        params = {'granularity': interval, 'start': start, 'end': end}
-        return self.httpGet(path, params)
-
-    def account(self, instrument_id):
-        path = '/api/spot/v3/accounts/' + instrument_id
-        return self.httpGet(path)
-
-    def cancel_order(self, instrument_id, orderid):
-        path = '/api/spot/v3/cancel_orders/' + orderid
-        params = {'instrument_id': instrument_id}
         return self.httpPost(path, params)
 
     # -----------------------------币币杠杆api-----------------------------
