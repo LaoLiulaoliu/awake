@@ -57,7 +57,7 @@ class HttpUtil(object):
             url = url + str(key) + '=' + str(value) + '&'
         return url[0:-1]
 
-    @retry(stop_max_attempt_number=3)
+    @retry(stop_max_attempt_number=10)
     def httpGet(self, endpoint, data=None):
         if data:
             endpoint = endpoint + self.parse_params_to_str(data)
@@ -65,12 +65,12 @@ class HttpUtil(object):
         timestamp = self.timestamp()
         signature = self.signature(timestamp, 'GET', endpoint, '')
         headers = self.get_header(signature, timestamp)
-        print(self.__url + endpoint)
+        # print(self.__url + endpoint)
 
         response = self.session.request('GET', self.__url + endpoint, headers=headers, timeout=10)
         return response.json()
 
-    @retry(stop_max_attempt_number=3)
+    @retry(stop_max_attempt_number=10)
     def httpPost(self, endpoint, data):
         body = json.dumps(data)
         timestamp = self.timestamp()

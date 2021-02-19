@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import time
 from HttpUtil import HttpUtil
 INSTRUMENT = 'btc-usdt'
 
@@ -74,7 +75,11 @@ class OkexSpot(object):
 		}
         """
         path = '/api/spot/v3/instruments/{}/ticker'.format(instrument_id)
-        return self.http.httpGet(path)
+        try:
+            return self.http.httpGet(path)
+        except Exception as e:
+            print('exception is: ', e)
+            time.sleep(10)
 
     def place_order(self, side, instrument_id, price, size):
         path = '/api/spot/v3/orders'

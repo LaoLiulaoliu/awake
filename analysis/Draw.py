@@ -55,7 +55,7 @@ class Draw(object):
             plt.show()
 
     def draw_plot_data_xy(self, data, x, y, title='plot'):
-        plt.figure(figsize=(20, 8))
+        plt.figure(figsize=(20, 15))
         plt.plot(data[x], data[y], color='blue', label='actual')
         plt.legend()
         plt.title(title)
@@ -64,7 +64,7 @@ class Draw(object):
         plt.show()
 
     def draw_plot_xy(self, x, y, title='plot'):
-        plt.figure(figsize=(20, 8))
+        plt.figure(figsize=(20, 15))
         plt.plot(x, y, color='blue', label='actual')
         plt.legend()
         plt.title(title)

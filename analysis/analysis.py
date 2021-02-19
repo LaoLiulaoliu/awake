@@ -6,7 +6,7 @@ from Draw import Draw
 
 
 def get_data():
-    from DBHandler import DBHandler
+    from ..DBHandler import DBHandler
     X = 'x'
     Y = 'y'
     data = {X: [], Y: []}
