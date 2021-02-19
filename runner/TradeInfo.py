@@ -12,7 +12,7 @@ class TradeInfo(object):
         self.fp = self.open(fname)
         self.sep = sep
 
-        self.data = Numpp(DIM, init_row_num)
+        self.data = Numpp(self.DIM, init_row_num)
 
     def open(self, fname=None):
         if self.fp is None:

@@ -23,8 +23,8 @@ class Numpp(object):
 
 
     def enlarge(self):
-        self.info = np.hstack((self.info, np.zeros((self.row_size, self.column_dim))))
+        self.info = np.vstack((self.info, np.zeros((self.row_size, self.column_dim))))
         self.row_size *= 2
 
     def status(self):
-        return f'Total row: {self.row_size}, current row: {self.current_size}, data shape: {self.info.shape}'
+        return f'Total row: {self.row_size}, data shape: {self.info.shape}, current row: {self.current_size}'

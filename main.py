@@ -8,20 +8,22 @@ from test.test_tradeinfo import test_tradeinfo
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, 'hs:t:', ['save=', 'test='])
+        opts, args = getopt.getopt(argv, 'hs:t', ['save=', 'test='])
     except getopt.GetoptError:
-      print('main.py -s leveldb_name -t 1')
+      print('main.py -s leveldb_name -t')
       sys.exit(2)
 
     for opt, arg in opts:
         if opt == '-h':
-            print('python main.py -s leveldb_name -t 1')
+            print('python main.py -s leveldb_name -t')
             sys.exit()
-        elif opt in ('s', '--save'):
+        elif opt in ('-s', '--save'):
             arg = arg if arg else None
             save(arg)
-        elif opt in ('t', '--test'):
-            outputfile = arg
+        elif opt in ('-t', '--test'):
+            test_tradeinfo(arg)
+        else:
+            print(None)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
