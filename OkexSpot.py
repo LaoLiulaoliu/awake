@@ -121,7 +121,7 @@ class OkexSpot(object):
         return self.http.httpGet(path)
 
 def error_handler(ret):
-    if r['error_code'] != '0'
+    if r['error_code'] != '0':
         print(r)
     else:
         return r['order_id']
