@@ -8,8 +8,8 @@ import json
 
 from datetime import datetime
 from retrying import retry
-from secret import *
-from tradesecret import *
+from .secret import *
+from .tradesecret import *
 
 CONTENT_TYPE = 'Content-Type'
 APPLICATION_JSON = 'application/json'
@@ -57,7 +57,8 @@ class HttpUtil(object):
             url = url + str(key) + '=' + str(value) + '&'
         return url[0:-1]
 
-    @retry(stop_max_attempt_number=10, wait_exponential_multiplier=1000, wait_exponential_max=5000)
+    #@retry(stop_max_attempt_number=10, wait_exponential_multiplier=1000, wait_exponential_max=5000)
+    @retry(stop_max_attempt_number=5)
     def httpGet(self, endpoint, data=None):
         if data:
             endpoint = endpoint + self.parse_params_to_str(data)
@@ -80,3 +81,7 @@ class HttpUtil(object):
         response = self.session.request('POST', self.__url + endpoint, headers=headers, data=body)
         return response.json()
 
+    def break_and_connect(self):
+        del self.session
+        self.session = requests.sessions.Session()
+        print('http break and connect again!!!')

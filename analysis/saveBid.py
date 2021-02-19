@@ -3,8 +3,9 @@
 
 import time
 from datetime import datetime
-from ..DBHandler import DBHandler
-from ..OkexSpot import OkexSpot, INSTRUMENT
+from analysis.DBHandler import DBHandler
+from runner.OkexSpot import OkexSpot, INSTRUMENT
+
 
 def init(name='test'):
     if not hasattr(init, '_db'):
@@ -24,4 +25,4 @@ def save(name=None):
         print(time.time() - t)
 
 if __name__ == '__main__':
-    save()
+    save('2021-02-19T07-15-37')
