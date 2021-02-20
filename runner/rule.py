@@ -53,7 +53,7 @@ def r20210219(capital=200):
                 if have_around_open_orders(last_price - 50, last_price + 50, list(open_buy_orderid_prices.values())) is False:
                     size = round(capital / last_price, 8)
                     order_id = place_buy_order(spot, last_price, size)
-                    if order_id is not None:
+                    if order_id is not None:  # if no enough balance(usdt)
                         tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, order_id, 0])
                         trade[order_id] = [0, last_price, size, 0]  # order_id: state, price, size, pocket
 
