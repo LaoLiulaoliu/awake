@@ -48,20 +48,20 @@ def pickup_leak_place_buy(low_24h, capital, spot, tradeinfo):
 
 
 def get_high_low_half_hour(begin_time, iterator):
-    seted = False
+    idx = -1
     high_hh, low_hh = 0, 100000000
-    for i in iterator:
-        timestamp, price = i
+    for i, data in iterator:
+        timestamp, price = data
         if begin_time - timestamp < 1800 * TIME_PRECISION:
             if price > high_hh:
                 high_hh = price
             if price < low_hh:
                 low_hh = price
-            seted = True
+            idx = i
         else:
             break
-    if seted:
-        return high_hh, low_hh
+    if idx > 0:
+        return high_hh, low_hh, idx
 
 
 def r20210219(capital=200):
@@ -72,12 +72,11 @@ def r20210219(capital=200):
     high_24h, low_24h = get_high_low(spot)
 
     begin_time = int(time.time() * TIME_PRECISION)
+    last_half_hour_idx = -1
     trend = Blaze('TREND.txt', 2)
     r = trend.reload(partial(get_high_low_half_hour, begin_time))
-    high_hh, low_hh = r if r else (high_24h, low_24h)
-
-    # high_precent = [high_24h * 0.01 * i for i in range(100, 70, -1)]  # math.log2(30) = 5
-    # high_precent_index = {}
+    high_hh, low_hh, last_half_hour_idx = r if r else (high_24h, low_24h, last_half_hour_idx)
+    # high_precent = [high_24h * 0.01 * i for i in range(100, 70, -1)]  # math.log2(30) = 5    # high_precent_index = {}
 
     pickup_leak_place_buy(low_24h, capital, spot, tradeinfo)
     while True:
@@ -86,6 +85,11 @@ def r20210219(capital=200):
             timestamp = int(datetime.strptime(r['timestamp'], '%Y-%m-%dT%H:%M:%S.%f%z').timestamp() * TIME_PRECISION)
             last_price = float(r['last'])
             trend.append((timestamp, last_price))
+
+            if last_price > high_hh:
+                high_hh = last_price
+            if last_price < low_hh:
+                low_hh = last_price
 
             if last_price < low_24h:
                 pass

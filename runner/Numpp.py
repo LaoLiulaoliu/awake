@@ -46,7 +46,7 @@ class Numpp(object):
     def iterator(self, reverse=False):
         if reverse:
             for i in range(self.current_size - 1, -1, -1):
-                yield self.info[i, :]
+                yield i, self.info[i, :]
         else:
             for i in range(self.current_size):
-                yield self.info[i, :]
+                yield i, self.info[i, :]
