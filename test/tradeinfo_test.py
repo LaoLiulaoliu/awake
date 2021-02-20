@@ -1,11 +1,11 @@
-# !/usr/bin/env python
+# !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from runner.TradeInfo import TradeInfo
+from runner.Blaze import Blaze
 
 
 def tradeinfo_test(arg):
-    tradeinfo = TradeInfo('friend.txt', 3)
+    tradeinfo = Blaze('friend.txt', 3)
     tradeinfo.load()
     print(tradeinfo.data.status())
 
