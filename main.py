@@ -21,12 +21,12 @@ def main(argv):
             print('python main.py -s leveldb_name -t')
             sys.exit()
         elif opt in ('-o', '--spot'):
-            VALUTA_IDX = 2
+            VALUTA_IDX = 0
             spot = OkexSpot(use_trade_key=True)
             # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
-            print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
+            # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
             # print(spot.trad_fee())
-            print(spot.orders(0, INSTRUMENT[VALUTA_IDX]))
+            # print(spot.orders(0, INSTRUMENT[VALUTA_IDX]))
             print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
         elif opt in ('-s', '--save'):
             # '2021-02-19T12-17-16'

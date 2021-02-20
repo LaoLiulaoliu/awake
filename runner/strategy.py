@@ -11,10 +11,10 @@ RETRY = 10
 TIME_PRECISION = 1000
 HALF_HOUR = 1800000
 VALUTA_IDX = 0
-INSTRUMENT[VALUTA_IDX]
+
 
 def place_buy_order(spot, bid_price, size):
-    """place 5 times, return order when success
+    """place RETRY times, return order when success
     """
     for i in range(RETRY):
         r = spot.place_order('buy', INSTRUMENT[VALUTA_IDX], bid_price, size)
@@ -24,13 +24,22 @@ def place_buy_order(spot, bid_price, size):
 
 
 def place_sell_order(spot, bid_price, size):
-    """place 5 times, return order when success
+    """place RETRY times, return order when success
     """
     for i in range(RETRY):
         r = spot.place_order('sell', INSTRUMENT[VALUTA_IDX], bid_price, size)
         order_id = print_error_or_get_order_id(r)
         if order_id:
             return order_id
+
+
+def get_open_buy_orders(spot):
+    """place RETRY times, return open orders when success
+    """
+    for i in range(RETRY):
+        r = spot.open_orders(INSTRUMENT[VALUTA_IDX])
+        if 'error_code' not in r and len(r) > 0:
+            return {i['order_id']: i['price'] for i in r if i['side'] == 'buy'}
 
 
 def get_high_low_last(spot):
@@ -49,7 +58,7 @@ def pickup_leak_place_buy(low_24h, capital, spot, tradeinfo):
     for i in pick_idx_by_hand:
         size = round(capital / low_precent[i], 8)
         order_id = place_buy_order(spot, low_precent[i], size)
-        tradeinfo.append([int(time.time() * TIME_PRECISION), low_precent[i], size, 0, order_id])
+        tradeinfo.append([int(time.time() * TIME_PRECISION), low_precent[i], size, order_id, 0])
     tradeinfo.flush()
 
 
@@ -114,13 +123,20 @@ def trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh):
         return last_half_hour_idx, high_hh, low_hh
 
 
+def have_around_open_orders(low, high, prices):
+    for p in prices:
+        if low < p < high:
+            return True
+    return False
+
+
 def r20210219(capital=200):
     spot = OkexSpot(use_trade_key=True)
-    tradeinfo = Blaze('TRADE.py', 5)
+    tradeinfo = Blaze(f'TRADE_{VALUTA_IDX}.py', 5)
     tradeinfo.load()
 
     high_24h, low_24h, last_price_init, begin_time = get_high_low_last(spot)
-    pickup_leak_place_buy(low_24h, capital, spot, tradeinfo)
+    # pickup_leak_place_buy(low_24h, capital, spot, tradeinfo)
 
     trend = Blaze('TREND.txt', 2)
     r = trend.custom_reload(partial(get_high_low_half_hour, begin_time))
@@ -133,11 +149,32 @@ def r20210219(capital=200):
 
     print(trend.data.status())
     # high_precent = [high_24h * 0.01 * i for i in range(100, 70, -1)]  # math.log2(30) = 5    # high_precent_index = {}
+    
+    diff_boundary = 150
+    trade = {}
+    cnt = 0
     while True:
+        open_buy_orderid_prices = {}
+        if 63 & cnt == 0:  # nearly half minutes
+            r = get_open_buy_orders(spot)
+            if r is not None:
+                open_buy_orderid_prices = r
+                cnt = 0
+
+        t = time.time()
         r = trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh)
+        print(f'one ticket spend: {time.time() - t}')
+        cnt += 1
         if r is not None:
             last_half_hour_idx, high_hh, low_hh = r
-
             timestamp, last_price = trend.last()
-            if low_24h < last_price < high_24h:
-                pass
+
+            # buy strategy
+            if high_hh - diff_boundary > last_price:
+                if have_around_open_orders(last_price - 50, last_price + 50, list(open_buy_orderid_prices.values())) is False:
+                    size = round(capital / last_price, 8)
+                    order_id = place_buy_order(spot, last_price, size)
+                    tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, order_id, 0])
+                    trade[order_id] = [0, last_price, size, 0]  # order_id: state, price, size, pocket
+            # sell strategy
+           
