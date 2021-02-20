@@ -6,11 +6,12 @@ import getopt
 
 from analysis.draw_spot import dump_data, load_and_draw
 from test.tradeinfo_test import tradeinfo_test
+from runner.strategy import r20210219
 
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, 'hs:du:t', ['save=', 'draw=', 'dump=', 'test='])
+        opts, args = getopt.getopt(argv, 'hs:du:tz', ['save=', 'draw=', 'dump=', 'test=', 'trade='])
     except getopt.GetoptError:
         print('main.py -s leveldb_name -t')
         sys.exit(2)
@@ -31,6 +32,8 @@ def main(argv):
             dump_data(arg)
         elif opt in ('-t', '--test'):
             tradeinfo_test(arg)
+        elif opt in ('-z', '--trade'):
+            r20210219(20)
         else:
             print(None)
 
