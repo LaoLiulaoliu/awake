@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import time
+from datetime import datetime
 from .OkexSpot import OkexSpot, INSTRUMENT, print_error_or_get_order_id
 from .TradeInfo import TradeInfo
 
 
-def place_buy_order(bid_price, size):
+def place_buy_order(spot, bid_price, size):
     """place 5 times, return order when success
     """
     order_id = None
@@ -16,39 +17,40 @@ def place_buy_order(bid_price, size):
         if order_id:
             return order_id
 
-def get_high_low():
+
+def get_high_low(spot):
     for i in range(5):
         r = spot.ticker(INSTRUMENT)
-        if r:    
+        if r:
             return float(r['high_24h']), float(r['low_24h'])
 
-def 20210219(capital=200):
+
+def r20210219(capital=200):
     spot = OkexSpot()
     tradeinfo = TradeInfo('TRADE.py')
     tradeinfo.load()
 
-    trendinfo = {}
+    trend = {}
     begin_time = round(time.time() * 10)
-    high_24h, low_24h = get_high_low()
+    high_24h, low_24h = get_high_low(spot)
 
-    high_precent = [high_24h * 0.01 * i for i in range(100, 70, -1)] # math.log2(30) = 5
+    high_precent = [high_24h * 0.01 * i for i in range(100, 70, -1)]  # math.log2(30) = 5
     low_precent = [low_24h * 0.01 * i for i in range(100, 70, -1)]
     low_precent_index = {}
-
 
     r = spot.ticker(INSTRUMENT)
     if r:
         timestamp = round(datetime.strptime(r['timestamp'], '%Y-%m-%dT%H:%M:%S.%f%z').timestamp() * 10)
-        last_price = float(r['last']
-        trendinfo[timestamp] = {'last': last_price)}
+        last_price = float(r['last'])
+        trend[timestamp] = {'last': last_price}
 
         if last_price <= low_24h:
             for i in range(len(low_precent) - 1):
-                if low_precent[i] < last_price < low_precent[i+1]:
+                if low_precent[i] < last_price < low_precent[i + 1]:
                     if i not in low_precent_index or timestamp - low_precent_index[i] > 36000:
                         low_precent_index[i] = timestamp
 
-                        order_id = place_buy_order(last_price, round(capital / last_price, 8))
+                        order_id = place_buy_order(spot, last_price, round(capital / last_price, 8))
                         tradeinfo.append([timestamp, last_price, INSTRUMENT, order_id])
                         break
         elif last_price > high_24h:
