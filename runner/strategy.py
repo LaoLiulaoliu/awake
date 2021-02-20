@@ -157,8 +157,8 @@ def r20210219(capital=200):
     cnt = 0
     while True:
         t = time.time()
-        open_buy_orderid_prices = {}
         if 127 & cnt == 0:  # nearly half minutes
+            open_buy_orderid_prices = {}
             r = get_open_buy_orders(spot)
             if r is not None:
                 open_buy_orderid_prices = r
