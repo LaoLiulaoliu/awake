@@ -21,7 +21,7 @@ def main(argv):
             print('python main.py -s leveldb_name -t')
             sys.exit()
         elif opt in ('-o', '--spot'):
-            VALUTA_IDX = 0
+            VALUTA_IDX = 2
             spot = OkexSpot()
             print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
             print(spot.order_details('6493772545352704', INSTRUMENT[VALUTA_IDX]))

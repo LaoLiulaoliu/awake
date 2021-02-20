@@ -4,7 +4,9 @@
 from .HttpUtil import HttpUtil
 
 INSTRUMENT = {
-    0: 'btc-usdt'
+    0: 'btc-usdt',
+    1: 'eth-usdt',
+    2: 'doge-usdt'
 }
 
 
@@ -112,6 +114,32 @@ class OkexSpot(object):
         return self.http.httpPost(path, params)
 
     def order_details(self, orderid, instrument_id=INSTRUMENT[0]):
+        """
+        {
+            'client_oid': '',
+            'created_at': '2021-02-20T12:11:45.490Z',
+            'fee': '',
+            'fee_currency': '',
+            'filled_notional': '0',
+            'filled_size': '0',
+            'funds': '',
+            'instrument_id': 'BTC-USDT',
+            'notional': '',
+            'order_id': '6493772545352704',
+            'order_type': '0',
+            'price': '51254',
+            'price_avg': '0',
+            'product_id': 'BTC-USDT',
+            'rebate': '',
+            'rebate_currency': '',
+            'side': 'buy',
+            'size': '0.00019511',
+            'state': '0',
+            'status': 'open',
+            'timestamp': '2021-02-20T12:11:45.490Z',
+            'type': 'limit'
+        }
+        """
         path = '/api/spot/v3/orders/' + orderid
         params = {'instrument_id': instrument_id}
         return self.http.httpGet(path, params)
