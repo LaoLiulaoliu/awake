@@ -14,7 +14,7 @@ VALUTA_IDX = 0
 def place_buy_order(spot, bid_price, size):
     """place RETRY times, return order when success
     """
-    for i in range(RETRY):
+    for i in range(RETRY-5):
         r = spot.place_order('buy', INSTRUMENT[VALUTA_IDX], bid_price, size)
         order_id = print_error_or_get_order_id(r)
         if order_id:
