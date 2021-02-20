@@ -42,11 +42,13 @@ def get_open_buy_orders(spot):
             return {i['order_id']: float(i['price']) for i in r if i['side'] == 'buy'}
 
 
-def get_filled_buy_orders(spot):
+def get_filled_buy_orders(spot, before=None):
+    """ TODO !!! The maximum result is 100
+    """
     for i in range(RETRY):
-        r = spot.orders(2, INSTRUMENT[VALUTA_IDX])
+        r = spot.orders(2, INSTRUMENT[VALUTA_IDX], before)
         if 'error_code' not in r and len(r) > 0:
-            return {i['order_id']: float(i['price']) for i in r if i['side'] == 'buy'}
+            return [(i['order_id'], float(i['price']), i['size']) for i in r if i['side'] == 'buy']
 
 
 def get_high_low_last(spot):
@@ -161,6 +163,7 @@ def r20210219(capital=200):
     diff_boundary = 150
     trade = {}
     open_buy_orderid_prices = {}
+    filled_buy_orderid_prices_size = []
     while True:
         t = time.time()
         r = get_open_buy_orders(spot)
@@ -183,9 +186,19 @@ def r20210219(capital=200):
                     order_id = place_buy_order(spot, last_price, size)
                     tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, order_id, 0])
                     trade[order_id] = [0, last_price, size, 0]  # order_id: state, price, size, pocket
-            # sell strategy
-            
 
+            # sell strategy
+            r = get_filled_buy_orders(spot, '6494679719429120')
+            if r is not None:
+                filled_buy_orderid_prices_size = r
+            for oid, p, size in filled_buy_orderid_prices:
+                if p + diff_boundary < last_price:
+                    order_id = place_sell_order(spot, last_price + 50, size)
+                    if order_id in trade:
+                        trade[order_id][0] = 2
+                        trade[order_id][3] = 1
+                    else:
+                        print(f'order_id not in trade: {order_id}, {trade}')
 
         strategy_t = time.time()
         print(f'circle: {strategy_t - t}, order: {open_buy_orders_t - t}, ticket: {ticket_t - open_buy_orders_t}, strategy: {strategy_t - ticket_t}')

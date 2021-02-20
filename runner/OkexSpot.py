@@ -174,7 +174,7 @@ class OkexSpot(object):
         path = '/api/spot/v3/orders_pending'
         return self.http.httpGet(path, {'instrument_id': instrument_id})
 
-    def orders(self, state, instrument_id=INSTRUMENT[0]):
+    def orders(self, state, instrument_id=INSTRUMENT[0], before=None):
         """Data structure is list of order_details.
         Order Status:
         -2 = Failed
@@ -189,6 +189,8 @@ class OkexSpot(object):
         """
         path = '/api/spot/v3/orders'
         params = {'instrument_id': instrument_id, 'state': state}
+        if before is not None:
+            params.update({'before': before})
         return self.http.httpGet(path, params)
 
     def kline(self, instrument_id, interval, start='', end=''):

@@ -26,7 +26,8 @@ def main(argv):
             # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
             # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
             # print(spot.trad_fee())
-            print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
+            # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494562570233856'))
+            print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494679719429120'))
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
         elif opt in ('-s', '--save'):
             # '2021-02-19T12-17-16'
