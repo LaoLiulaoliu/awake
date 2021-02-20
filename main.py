@@ -34,7 +34,7 @@ def main(argv):
             # '2021-02-19T12-17-16'
             arg = arg if arg else None
             from analysis.saveBid import save
-            save(arg)
+            save(0, arg)
         elif opt in ('-d', '--draw'):
             from analysis.draw_spot import load_and_draw
             load_and_draw()

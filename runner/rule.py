@@ -6,7 +6,7 @@ from functools import partial
 
 from .Blaze import Blaze
 from .OkexSpot import OkexSpot
-from .strategy import TIME_PRECISION, VALUTA_IDX
+from .strategy import *  # TIME_PRECISION, VALUTA_IDX
 
 
 def r20210219(capital=200):
