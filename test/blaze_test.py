@@ -5,11 +5,12 @@ from runner.Blaze import Blaze
 
 
 def blaze_test():
-    tradeinfo = Blaze('friend.txt', 3)
+    data = [1, 2, 3, 4]
+    tradeinfo = Blaze('friend.txt', len(data), 3)
     tradeinfo.load()
     print(tradeinfo.data.status())
 
     for j in range(3):
         for i in range(3):
-            tradeinfo.append([1, 2, 3, 4])
+            tradeinfo.append(data)
         print(f'idx: {j}', tradeinfo.data.status())

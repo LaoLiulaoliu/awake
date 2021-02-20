@@ -41,13 +41,14 @@ def pickup_leak_place_buy(low_24h, capital, spot, tradeinfo):
     low_precent = [low_24h * 0.01 * i for i in range(100, 70, -1)]
     pick_idx_by_hand = [2, 4, 6, 8, 10]
     for i in pick_idx_by_hand:
-        order_id = place_buy_order(spot, low_precent[i], round(capital / low_precent[i], 8))
-        tradeinfo.append([round(time.time() * TIME_PRECISION), low_precent[i], INSTRUMENT, order_id])
+        size = round(capital / low_precent[i], 8)
+        order_id = place_buy_order(spot, low_precent[i], size)
+        tradeinfo.append([round(time.time() * TIME_PRECISION), low_precent[i], size, INSTRUMENT, order_id])
 
 
 def r20210219(capital=200):
     spot = OkexSpot(trade=True)
-    tradeinfo = Blaze('TRADE.py')
+    tradeinfo = Blaze('TRADE.py', 5)
     tradeinfo.load()
 
     trend = []
@@ -60,7 +61,7 @@ def r20210219(capital=200):
 
     r = spot.ticker(INSTRUMENT)
     if r:
-        timestamp = round(datetime.strptime(r['timestamp'], '%Y-%m-%dT%H:%M:%S.%f%z').timestamp() * TIME_PRECISION)
+        timestamp = int(datetime.strptime(r['timestamp'], '%Y-%m-%dT%H:%M:%S.%f%z').timestamp() * TIME_PRECISION)
         last_price = float(r['last'])
         trend.append((timestamp, last_price))
 

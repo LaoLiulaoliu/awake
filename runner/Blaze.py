@@ -5,15 +5,16 @@ from .Numpp import Numpp
 
 
 class Blaze(object):
-    DIM = 4  # timestamp price instrument_id order_id
-
-    def __init__(self, fname, init_row_num=1000, sep='\t'):
+    def __init__(self, fname, col_dim, init_row_num=1000, sep='\t'):
+        """
+        col_dim: timestamp price size instrument_id order_id
+        """
         self.fp = None
         self.fname = fname
         self.fp = self.open(fname)
         self.sep = sep
 
-        self.data = Numpp(self.DIM, init_row_num)
+        self.data = Numpp(col_dim, init_row_num)
 
     def open(self, fname=None):
         if self.fp is None:
