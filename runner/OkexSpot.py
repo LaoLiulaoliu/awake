@@ -118,6 +118,30 @@ class OkexSpot(object):
 
     def open_orders(self, instrument_id=INSTRUMENT[0]):
         """This retrieves the list of your current open orders.
+        [{
+            'client_oid': '',
+            'created_at': '2021-02-20T12:11:45.490Z',
+            'fee': '',
+            'fee_currency': '',
+            'filled_notional': '0',
+            'filled_size': '0',
+            'funds': '',
+            'instrument_id': 'BTC-USDT',
+            'notional': '',
+            'order_id': '6493772545352704',
+            'order_type': '0',
+            'price': '51254',
+            'price_avg': '0',
+            'product_id': 'BTC-USDT',
+            'rebate': '',
+            'rebate_currency': '',
+            'side': 'buy',
+            'size': '0.00019511',
+            'state': '0',
+            'status': 'open',
+            'timestamp': '2021-02-20T12:11:45.490Z',
+            'type': 'limit'
+        }]
         """
         path = '/api/spot/v3/orders_pending'
         return self.http.httpGet(path, {'instrument_id': instrument_id})

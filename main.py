@@ -24,6 +24,7 @@ def main(argv):
             VALUTA_IDX = 0
             spot = OkexSpot()
             print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
+            print(spot.order_details('6493772545352704', INSTRUMENT[VALUTA_IDX]))
         elif opt in ('-s', '--save'):
             # '2021-02-19T12-17-16'
             arg = arg if arg else None
