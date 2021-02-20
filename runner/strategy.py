@@ -10,13 +10,14 @@ from .Tool import Tool
 RETRY = 5
 TIME_PRECISION = 1000
 HALF_HOUR = 1800000
-
+VALUTA_IDX = 0
+INSTRUMENT[VALUTA_IDX]
 
 def place_buy_order(spot, bid_price, size):
     """place 5 times, return order when success
     """
     for i in range(RETRY):
-        r = spot.place_order('buy', INSTRUMENT, bid_price, size)
+        r = spot.place_order('buy', INSTRUMENT[VALUTA_IDX], bid_price, size)
         order_id = print_error_or_get_order_id(r)
         if order_id:
             return order_id
@@ -26,7 +27,7 @@ def place_sell_order(spot, bid_price, size):
     """place 5 times, return order when success
     """
     for i in range(RETRY):
-        r = spot.place_order('sell', INSTRUMENT, bid_price, size)
+        r = spot.place_order('sell', INSTRUMENT[VALUTA_IDX], bid_price, size)
         order_id = print_error_or_get_order_id(r)
         if order_id:
             return order_id
@@ -34,7 +35,7 @@ def place_sell_order(spot, bid_price, size):
 
 def get_high_low_last(spot):
     for i in range(RETRY):
-        r = spot.ticker(INSTRUMENT)
+        r = spot.ticker(INSTRUMENT[VALUTA_IDX])
         if r:
             return (float(r['high_24h']),
                     float(r['low_24h']),
@@ -81,12 +82,11 @@ def first_half_hour_no_bid(spot, trend, last_price_init):
 
 
 def trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh):
-    r = spot.ticker(INSTRUMENT)
+    r = spot.ticker(INSTRUMENT[VALUTA_IDX])
     if r:
         timestamp = Tool.convert_time_str(r['timestamp'], TIME_PRECISION)
         last_price = float(r['last'])
 
-        print((timestamp, last_price))
         trend.append((timestamp, last_price))
         if last_price > high_hh:
             high_hh = last_price
@@ -122,7 +122,6 @@ def r20210219(capital=200):
     if r:
         high_hh, low_hh, last_half_hour_idx = r
     else:  # empty trend file or expired trend file
-        print('init append', begin_time, last_price_init)
         trend.append((begin_time, last_price_init))
         high_hh, low_hh, last_half_hour_idx = last_price_init, last_price_init, 0
         first_half_hour_no_bid(spot, trend, last_price_init)

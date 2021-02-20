@@ -16,13 +16,13 @@ def init(name='test'):
     return init._db, init._spot
 
 
-def save(name=None):
+def save(valuta_idx, name=None):
     name = datetime.utcnow().strftime('%Y-%m-%dT%H-%M-%S') if name is None else name
     db, spot = init(name)
 
     while True:
         t = time.time()
-        r = spot.ticker(INSTRUMENT)
+        r = spot.ticker(INSTRUMENT[valuta_idx])
         if r:
             timestamp = str(int(datetime.strptime(r['timestamp'], '%Y-%m-%dT%H:%M:%S.%f%z').timestamp() * 1000))
             db.put(timestamp, {'last': r['last'], 'high_24h': r['high_24h'], 'low_24h': r['low_24h']})
@@ -30,4 +30,4 @@ def save(name=None):
 
 
 if __name__ == '__main__':
-    save('2021-02-19T07-15-37')
+    save(0, '2021-02-19T07-15-37')
