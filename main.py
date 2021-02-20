@@ -22,9 +22,12 @@ def main(argv):
             sys.exit()
         elif opt in ('-o', '--spot'):
             VALUTA_IDX = 2
-            spot = OkexSpot()
-            print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
-            print(spot.order_details('6493772545352704', INSTRUMENT[VALUTA_IDX]))
+            spot = OkexSpot(use_trade_key=True)
+            # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
+            print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
+            # print(spot.trad_fee())
+            print(spot.orders(0, INSTRUMENT[VALUTA_IDX]))
+            print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
         elif opt in ('-s', '--save'):
             # '2021-02-19T12-17-16'
             arg = arg if arg else None
