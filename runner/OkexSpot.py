@@ -175,7 +175,7 @@ class OkexSpot(object):
         return self.http.httpGet(path, {'instrument_id': instrument_id})
 
     def orders(self, state, instrument_id=INSTRUMENT[0]):
-        """Data structure is list of structure of order_details.
+        """Data structure is list of order_details.
         Order Status:
         -2 = Failed
         -1 = Canceled
