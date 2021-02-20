@@ -28,3 +28,25 @@ class Numpp(object):
 
     def status(self):
         return f'Total row: {self.row_size}, data shape: {self.info.shape}, current row: {self.current_size}'
+
+    def first(self):
+        return self.info[0, :]
+
+    def last(self):
+        return self.info[self.current_size - 1, :] if self.current_size > 0 else self.info[self.current_size, :]
+
+    def update(self, idx):
+        if idx < self.row_size:
+            self.info[idx, :] = [0] * self.column_dim
+
+    def pop_last(self):
+        if self.current_size > 0:
+            self.info[self.current_size - 1, :] = [0] * self.column_dim
+
+    def iterator(self, reverse=False):
+        if reverse:
+            for i in range(self.current_size - 1, -1, -1):
+                yield self.info[i, :]
+        else:
+            for i in range(self.current_size):
+                yield self.info[i, :]

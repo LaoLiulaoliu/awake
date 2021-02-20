@@ -25,6 +25,11 @@ class Blaze(object):
         if self.fp:
             self.fp.close()
 
+    def load(self):
+        self.fp.seek(0, 0)
+        for line in self.fp:
+            self.data.append(line.split(self.sep))
+
     def append(self, line_list):
         try:
             self.data.append(line_list)
@@ -32,7 +37,18 @@ class Blaze(object):
         except Exception as e:
             print(f'exception is: {e}')
 
-    def load(self):
-        self.fp.seek(0, 0)
-        for line in self.fp:
-            self.data.append(line.split(self.sep))
+    def first(self):
+        return self.data.first()
+
+    def last(self):
+        return self.data.last()
+
+    def update(self, idx):
+        self.data.update(idx)
+
+    def pop_last(self):
+        self.data.pop_last()
+
+    def reload(self, callback=lambda x: None):
+        self.load()
+        return callback(self.data.iterator(reverse=True))
