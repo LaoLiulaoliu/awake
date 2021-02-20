@@ -38,6 +38,7 @@ def get_open_buy_orders(spot):
     """
     for i in range(RETRY):
         r = spot.open_orders(INSTRUMENT[VALUTA_IDX])
+        print(f'get_open_buy_orders return: {r}')
         if 'error_code' not in r and len(r) > 0:
             return {i['order_id']: float(i['price']) for i in r if i['side'] == 'buy'}
 
