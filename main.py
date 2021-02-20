@@ -3,8 +3,6 @@
 
 import sys
 import getopt
-
-from analysis.draw_spot import dump_data, load_and_draw
 from test.blaze_test import blaze_test
 from runner.strategy import r20210219
 
@@ -28,8 +26,10 @@ def main(argv):
             from analysis.saveBid import save
             save(arg)
         elif opt in ('-d', '--draw'):
+            from analysis.draw_spot import load_and_draw
             load_and_draw()
         elif opt in ('-u', '--dump'):
+            from analysis.draw_spot import dump_data
             dump_data(arg)
         elif opt in ('-z', '--trade'):
             r20210219(int(arg))
