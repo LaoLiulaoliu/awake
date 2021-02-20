@@ -10,6 +10,8 @@ tradesecret.py
 
 *.txt
 
+.DS_Store
+
 # C extensions
 *.so
 

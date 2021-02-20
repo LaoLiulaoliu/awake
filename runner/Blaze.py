@@ -54,7 +54,7 @@ class Blaze(object):
         return self.data.get_idx(idx)
 
     def get_range(self, start, end=None):
-        self.data.get_range(start, end)
+        return self.data.get_range(start, end)
 
     def pop_last(self):
         self.data.pop_last()
