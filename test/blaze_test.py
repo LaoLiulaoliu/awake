@@ -4,7 +4,7 @@
 from runner.Blaze import Blaze
 
 
-def tradeinfo_test(arg):
+def blaze_test():
     tradeinfo = Blaze('friend.txt', 3)
     tradeinfo.load()
     print(tradeinfo.data.status())
