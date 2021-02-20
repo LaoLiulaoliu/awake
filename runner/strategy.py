@@ -7,7 +7,7 @@ from .OkexSpot import OkexSpot, INSTRUMENT, print_error_or_get_order_id
 from .Blaze import Blaze
 from .Tool import Tool
 
-RETRY = 5
+RETRY = 10
 TIME_PRECISION = 1000
 HALF_HOUR = 1800000
 VALUTA_IDX = 0
@@ -83,6 +83,7 @@ def first_half_hour_no_bid(spot, trend, last_price_init):
 
 def trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh):
     r = spot.ticker(INSTRUMENT[VALUTA_IDX])
+    time.sleep(0.1)
     if r:
         if 'timestamp' not in r:
             print('timestamp not in r:', r)
@@ -131,11 +132,10 @@ def r20210219(capital=200):
 
     # high_precent = [high_24h * 0.01 * i for i in range(100, 70, -1)]  # math.log2(30) = 5    # high_precent_index = {}
     while True:
-        while True:
-            r = trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh)
-            if r is not None:
-                last_half_hour_idx, high_hh, low_hh = r
+        r = trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh)
+        if r is not None:
+            last_half_hour_idx, high_hh, low_hh = r
 
-                timestamp, last_price = trend.last()
-                if low_24h < last_price < high_24h:
-                    pass
+            timestamp, last_price = trend.last()
+            if low_24h < last_price < high_24h:
+                pass
