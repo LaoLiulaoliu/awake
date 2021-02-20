@@ -84,6 +84,9 @@ def first_half_hour_no_bid(spot, trend, last_price_init):
 def trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh):
     r = spot.ticker(INSTRUMENT[VALUTA_IDX])
     if r:
+        if 'timestamp' not in r:
+            print('timestamp not in r:', r)
+            return
         timestamp = Tool.convert_time_str(r['timestamp'], TIME_PRECISION)
         last_price = float(r['last'])
 
