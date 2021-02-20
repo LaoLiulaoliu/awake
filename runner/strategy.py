@@ -155,16 +155,17 @@ def r20210219(capital=200):
     trade = {}
     cnt = 0
     while True:
+        t = time.time()
         open_buy_orderid_prices = {}
-        if 63 & cnt == 0:  # nearly half minutes
+        if 127 & cnt == 0:  # nearly half minutes
             r = get_open_buy_orders(spot)
             if r is not None:
                 open_buy_orderid_prices = r
                 cnt = 0
 
-        t = time.time()
         r = trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh)
-        print(f'one ticket spend: {time.time() - t}')
+        ticket_t = time.time()
+
         cnt += 1
         if r is not None:
             last_half_hour_idx, high_hh, low_hh = r
@@ -179,3 +180,4 @@ def r20210219(capital=200):
                     trade[order_id] = [0, last_price, size, 0]  # order_id: state, price, size, pocket
             # sell strategy
            
+        print(f'circle spend: {time.time() - t}, ticket spend: {ticket_t - t}')
