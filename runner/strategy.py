@@ -39,7 +39,7 @@ def get_open_buy_orders(spot):
     for i in range(RETRY):
         r = spot.open_orders(INSTRUMENT[VALUTA_IDX])
         if 'error_code' not in r and len(r) > 0:
-            return {i['order_id']: i['price'] for i in r if i['side'] == 'buy'}
+            return {i['order_id']: float(i['price']) for i in r if i['side'] == 'buy'}
 
 
 def get_high_low_last(spot):
@@ -124,6 +124,7 @@ def trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh):
 
 
 def have_around_open_orders(low, high, prices):
+    print(low, high, prices)
     for p in prices:
         if low < p < high:
             return True
