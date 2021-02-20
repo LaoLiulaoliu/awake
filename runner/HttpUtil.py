@@ -29,6 +29,7 @@ class HttpUtil(object):
         if trade:
             self.__apikey = apikey
             self.__secretkey = secretkey
+            self.__passphrase = passphrase
         else:
             self.__apikey = API_KEY
             self.__secretkey = SECRET_KEY
