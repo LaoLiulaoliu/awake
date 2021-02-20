@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+print(__name__, __package__)
 import json
-from Draw import Draw
+from .Draw import Draw
 
 
-def get_data():
-    from ..DBHandler import DBHandler
+def get_data(key):
+    from .DBHandler import DBHandler
     X = 'x'
     Y = 'y'
     data = {X: [], Y: []}
-    db = DBHandler('2021-02-19T03-20-36')
-    
+    db = DBHandler(key)
+
     for k, v in db.iterator_kv():
         data[X].append(k)
         data[Y].append(json.loads(v)['last'])
     return data
+
 
 def draw_data(data):
     """
@@ -23,23 +25,26 @@ def draw_data(data):
     """
     X = 'x'
     Y = 'y'
-    scale = 500
+    scale = 1000
     draw = Draw()
     length = len(data[X])
     for i in range(length // scale):
-        draw.draw_plot_xy(data[X][i*scale:(i+1)*scale], list(map(float, data[Y][i*scale:(i+1)*scale])))
-        print(i*scale, (i+1)*scale)
+        draw.draw_plot_xy(data[X][i * scale:(i + 1) * scale], list(map(float, data[Y][i * scale:(i + 1) * scale])))
+        print(i * scale, (i + 1) * scale)
 
 
-def dump_data():
-    data = get_data()
+def dump_data(key):
+    data = get_data(key)
     with open('a.txt', 'w') as fd:
         json.dump(data, fd)
+
 
 def load_and_draw():
     with open('a.txt', 'r') as fd:
         data = json.load(fd)
     draw_data(data)
 
-# dump_data()
-load_and_draw()
+
+if __name__ == '__main__':
+    # dump_data('2021-02-19T08-44-22')
+    load_and_draw()
