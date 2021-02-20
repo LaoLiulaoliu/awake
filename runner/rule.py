@@ -51,11 +51,12 @@ def r20210219(capital=200):
             print(high_hh, low_hh, last_price)
             if high_hh - diff_boundary > last_price:
                 if have_around_open_orders(last_price - 50, last_price + 50, list(open_buy_orderid_prices.values())) is False:
-                    size = round(capital / last_price, 8)
-                    order_id = place_buy_order(spot, last_price, size)
-                    if order_id is not None:  # if no enough balance(usdt)
-                        tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, order_id, 0])
-                        trade[order_id] = [0, last_price, size, 0]  # order_id: state, price, size, pocket
+                    if have_around_filled_orders(last_price - 50, last_price + 50, trade) is False:
+                        size = round(capital / last_price, 8)
+                        order_id = place_buy_order(spot, last_price, size)
+                        if order_id is not None:  # if no enough balance(usdt)
+                            tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, order_id, 0])
+                            trade[order_id] = [0, last_price, size, 0]  # order_id: state, price, size, pocket
 
             # sell strategy
             r = get_filled_buy_orders(spot, '6494679719429120')
@@ -65,8 +66,8 @@ def r20210219(capital=200):
                 if p + diff_boundary < last_price:
                     order_id = place_sell_order(spot, last_price + 50, size)
                     if order_id in trade:
-                        trade[order_id][0] = 2
-                        trade[order_id][3] = 1
+                        trade[order_id][0] = 2  # state filled
+                        trade[order_id][3] = 1  # save to pocket
                     else:
                         print(f'order_id not in trade: {order_id}, {trade}')
 

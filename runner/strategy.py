@@ -49,6 +49,18 @@ def get_filled_buy_orders(spot, before=None):
             return [(i['order_id'], float(i['price']), i['size']) for i in r if i['side'] == 'buy']
 
 
+def place_buy_order_saveinfo(spot, tradeinfo, capital, last_price):
+    """8 is ok system precision
+       0 stands for open state
+    """
+    size = round(capital / last_price, 8)
+    order_id = place_buy_order(spot, last_price, size)
+    if order_id is not None:  # if no enough balance(usdt)
+        tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, order_id, 0])
+        return True
+    return False
+
+
 def get_high_low_last(spot):
     for i in range(RETRY-4):
         r = spot.ticker(INSTRUMENT[VALUTA_IDX])
@@ -63,9 +75,7 @@ def pickup_leak_place_buy(low_24h, capital, spot, tradeinfo):
     low_precent = [low_24h * 0.01 * i for i in range(100, 70, -1)]
     pick_idx_by_hand = [2, 4, 6, 8, 10]
     for i in pick_idx_by_hand:
-        size = round(capital / low_precent[i], 8)
-        order_id = place_buy_order(spot, low_precent[i], size)
-        tradeinfo.append([int(time.time() * TIME_PRECISION), low_precent[i], size, order_id, 0])
+        place_buy_order_saveinfo(spot, tradeinfo, capital, low_precent[i])
     tradeinfo.flush()
 
 
@@ -135,4 +145,11 @@ def have_around_open_orders(low, high, prices):
     for p in prices:
         if low < p < high:
             return True
+    return False
+
+def have_around_filled_orders(low, high, trade):
+    for trade_id, value in trade.items():
+        if value[0] == 2 and value[3] == 0:  # filled, not pocket
+            if low < value[1] < high:
+                return True
     return False
