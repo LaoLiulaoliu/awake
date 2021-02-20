@@ -191,7 +191,7 @@ def r20210219(capital=200):
             r = get_filled_buy_orders(spot, '6494679719429120')
             if r is not None:
                 filled_buy_orderid_prices_size = r
-            for oid, p, size in filled_buy_orderid_prices:
+            for oid, p, size in filled_buy_orderid_prices_size:
                 if p + diff_boundary < last_price:
                     order_id = place_sell_order(spot, last_price + 50, size)
                     if order_id in trade:
