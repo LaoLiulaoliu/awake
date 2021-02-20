@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from .HttpUtil import HttpUtil
+
 INSTRUMENT = 'btc-usdt'
+
 
 class OkexSpot(object):
     """ 币币api
@@ -21,15 +23,15 @@ class OkexSpot(object):
 
     def instruments(self):
         """ lots of this kind of data
-		{
-		  "base_currency": "BTC",
-		  "category": "1",
-		  "instrument_id": "BTC-USDT",
-		  "min_size": "0.0001",
-		  "quote_currency": "USDT",
-		  "size_increment": "0.00000001",
-		  "tick_size": "0.1"
-		}
+        {
+            "base_currency": "BTC",
+            "category": "1",
+            "instrument_id": "BTC-USDT",
+            "min_size": "0.0001",
+            "quote_currency": "USDT",
+            "size_increment": "0.00000001",
+            "tick_size": "0.1"
+        }
         """
         path = '/api/spot/v3/instruments'
         return self.http.httpGet(path)
@@ -52,26 +54,26 @@ class OkexSpot(object):
 
     def ticker(self, instrument_id=INSTRUMENT):
         """
-		{
-		  "best_ask": "51846.7",
-		  "best_bid": "51846.6",
-		  "instrument_id": "BTC-USDT",
-		  "open_utc0": "52116",
-		  "open_utc8": "51150.3",
-		  "product_id": "BTC-USDT",
-		  "last": "51840.1",
-		  "last_qty": "0.0006",
-		  "ask": "51846.7",
-		  "best_ask_size": "0.04177949",
-		  "bid": "51846.6",
-		  "best_bid_size": "0.00943893",
-		  "open_24h": "50610.7",
-		  "high_24h": "52617.9",
-		  "low_24h": "50522.9",
-		  "base_volume_24h": "8952.40823458",
-		  "timestamp": "2021-02-18T07:15:38.435Z",
-		  "quote_volume_24h": "461411588.69765782"
-		}
+        {
+            "best_ask": "51846.7",
+            "best_bid": "51846.6",
+            "instrument_id": "BTC-USDT",
+            "open_utc0": "52116",
+            "open_utc8": "51150.3",
+            "product_id": "BTC-USDT",
+            "last": "51840.1",
+            "last_qty": "0.0006",
+            "ask": "51846.7",
+            "best_ask_size": "0.04177949",
+            "bid": "51846.6",
+            "best_bid_size": "0.00943893",
+            "open_24h": "50610.7",
+            "high_24h": "52617.9",
+            "low_24h": "50522.9",
+            "base_volume_24h": "8952.40823458",
+            "timestamp": "2021-02-18T07:15:38.435Z",
+            "quote_volume_24h": "461411588.69765782"
+        }
         """
         path = '/api/spot/v3/instruments/{}/ticker'.format(instrument_id)
         try:
@@ -91,10 +93,12 @@ class OkexSpot(object):
         """ orders is an List of dict, dict e.g.: {'instrument_id': 'btc-usdt', 'side': side, 'size': size, 'price': price}
         """
         path = '/api/spot/v3/batch_orders'
-        params = [{'type': 'limit', 'instrument_id': order['instrument_id'], 'side': order['side'], 'size': order['size'], 'price': order['price']}
+        params = [
+            {'type': 'limit', 'instrument_id': order['instrument_id'], 'side': order['side'], 'size': order['size'],
+             'price': order['price']}
             for order in orders]
         return self.http.httpPost(path, params)
-            
+
     def cancel_order(self, orderid, instrument_id=INSTRUMENT):
         path = '/api/spot/v3/cancel_orders/' + orderid
         params = {'instrument_id': instrument_id}
@@ -125,6 +129,7 @@ class OkexSpot(object):
         path = '/api/spot/v3/trade_fee'
         return self.http.httpGet(path)
 
+
 def print_error_or_get_order_id(ret):
     if ret['error_code'] != '0':
         print(ret)
@@ -132,9 +137,10 @@ def print_error_or_get_order_id(ret):
     else:
         return ret['order_id']
 
+
 if __name__ == '__main__':
     spot = OkexSpot()
-    print( spot.ticker(INSTRUMENT) )
+    print(spot.ticker(INSTRUMENT))
 
     # r = spot.place_order('buy', INSTRUMENT, 1000, 1)
     # order_id = print_error_or_get_order_id(r)

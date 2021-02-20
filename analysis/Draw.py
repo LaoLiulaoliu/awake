@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
 
+
 class Draw(object):
     def draw_scatter(self, data, x, y, color=None):
         plt.figure(figsize=(20, 8))

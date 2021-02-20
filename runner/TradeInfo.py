@@ -3,8 +3,9 @@
 
 from .Numpp import Numpp
 
+
 class TradeInfo(object):
-    DIM = 4 # timestamp price instrument_id order_id
+    DIM = 4  # timestamp price instrument_id order_id
 
     def __init__(self, fname, init_row_num=1000, sep='\t'):
         self.fp = None

@@ -16,6 +16,7 @@ def main(argv):
         sys.exit(2)
 
     for opt, arg in opts:
+        print(opt, arg)
         if opt == '-h':
             print('python main.py -s leveldb_name -t')
             sys.exit()
@@ -35,5 +36,5 @@ def main(argv):
 
 
 if __name__ == '__main__':
-    # main(sys.argv[1:])
-    main(['-d'])
+    main(sys.argv[1:])
+    # main(['-d'])

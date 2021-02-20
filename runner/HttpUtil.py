@@ -22,6 +22,7 @@ BASE_URL = 'https://www.okex.com'
 # WS_URL = 'ws://echo.websocket.org/'
 WS_URL = 'wss://real.okex.com:8443/ws/v3'
 
+
 class HttpUtil(object):
     def __init__(self):
         self.__url = BASE_URL
@@ -42,13 +43,14 @@ class HttpUtil(object):
 
     def timestamp(self):
         timestamp = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')
-        return timestamp[0:-3] + 'Z' 
+        return timestamp[0:-3] + 'Z'
 
     def signature(self, timestamp, method, request_path, body):
         if body is None or body == {}:
             body = ''
         message = str(timestamp) + str.upper(method) + request_path + str(body)
-        mac = hmac.new(bytes(self.__secretkey, encoding='utf8'), bytes(message, encoding='utf-8'), digestmod='sha256').digest()
+        mac = hmac.new(bytes(self.__secretkey, encoding='utf8'), bytes(message, encoding='utf-8'),
+                       digestmod='sha256').digest()
         return base64.b64encode(mac)
 
     def parse_params_to_str(self, params):
@@ -57,7 +59,7 @@ class HttpUtil(object):
             url = url + str(key) + '=' + str(value) + '&'
         return url[0:-1]
 
-    #@retry(stop_max_attempt_number=10, wait_exponential_multiplier=1000, wait_exponential_max=5000)
+    # @retry(stop_max_attempt_number=10, wait_exponential_multiplier=1000, wait_exponential_max=5000)
     @retry(stop_max_attempt_number=5)
     def httpGet(self, endpoint, data=None):
         if data:

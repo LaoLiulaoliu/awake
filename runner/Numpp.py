@@ -3,6 +3,7 @@
 
 import numpy as np
 
+
 class Numpp(object):
     def __init__(self, column_dim, init_row_num=1000):
         self.column_dim = column_dim
@@ -20,7 +21,6 @@ class Numpp(object):
 
         self.info[self.current_size, :] = line_list
         self.current_size += 1
-
 
     def enlarge(self):
         self.info = np.vstack((self.info, np.zeros((self.row_size, self.column_dim))))

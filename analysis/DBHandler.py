@@ -6,6 +6,7 @@ import leveldb
 import gevent.lock
 import json
 
+
 class DBHandler(object):
     __sem = gevent.lock.BoundedSemaphore(1)
 
@@ -35,7 +36,7 @@ class DBHandler(object):
         """key is str
         """
         return self.db.Get(key.encode()).decode()
-    
+
     def display(self):
         for key, value in self.db.RangeIter():
             print(key, value)
@@ -56,9 +57,10 @@ class DBHandler(object):
         """b.Delete(k) not really delete data，db.Write(b) do all operations
         """
         b = leveldb.WriteBatch()
-        for k in self.db.RangeIter(include_value = False, reverse = True):
+        for k in self.db.RangeIter(include_value=False, reverse=True):
             b.Delete(k)
         self.db.Write(b)
+
 
 if __name__ == '__main__':
     db = DBHandler('2021-02-19T03-20-36')

@@ -1,9 +1,11 @@
 from retrying import retry
 import time
 
+
 def retry_if_error(exception):
     print('sleeped')
     return isinstance(exception, IOError)
+
 
 class retry_test(object):
     # @retry(stop_max_attempt_number=3, retry_on_exception=retry_if_error)

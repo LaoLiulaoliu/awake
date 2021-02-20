@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-print(__name__, __package__)
 import json
+from datetime import datetime
 from .Draw import Draw
+
+print(__name__, __package__)
+
+
+def convert_time_str(time_str):
+    return round(datetime.strptime(time_str, '%Y-%m-%dT%H:%M:%S.%f%z').timestamp() * 10)
 
 
 def get_data(key):
@@ -22,15 +28,20 @@ def get_data(key):
 def draw_data(data):
     """
     need change Y to float, or else, it will disorder
+    cut the data tail which not exceed 1 hour
     """
     X = 'x'
     Y = 'y'
-    scale = 1000
+    scale = 18000  # an hour
+    head, tail = 0, 0
     draw = Draw()
-    length = len(data[X])
-    for i in range(length // scale):
-        draw.draw_plot_xy(data[X][i * scale:(i + 1) * scale], list(map(float, data[Y][i * scale:(i + 1) * scale])))
-        print(i * scale, (i + 1) * scale)
+    times = list(map(convert_time_str, data[X]))
+
+    for i, t in enumerate(times):
+        if t - times[head] > scale:
+            tail = i
+            draw.draw_plot_xy(times[head:tail], list(map(float, data[Y][head:tail])))
+            head = i
 
 
 def dump_data(key):
