@@ -38,7 +38,6 @@ def get_open_buy_orders(spot):
     """
     for i in range(RETRY):
         r = spot.open_orders(INSTRUMENT[VALUTA_IDX])
-        print(f'get_open_buy_orders return: {r}')
         if 'error_code' not in r and len(r) > 0:
             return {i['order_id']: float(i['price']) for i in r if i['side'] == 'buy'}
 
@@ -154,25 +153,23 @@ def r20210219(capital=200):
     
     diff_boundary = 150
     trade = {}
-    cnt = 0
+    open_buy_orderid_prices = {}
     while True:
         t = time.time()
-        if 127 & cnt == 0:  # nearly half minutes
-            open_buy_orderid_prices = {}
-            r = get_open_buy_orders(spot)
-            if r is not None:
-                open_buy_orderid_prices = r
-                cnt = 0
+        r = get_open_buy_orders(spot)
+        if r is not None:
+            open_buy_orderid_prices = r
 
+        open_buy_orders_t = time.time()
         r = trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh)
         ticket_t = time.time()
 
-        cnt += 1
         if r is not None:
             last_half_hour_idx, high_hh, low_hh = r
             timestamp, last_price = trend.last()
 
             # buy strategy
+            print(high_hh, low_hh, last_price)
             if high_hh - diff_boundary > last_price:
                 if have_around_open_orders(last_price - 50, last_price + 50, list(open_buy_orderid_prices.values())) is False:
                     size = round(capital / last_price, 8)
@@ -180,5 +177,6 @@ def r20210219(capital=200):
                     tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, order_id, 0])
                     trade[order_id] = [0, last_price, size, 0]  # order_id: state, price, size, pocket
             # sell strategy
-           
-        print(f'circle spend: {time.time() - t}, ticket spend: {ticket_t - t}')
+
+        strategy_t = time.time()
+        print(f'circle: {strategy_t - t}, order: {open_buy_orders_t - t}, ticket: {ticket_t - open_buy_orders_t}, strategy: {strategy_t - ticket_t}')
