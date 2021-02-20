@@ -50,7 +50,6 @@ def pickup_leak_place_buy(low_24h, capital, spot, tradeinfo):
         size = round(capital / low_precent[i], 8)
         order_id = place_buy_order(spot, low_precent[i], size)
         tradeinfo.append([int(time.time() * TIME_PRECISION), low_precent[i], size, 0, order_id])
-    print(tradeinfo.data.status())
 
 
 def get_high_low_half_hour(begin_time, iterator):
@@ -131,6 +130,7 @@ def r20210219(capital=200):
         high_hh, low_hh, last_half_hour_idx = last_price_init, last_price_init, 0
         first_half_hour_no_bid(spot, trend, last_price_init)
 
+    print(trend.data.status())
     # high_precent = [high_24h * 0.01 * i for i in range(100, 70, -1)]  # math.log2(30) = 5    # high_precent_index = {}
     while True:
         r = trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh)
