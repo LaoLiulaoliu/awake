@@ -3,7 +3,7 @@
 
 from .HttpUtil import HttpUtil
 
-INSTRUMENT = 'btc-usdt'
+INSTRUMENT = 'btc-usdt'  # 0 index
 
 
 class OkexSpot(object):
