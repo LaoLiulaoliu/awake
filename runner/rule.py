@@ -65,7 +65,7 @@ def r20210219(capital=200):
             for oid, p, size in filled_buy_orderid_prices_size:
                 if p + diff_boundary < last_price:
                     order_id = place_sell_order(spot, last_price + 50, size)
-                    if order_id in trade:
+                    if order_id in trade:  # Do I need to trade.pop(order_id), write whole not poped to file periodically
                         trade[order_id][0] = 2  # state filled
                         trade[order_id][3] = 1  # save to pocket
                     else:
