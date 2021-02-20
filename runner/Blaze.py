@@ -51,7 +51,7 @@ class Blaze(object):
         self.data.update(idx)
 
     def get_idx(self, idx):
-        self.data.get_idx(idx)
+        return self.data.get_idx(idx)
 
     def get_range(self, start, end=None):
         self.data.get_range(start, end)
