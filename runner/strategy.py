@@ -42,6 +42,13 @@ def get_open_buy_orders(spot):
             return {i['order_id']: float(i['price']) for i in r if i['side'] == 'buy'}
 
 
+def get_filled_buy_orders(spot):
+    for i in range(RETRY):
+        r = spot.orders(2, INSTRUMENT[VALUTA_IDX])
+        if 'error_code' not in r and len(r) > 0:
+            return {i['order_id']: float(i['price']) for i in r if i['side'] == 'buy'}
+
+
 def get_high_low_last(spot):
     for i in range(RETRY):
         r = spot.ticker(INSTRUMENT[VALUTA_IDX])
@@ -177,6 +184,8 @@ def r20210219(capital=200):
                     tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, order_id, 0])
                     trade[order_id] = [0, last_price, size, 0]  # order_id: state, price, size, pocket
             # sell strategy
+            
+
 
         strategy_t = time.time()
         print(f'circle: {strategy_t - t}, order: {open_buy_orders_t - t}, ticket: {ticket_t - open_buy_orders_t}, strategy: {strategy_t - ticket_t}')
