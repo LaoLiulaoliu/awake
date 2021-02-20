@@ -79,7 +79,7 @@ class OkexSpot(object):
         try:
             return self.http.httpGet(path)
         except Exception as e:
-            print('exception is: ', e)
+            print(f'OkexSpot::ticker exception is: {e}')
             self.http.break_and_connect()
             return
 

@@ -39,7 +39,7 @@ class Blaze(object):
             self.data.append(line_list)
             self.fp.write(self.sep.join(map(str, line_list)) + '\n')
         except Exception as e:
-            print(f'exception is: {e}')
+            print(f'Blaze::append exception is: {e}')
 
     def first(self):
         return self.data.first()
