@@ -48,6 +48,7 @@ def pickup_leak_place_buy(low_24h, capital, spot, tradeinfo):
     for i in pick_idx_by_hand:
         size = round(capital / low_precent[i], 8)
         order_id = place_buy_order(spot, low_precent[i], size)
+        print([int(time.time() * TIME_PRECISION), low_precent[i], size, INSTRUMENT, order_id])
         tradeinfo.append([int(time.time() * TIME_PRECISION), low_precent[i], size, INSTRUMENT, order_id])
 
 
@@ -86,6 +87,7 @@ def trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh):
         timestamp = Tool.convert_time_str(r['timestamp'], TIME_PRECISION)
         last_price = float(r['last'])
 
+        print((timestamp, last_price))
         trend.append((timestamp, last_price))
         if last_price > high_hh:
             high_hh = last_price
@@ -93,6 +95,7 @@ def trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh):
             low_hh = last_price
 
         high_need_sort, low_need_sort = False, False
+        print(timestamp, trend.get_idx(last_half_hour_idx), last_half_hour_idx)
         while timestamp - trend.get_idx(last_half_hour_idx)[0] > HALF_HOUR:
             if Tool.float_close(high_hh, trend.get_idx(last_half_hour_idx)[1]):
                 high_need_sort = True
@@ -120,6 +123,7 @@ def r20210219(capital=200):
     if r:
         high_hh, low_hh, last_half_hour_idx = r
     else:  # empty trend file or expired trend file
+        print('init append', begin_time, last_price_init)
         trend.append((begin_time, last_price_init))
         high_hh, low_hh, last_half_hour_idx = last_price_init, last_price_init, 0
         first_half_hour_no_bid(spot, trend, last_price_init)
