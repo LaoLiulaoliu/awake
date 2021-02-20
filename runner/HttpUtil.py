@@ -24,9 +24,9 @@ WS_URL = 'wss://real.okex.com:8443/ws/v3'
 
 
 class HttpUtil(object):
-    def __init__(self, trade=False):
+    def __init__(self, use_trade_key=False):
         self.__url = BASE_URL
-        if trade:
+        if use_trade_key:
             self.__apikey = apikey
             self.__secretkey = secretkey
             self.__passphrase = passphrase

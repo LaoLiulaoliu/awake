@@ -39,6 +39,17 @@ class Numpp(object):
         if idx < self.row_size:
             self.info[idx, :] = [0] * self.column_dim
 
+    def get_idx(self, idx):
+        return self.info[idx, :]
+
+    def get_range(self, start, end=None):
+        if end is None:
+            return None if start >= self.current_size else self.info[start:self.current_size, :]
+
+        if end > self.current_size:
+            end = self.current_size
+        return None if start >= end else self.info[start:end, :]
+
     def pop_last(self):
         if self.current_size > 0:
             self.info[self.current_size - 1, :] = [0] * self.column_dim

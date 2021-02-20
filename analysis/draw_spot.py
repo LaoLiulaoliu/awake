@@ -2,14 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import json
-from datetime import datetime
+from runner.Tool import Tool
 from .Draw import Draw
 
 print(__name__, __package__)
-
-
-def convert_time_str(time_str):
-    return round(datetime.strptime(time_str, '%Y-%m-%dT%H:%M:%S.%f%z').timestamp() * 10)
 
 
 def get_data(key):
@@ -35,7 +31,7 @@ def draw_data(data):
     scale = 18000  # an hour
     head, tail = 0, 0
     draw = Draw()
-    times = list(map(convert_time_str, data[X])) if 'T' in data[X][0] else list(map(int, data[X]))
+    times = list(map(Tool.convert_time_str, data[X])) if 'T' in data[X][0] else list(map(int, data[X]))
 
     for i, t in enumerate(times):
         if t - times[head] > scale:

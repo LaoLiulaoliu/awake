@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+
 
 class Tool(object):
 
@@ -27,3 +29,14 @@ class Tool(object):
                     return middle + 1
                 else:
                     return middle
+
+    @staticmethod
+    def float_close(a, b, precision=1e5):
+        if precision * abs(a - b) < 1:
+            return True
+        return False
+
+    @staticmethod
+    def convert_time_str(time_str, precision=1000):
+        return int(datetime.strptime(time_str, '%Y-%m-%dT%H:%M:%S.%f%z').timestamp() * precision)
+

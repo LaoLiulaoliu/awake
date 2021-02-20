@@ -25,10 +25,14 @@ class Blaze(object):
         if self.fp:
             self.fp.close()
 
-    def load(self):
+    def load(self, convert=None):
         self.fp.seek(0, 0)
-        for line in self.fp:
-            self.data.append(line.split(self.sep))
+        if convert:
+            for line in self.fp:
+                self.data.append(list(map(convert, line.split(self.sep))))
+        else:
+            for line in self.fp:
+                self.data.append(line.split(self.sep))
 
     def append(self, line_list):
         try:
@@ -46,9 +50,22 @@ class Blaze(object):
     def update(self, idx):
         self.data.update(idx)
 
+    def get_idx(self, idx):
+        self.data.get_idx(idx)
+
+    def get_range(self, start, end=None):
+        self.data.get_range(start, end)
+
     def pop_last(self):
         self.data.pop_last()
 
-    def reload(self, callback=lambda x: None):
-        self.load()
+    def reload(self, convert=None, callback=lambda x: None):
+        self.load(convert)
+        return callback(self.data.iterator(reverse=True))
+
+    def custom_reload(self, callback=lambda x: None):
+        self.fp.seek(0, 0)
+        for line in self.fp:
+            timestamp, price = line.split(self.sep)
+            self.data.append((int(timestamp), float(price)))
         return callback(self.data.iterator(reverse=True))
