@@ -35,7 +35,7 @@ def draw_data(data):
     scale = 18000  # an hour
     head, tail = 0, 0
     draw = Draw()
-    times = list(map(convert_time_str, data[X]))
+    times = list(map(convert_time_str, data[X])) if 'T' in data[X][0] else list(map(int, data[X]))
 
     for i, t in enumerate(times):
         if t - times[head] > scale:

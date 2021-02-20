@@ -17,7 +17,6 @@ def main(argv):
         sys.exit(2)
 
     for opt, arg in opts:
-        print(opt, arg)
         if opt == '-h':
             print('python main.py -s leveldb_name -t')
             sys.exit()

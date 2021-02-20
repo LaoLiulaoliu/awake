@@ -24,7 +24,7 @@ def save(name=None):
         t = time.time()
         r = spot.ticker(INSTRUMENT)
         if r:
-            timestamp = int(datetime.strptime(r['timestamp'], '%Y-%m-%dT%H:%M:%S.%f%z').timestamp() * 1000)
+            timestamp = str(int(datetime.strptime(r['timestamp'], '%Y-%m-%dT%H:%M:%S.%f%z').timestamp() * 1000))
             db.put(timestamp, {'last': r['last'], 'high_24h': r['high_24h'], 'low_24h': r['low_24h']})
             now = time.time()
             print(now - t, now)
