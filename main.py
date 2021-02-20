@@ -5,11 +5,11 @@ import sys
 import getopt
 from test.blaze_test import blaze_test
 from runner.strategy import r20210219
-
+from runner.OkexSpot import OkexSpot, INSTRUMENT
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, 'bhs:du:z:', ['save=', 'dump=', 'trade='])
+        opts, args = getopt.getopt(argv, 'bdhos:u:z:', ['dump=', 'save=', 'trade='])
     except getopt.GetoptError:
         print('main.py -s leveldb_name -t')
         sys.exit(2)
@@ -20,6 +20,10 @@ def main(argv):
         elif opt == '-h':
             print('python main.py -s leveldb_name -t')
             sys.exit()
+        elif opt in ('-o', '--spot'):
+            VALUTA_IDX = 0
+            spot = OkexSpot()
+            print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
         elif opt in ('-s', '--save'):
             # '2021-02-19T12-17-16'
             arg = arg if arg else None

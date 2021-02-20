@@ -41,6 +41,9 @@ class Blaze(object):
         except Exception as e:
             print(f'Blaze::append exception is: {e}, data: {line_list}')
 
+    def flush(self):
+        self.fp.flush()
+        
     def first(self):
         return self.data.first()
 

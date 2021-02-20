@@ -50,6 +50,7 @@ def pickup_leak_place_buy(low_24h, capital, spot, tradeinfo):
         size = round(capital / low_precent[i], 8)
         order_id = place_buy_order(spot, low_precent[i], size)
         tradeinfo.append([int(time.time() * TIME_PRECISION), low_precent[i], size, 0, order_id])
+    tradeinfo.flush()
 
 
 def get_high_low_half_hour(begin_time, iterator):

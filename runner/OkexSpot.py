@@ -141,9 +141,10 @@ def print_error_or_get_order_id(ret):
 
 
 if __name__ == '__main__':
+    VALUTA_IDX = 0
     spot = OkexSpot()
-    print(spot.ticker(INSTRUMENT[0]))
+    print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
 
-    # r = spot.place_order('buy', INSTRUMENT[0], 1000, 1)
+    # r = spot.place_order('buy', INSTRUMENT[VALUTA_IDX], 1000, 1)
     # order_id = print_error_or_get_order_id(r)
     # spot.cancel_order('6486089829214208')
