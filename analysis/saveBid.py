@@ -12,7 +12,7 @@ def init(name='test'):
     if not hasattr(init, '_db'):
         setattr(init, '_db', DBHandler(name))
     if not hasattr(init, '_spot'):
-        setattr(init, '_spot', OkexSpot())
+        setattr(init, '_spot', OkexSpot(trade=False))
     return init._db, init._spot
 
 

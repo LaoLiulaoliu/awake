@@ -43,7 +43,7 @@ def pickup_leak_place_buy(low_24h, capital, spot, tradeinfo):
 
 
 def r20210219(capital=200):
-    spot = OkexSpot()
+    spot = OkexSpot(trade=True)
     tradeinfo = TradeInfo('TRADE.py')
     tradeinfo.load()
 

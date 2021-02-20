@@ -10,8 +10,8 @@ class OkexSpot(object):
     """ 币币api
     """
 
-    def __init__(self):
-        self.http = HttpUtil()
+    def __init__(self, trade=False):
+        self.http = HttpUtil(trade)
 
     def get_server_time(self):
         """
