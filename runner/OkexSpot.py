@@ -54,7 +54,7 @@ class OkexSpot(object):
 
         return self.http.httpGet(endpoint, params)
 
-    def ticker(self, instrument_id=IDX_INSTRUMENT):
+    def ticker(self, instrument_id=INSTRUMENT[0]):
         """
         {
             "best_ask": "51846.7",
@@ -101,22 +101,22 @@ class OkexSpot(object):
             for order in orders]
         return self.http.httpPost(path, params)
 
-    def cancel_order(self, orderid, instrument_id=IDX_INSTRUMENT):
+    def cancel_order(self, orderid, instrument_id=INSTRUMENT[0]):
         path = '/api/spot/v3/cancel_orders/' + orderid
         params = {'instrument_id': instrument_id}
         return self.http.httpPost(path, params)
 
-    def cancel_multiple_orders(self, instrument_id=IDX_INSTRUMENT):
+    def cancel_multiple_orders(self, instrument_id=INSTRUMENT[0]):
         path = '/api/spot/v3/cancel_batch_orders'
         params = [{'instrument_id': instrument_id}]
         return self.http.httpPost(path, params)
 
-    def order_details(self, orderid, instrument_id=IDX_INSTRUMENT):
+    def order_details(self, orderid, instrument_id=INSTRUMENT[0]):
         path = '/api/spot/v3/orders/' + orderid
         params = {'instrument_id': instrument_id}
         return self.http.httpGet(path, params)
 
-    def open_orders(self, instrument_id=IDX_INSTRUMENT):
+    def open_orders(self, instrument_id=INSTRUMENT[0]):
         """This retrieves the list of your current open orders.
         """
         path = '/api/spot/v3/orders_pending'
@@ -127,7 +127,7 @@ class OkexSpot(object):
         params = {'granularity': interval, 'start': start, 'end': end}
         return self.http.httpGet(path, params)
 
-    def trad_fee(self, instrument_id=IDX_INSTRUMENT):
+    def trad_fee(self, instrument_id=INSTRUMENT[0]):
         path = '/api/spot/v3/trade_fee'
         return self.http.httpGet(path)
 
@@ -142,8 +142,8 @@ def print_error_or_get_order_id(ret):
 
 if __name__ == '__main__':
     spot = OkexSpot()
-    print(spot.ticker(IDX_INSTRUMENT))
+    print(spot.ticker(INSTRUMENT[0]))
 
-    # r = spot.place_order('buy', INSTRUMENT, 1000, 1)
+    # r = spot.place_order('buy', INSTRUMENT[0], 1000, 1)
     # order_id = print_error_or_get_order_id(r)
     # spot.cancel_order('6486089829214208')
