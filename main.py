@@ -9,7 +9,7 @@ from runner.OkexSpot import OkexSpot, INSTRUMENT
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, 'bdhos:u:z:', ['dump=', 'save=', 'trade='])
+        opts, args = getopt.getopt(argv, 'bd:hos:u:z:', ['draw=', 'save=', 'dump=', 'trade='])
     except getopt.GetoptError:
         print('main.py -s leveldb_name -t')
         sys.exit(2)
@@ -36,8 +36,8 @@ def main(argv):
             from analysis.saveBid import save
             save(0, arg)
         elif opt in ('-d', '--draw'):
-            from analysis.draw_spot import load_and_draw
-            load_and_draw()
+            from analysis.draw_spot import load_and_draw, draw_trend_txt
+            draw_trend_txt(arg)
         elif opt in ('-u', '--dump'):
             from analysis.draw_spot import dump_data
             dump_data(arg)

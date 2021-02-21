@@ -3,6 +3,7 @@
 
 import json
 from runner.Tool import Tool
+from runner.Blaze import Blaze
 from .Draw import Draw
 
 print(__name__, __package__)
@@ -28,10 +29,13 @@ def draw_data(data):
     """
     X = 'x'
     Y = 'y'
-    scale = 18000  # an hour
+    scale = 1800000  # half an hour
     head, tail = 0, 0
     draw = Draw()
-    times = list(map(Tool.convert_time_str, data[X])) if 'T' in data[X][0] else list(map(int, data[X]))
+    if isinstance(data[X][0], float):
+        times = data[X]
+    else:
+        times = list(map(Tool.convert_time_str, data[X])) if 'T' in data[X][0] else list(map(int, data[X]))
 
     for i, t in enumerate(times):
         if t - times[head] > scale:
