@@ -147,6 +147,7 @@ def have_around_open_orders(low, high, prices):
             return True
     return False
 
+
 def have_around_filled_orders(low, high, trade):
     for trade_id, value in trade.items():
         if value[0] == 2 and value[3] == 0:  # filled, not pocket

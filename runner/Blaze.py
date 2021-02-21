@@ -62,9 +62,9 @@ class Blaze(object):
     def pop_last(self):
         self.data.pop_last()
 
-    def reload(self, convert=None, callback=lambda x: None):
+    def reload(self, convert=None, reverse=True, callback=lambda x: None):
         self.load(convert)
-        return callback(self.data.iterator(reverse=True))
+        return callback(self.data.iterator(reverse=reverse))
 
     def custom_reload(self, callback=lambda x: None):
         self.fp.seek(0, 0)

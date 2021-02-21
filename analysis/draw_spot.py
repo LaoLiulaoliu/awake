@@ -52,6 +52,22 @@ def load_and_draw():
     draw_data(data)
 
 
+def draw_trend_txt(fname):
+    def get_data(iterator):
+        timestamps = []
+        prices = []
+        for i, data in iterator:
+            timestamps.append(data[0])
+            prices.append(data[1])
+
+        return timestamps, prices
+
+    trend = Blaze(fname, 2)
+    timestamps, prices = trend.reload(reverse=False, callback=get_data)
+    data = {'x': timestamps, 'y': prices}
+    draw_data(data)
+
+
 if __name__ == '__main__':
     # dump_data('2021-02-19T08-44-22')
     load_and_draw()
