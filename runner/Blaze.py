@@ -64,7 +64,7 @@ class Blaze(object):
 
     def reload(self, convert=None, reverse=True, callback=lambda x: None):
         self.load(convert)
-        yield callback(self.data.iterator(reverse=reverse))
+        return callback(self.data.iterator(reverse=reverse))
 
     def custom_reload(self, callback=lambda x: None):
         self.fp.seek(0, 0)

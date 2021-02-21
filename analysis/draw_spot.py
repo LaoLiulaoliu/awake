@@ -61,8 +61,7 @@ def load_and_draw():
 
 def draw_trend_txt(fname):
     def get_data(iterator):
-        for i, data in iterator:
-            yield data
+        return iterator
 
     timestamps = []
     prices = []
@@ -70,15 +69,17 @@ def draw_trend_txt(fname):
     head = 0
     scale = 1800000  # half an hour
 
+    draw = Draw()
     trend = Blaze(fname, 2)
-    for timestamp, price in trend.reload(reverse=True, callback=get_data):
+    for i, data in trend.reload(reverse=True, callback=get_data):
+        timestamp, price = data
         timestamps.append(timestamp)
         prices.append(price)
         cnt += 1
 
         if 31 & cnt == 0:
             if timestamps[head] - timestamp > scale:
-                h = datetime.utcfromtimestamp(timestamps[cnt] * 0.001).strftime('%Y-%m-%dT%H%M%S')
+                h = datetime.utcfromtimestamp(timestamps[cnt-1] * 0.001).strftime('%Y-%m-%dT%H%M%S')
                 t = datetime.utcfromtimestamp(timestamps[head] * 0.001).strftime('%Y-%m-%dT%H%M%S')
                 draw.draw_plot_xy(
                     list(reversed(list(map(int, timestamps[head:cnt])))),

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import time
+from datetime import datetime
 from functools import partial
 
 from .Blaze import Blaze
@@ -17,7 +18,7 @@ def r20210219(capital=200):
     high_24h, low_24h, last_price_init, begin_time = get_high_low_last(spot)
     # pickup_leak_place_buy(low_24h, capital, spot, tradeinfo)
 
-    trend = Blaze('TREND.txt', 2)
+    trend = Blaze(f"TREND_{datetime.utcnow().strftime('%Y-%m-%d')}.txt", 2)
     r = trend.custom_reload(partial(get_high_low_half_hour, begin_time))
     if r:
         high_hh, low_hh, last_half_hour_idx = r
