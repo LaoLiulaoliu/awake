@@ -73,7 +73,8 @@ class Draw(object):
         plt.title(title)
         plt.xlabel('time')
         plt.ylabel('value')
-        plt.show()
+        # plt.show()
+        plt.savefig(title)
 
     def draw_plot(self, real, pred, title='plot'):
         plt.figure(figsize=(20, 8))

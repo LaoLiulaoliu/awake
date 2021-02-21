@@ -40,7 +40,9 @@ def draw_data(data):
     for i, t in enumerate(times):
         if t - times[head] > scale:
             tail = i
-            draw.draw_plot_xy(times[head:tail], list(map(float, data[Y][head:tail])))
+            h = datetime.utcfromtimestamp(times[head] * 0.001).strftime("%Y-%m-%dT%H:%M:%S")
+            t = datetime.utcfromtimestamp(times[tail] * 0.001).strftime("%Y-%m-%dT%H:%M:%S")
+            draw.draw_plot_xy(times[head:tail], list(map(float, data[Y][head:tail])), f'{h} {t}')
             head = i
 
 
