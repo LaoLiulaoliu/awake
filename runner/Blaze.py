@@ -34,6 +34,12 @@ class Blaze(object):
             for line in self.fp:
                 self.data.append(line.split(self.sep))
 
+    def trend_load(self):
+        self.fp.seek(0, 0)
+        for line in self.fp:
+            timestamp, price = line.split(self.sep)
+            self.data.append((int(timestamp), float(price)))
+
     def append(self, line_list):
         try:
             self.data.append(line_list)
@@ -66,9 +72,6 @@ class Blaze(object):
         self.load(convert)
         return callback(self.data.iterator(reverse=reverse))
 
-    def custom_reload(self, callback=lambda x: None):
-        self.fp.seek(0, 0)
-        for line in self.fp:
-            timestamp, price = line.split(self.sep)
-            self.data.append((int(timestamp), float(price)))
-        return callback(self.data.iterator(reverse=True))
+    def iterator(self, reverse=True):
+        self.data.iterator(reverse=reverse)
+

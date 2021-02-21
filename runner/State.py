@@ -1,0 +1,116 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import time
+from .OkexSpot import INSTRUMENT
+from .Tool import Tool
+from .const import MIN_60, MIN_30, MIN_12, VALUTA_IDX, TIME_PRECISION
+
+
+class State(object):
+    def __init__(self):
+        # p60: pair of 60 minutes
+        # h: high_price, l: low_price, i: last_period_time_index,
+        self.p60 = {'h': 0, 'l': 0, 'i': 0}
+        self.p30 = {'h': 0, 'l': 0, 'i': 0}
+        self.p12 = {'h': 0, 'l': 0, 'i': 0}
+
+    def set_init_state(self, high, low, idx):
+        for pair in [self.p60, self.p30, self.p12]:
+            pair['h'] = high
+            pair['l'] = low
+            pair['i'] = idx
+
+    def set_restart_state(self, trend, begin_time, begin_price):
+        """1. data is too short, less than 12 minutes, need traverse 3 times. seted all True
+           2. data expired largest period(60), no care long short. seted all False
+           3. data expired short period, not expired long period. seted half False, half True
+           4. empty trend file. seted all False
+
+           False need init, empty trend file or expired trend file
+        """
+        self.set_init_state(0, 100000000, -1)
+        seted = [False, False, False]
+        period_idx = 0
+
+        pairs = [self.p12, self.p30, self.p60]
+        compare_times = [MIN_12, MIN_30, MIN_60]
+        
+        for pair, compare_time in zip([self.p12, self.p30, self.p60], [MIN_12, MIN_30, MIN_60]):
+            for i, data in trend.iterator(reverse=True):
+                timestamp, price = data
+            
+                if begin_time - timestamp < compare_time:
+                    if price > pair['h']:
+                        pair['h'] = price
+                    if price < pair['l']:
+                        pair['l'] = price
+                    pair['i'] = i
+                    seted[period_idx] = True
+                else:
+                    break
+            period_idx += 1
+        
+        for i in seted:
+            if i is False:
+                self.set_init_state(begin_price, begin_price, 0)
+        if False in seted:
+            trend.append((begin_time, begin_price))
+            self.first_half_hour_no_bid(spot, trend)
+            
+    def compare_set_current_high_low(self, current_price):
+        """ 当前值是最大最小值，设置之
+        """
+        for pair in [self.p60, self.p30, self.p12]:
+            if current_price > pair['h']:
+                pair['h'] = current_price
+            if current_price < pair['l']:
+                pair['l'] = current_price
+
+    def update_high_low_idx(self, timestamp, trend):
+        """if 当前时间 - 前12分钟时间点的data[index] > 12分钟:
+               时间点前进一步
+           if 淘汰时间点有最大最小值:
+               当下12分钟时间数据list排序
+        """
+        for pair, compare_time in zip([self.p60, self.p30, self.p12], [MIN_60, MIN_30, MIN_12]):
+            high_need_sort, low_need_sort = False, False
+            while True:
+                pre_time, pre_price = trend.get_idx(pair['i'])
+                if timestamp - pre_time > compare_time:
+                    if Tool.float_close(pair['h'], pre_price):
+                        high_need_sort = True
+                    elif Tool.float_close(pair['l'], pre_price):
+                        low_need_sort = True
+                    pair['i'] += 1
+                else:
+                    break
+
+            if high_need_sort or low_need_sort:
+                sorted_price_list = sorted([i[1] for i in trend.get_range(pair['i'])])
+                if high_need_sort:
+                    pair['h'] = sorted_price_list[-1]
+                if low_need_sort:
+                    pair['l'] = sorted_price_list[0]
+
+    def trace_trend_update_state(self, spot, trend):
+        r = spot.ticker(INSTRUMENT[VALUTA_IDX])
+        time.sleep(0.1)
+        if r:
+            if 'timestamp' not in r:
+                print('timestamp not in r:', r)
+                return
+            timestamp = Tool.convert_time_str(r['timestamp'], TIME_PRECISION)
+            current_price = float(r['last'])
+            trend.append((timestamp, current_price))
+
+            self.compare_set_current_high_low(current_price)
+            self.update_high_low_idx(timestamp, trend)
+
+    def first_half_hour_no_bid(self, spot, trend):
+        while True:
+            r = self.trace_trend_update_state(spot, trend)
+            if r is not None:
+                last_half_hour_idx, high_hh, low_hh = r
+                if last_half_hour_idx > 0:
+                    break

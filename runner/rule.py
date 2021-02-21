@@ -7,25 +7,22 @@ from functools import partial
 
 from .Blaze import Blaze
 from .OkexSpot import OkexSpot
-from .strategy import *  # TIME_PRECISION, VALUTA_IDX
+from .strategy import *
+from State import State
 
 
 def r20210219(capital=200, do_trade=False):
     spot = OkexSpot(use_trade_key=True)
+    state = State()
     tradeinfo = Blaze(f'TRADE_{VALUTA_IDX}.py', 5)
     tradeinfo.load()
 
-    high_24h, low_24h, last_price_init, begin_time = get_high_low_last(spot)
+    high_24h, low_24h, last_price_init, begin_time = get_high_low_lastest(spot)
     # pickup_leak_place_buy(low_24h, capital, spot, tradeinfo)
 
     trend = Blaze(f"TREND_{datetime.utcnow().strftime('%Y-%m-%d')}.txt", 2)
-    r = trend.custom_reload(partial(get_high_low_half_hour, begin_time))
-    if r:
-        high_hh, low_hh, last_half_hour_idx = r
-    else:  # empty trend file or expired trend file
-        trend.append((begin_time, last_price_init))
-        high_hh, low_hh, last_half_hour_idx = last_price_init, last_price_init, 0
-        first_half_hour_no_bid(spot, trend, last_price_init)
+    trend.trend_load()
+    state.set_restart_state(trend, begin_time, last_price_init)
 
     print(trend.data.status())
     # high_precent = [high_24h * 0.01 * i for i in range(100, 70, -1)]  # math.log2(30) = 5    # high_precent_index = {}

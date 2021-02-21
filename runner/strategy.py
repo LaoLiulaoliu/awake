@@ -4,11 +4,7 @@
 import time
 from .OkexSpot import INSTRUMENT, print_error_or_get_order_id
 from .Tool import Tool
-
-RETRY = 10
-TIME_PRECISION = 1000
-HALF_HOUR = 1800000
-VALUTA_IDX = 0
+from .const import MIN_30, VALUTA_IDX, TIME_PRECISION, RETRY
 
 
 def place_buy_order(spot, bid_price, size):
@@ -61,7 +57,7 @@ def place_buy_order_saveinfo(spot, tradeinfo, capital, last_price):
     return False
 
 
-def get_high_low_last(spot):
+def get_high_low_lastest(spot):
     for i in range(RETRY-4):
         r = spot.ticker(INSTRUMENT[VALUTA_IDX])
         if r:
@@ -77,67 +73,6 @@ def pickup_leak_place_buy(low_24h, capital, spot, tradeinfo):
     for i in pick_idx_by_hand:
         place_buy_order_saveinfo(spot, tradeinfo, capital, low_precent[i])
     tradeinfo.flush()
-
-
-def get_high_low_half_hour(begin_time, iterator):
-    idx = -1
-    high_hh, low_hh = 0, 100000000
-    for i, data in iterator:
-        timestamp, price = data
-        if begin_time - timestamp < HALF_HOUR:
-            if price > high_hh:
-                high_hh = price
-            if price < low_hh:
-                low_hh = price
-            idx = i
-        else:
-            break
-    if idx > 0:
-        return high_hh, low_hh, idx
-
-
-def first_half_hour_no_bid(spot, trend, last_price_init):
-    high_hh, low_hh = last_price_init, last_price_init
-    last_half_hour_idx = 0
-
-    while True:
-        r = trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh)
-        if r is not None:
-            last_half_hour_idx, high_hh, low_hh = r
-            if last_half_hour_idx > 0:
-                break
-
-
-def trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh):
-    r = spot.ticker(INSTRUMENT[VALUTA_IDX])
-    time.sleep(0.1)
-    if r:
-        if 'timestamp' not in r:
-            print('timestamp not in r:', r)
-            return
-        timestamp = Tool.convert_time_str(r['timestamp'], TIME_PRECISION)
-        last_price = float(r['last'])
-
-        trend.append((timestamp, last_price))
-        if last_price > high_hh:
-            high_hh = last_price
-        if last_price < low_hh:
-            low_hh = last_price
-
-        high_need_sort, low_need_sort = False, False
-        # print(timestamp, trend.get_idx(last_half_hour_idx), last_half_hour_idx)
-        while timestamp - trend.get_idx(last_half_hour_idx)[0] > HALF_HOUR:
-            if Tool.float_close(high_hh, trend.get_idx(last_half_hour_idx)[1]):
-                high_need_sort = True
-            elif Tool.float_close(low_hh, trend.get_idx(last_half_hour_idx)[1]):
-                low_need_sort = True
-            last_half_hour_idx += 1
-
-        if high_need_sort:
-            high_hh = sorted([i[1] for i in trend.get_range(last_half_hour_idx)])[-1]
-        if low_need_sort:
-            low_hh = sorted([i[1] for i in trend.get_range(last_half_hour_idx)])[0]
-        return last_half_hour_idx, high_hh, low_hh
 
 
 def have_around_open_orders(low, high, prices):
