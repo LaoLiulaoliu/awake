@@ -9,6 +9,7 @@ tradesecret.py
 .idea/
 
 *.txt
+*.png
 
 .DS_Store
 

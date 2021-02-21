@@ -10,7 +10,7 @@ from .OkexSpot import OkexSpot
 from .strategy import *  # TIME_PRECISION, VALUTA_IDX
 
 
-def r20210219(capital=200):
+def r20210219(capital=200, do_trade=False):
     spot = OkexSpot(use_trade_key=True)
     tradeinfo = Blaze(f'TRADE_{VALUTA_IDX}.py', 5)
     tradeinfo.load()
@@ -48,29 +48,30 @@ def r20210219(capital=200):
             last_half_hour_idx, high_hh, low_hh = r
             timestamp, last_price = trend.last()
 
-            # buy strategy
-            print(high_hh, low_hh, last_price)
-            if high_hh - diff_boundary > last_price:
-                if have_around_open_orders(last_price - 50, last_price + 50, list(open_buy_orderid_prices.values())) is False:
-                    if have_around_filled_orders(last_price - 50, last_price + 50, trade) is False:
-                        size = round(capital / last_price, 8)
-                        order_id = place_buy_order(spot, last_price, size)
-                        if order_id is not None:  # if no enough balance(usdt)
-                            tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, order_id, 0])
-                            trade[order_id] = [0, last_price, size, 0]  # order_id: state, price, size, pocket
+            if do_trade:
+                # buy strategy
+                print(high_hh, low_hh, last_price)
+                if high_hh - diff_boundary > last_price:
+                    if have_around_open_orders(last_price - 50, last_price + 50, list(open_buy_orderid_prices.values())) is False:
+                        if have_around_filled_orders(last_price - 50, last_price + 50, trade) is False:
+                            size = round(capital / last_price, 8)
+                            order_id = place_buy_order(spot, last_price, size)
+                            if order_id is not None:  # if no enough balance(usdt)
+                                tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, order_id, 0])
+                                trade[order_id] = [0, last_price, size, 0]  # order_id: state, price, size, pocket
 
-            # sell strategy
-            r = get_filled_buy_orders(spot, '6494679719429120')
-            if r is not None:
-                filled_buy_orderid_prices_size = r
-            for oid, p, size in filled_buy_orderid_prices_size:
-                if p + diff_boundary < last_price:
-                    order_id = place_sell_order(spot, last_price, size)
-                    if order_id in trade:  # Do I need to trade.pop(order_id), write whole not poped to file periodically
-                        trade[order_id][0] = 2  # state filled
-                        trade[order_id][3] = 1  # save to pocket
-                    else:
-                        print(f'order_id not in trade: {order_id}, {trade}')
+                # sell strategy
+                r = get_filled_buy_orders(spot, '6494679719429120')
+                if r is not None:
+                    filled_buy_orderid_prices_size = r
+                for oid, p, size in filled_buy_orderid_prices_size:
+                    if p + diff_boundary < last_price:
+                        order_id = place_sell_order(spot, last_price, size)
+                        if order_id in trade:  # Do I need to trade.pop(order_id), write whole not poped to file periodically
+                            trade[order_id][0] = 2  # state filled
+                            trade[order_id][3] = 1  # save to pocket
+                        else:
+                            print(f'order_id not in trade: {order_id}, {trade}')
 
         strategy_t = time.time()
         print(f'circle: {strategy_t - t}, order: {open_buy_orders_t - t}, ticket: {ticket_t - open_buy_orders_t}, strategy: {strategy_t - ticket_t}')

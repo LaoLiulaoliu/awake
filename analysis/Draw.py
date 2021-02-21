@@ -64,7 +64,7 @@ class Draw(object):
         plt.xlabel('time')
         plt.ylabel('value')
         plt.show()
-        plt.clf()
+        plt.close()
 
     def draw_plot_xy(self, x, y, title='plot'):
         plt.figure(figsize=(20, 15))
@@ -76,7 +76,7 @@ class Draw(object):
         plt.ylabel('value')
         # plt.show()
         plt.savefig(title)
-        plt.clf()
+        plt.close()
 
     def draw_plot(self, real, pred, title='plot'):
         plt.figure(figsize=(20, 8))
