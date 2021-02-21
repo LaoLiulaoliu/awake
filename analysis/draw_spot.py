@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+from datetime import datetime
 from runner.Tool import Tool
 from runner.Blaze import Blaze
 from .Draw import Draw
@@ -29,7 +30,7 @@ def draw_data(data):
     """
     X = 'x'
     Y = 'y'
-    scale = 1800000  # half an hour
+    scale = 18000  # half an hour
     head, tail = 0, 0
     draw = Draw()
     if isinstance(data[X][0], float):
@@ -40,8 +41,8 @@ def draw_data(data):
     for i, t in enumerate(times):
         if t - times[head] > scale:
             tail = i
-            h = datetime.utcfromtimestamp(times[head] * 0.001).strftime("%Y-%m-%dT%H:%M:%S")
-            t = datetime.utcfromtimestamp(times[tail] * 0.001).strftime("%Y-%m-%dT%H:%M:%S")
+            h = datetime.utcfromtimestamp(times[head] * 0.001).strftime('%Y-%m-%dT%H%M%S')
+            t = datetime.utcfromtimestamp(times[tail] * 0.001).strftime('%Y-%m-%dT%H%M%S')
             draw.draw_plot_xy(times[head:tail], list(map(float, data[Y][head:tail])), f'{h} {t}')
             head = i
 
@@ -60,18 +61,30 @@ def load_and_draw():
 
 def draw_trend_txt(fname):
     def get_data(iterator):
-        timestamps = []
-        prices = []
         for i, data in iterator:
-            timestamps.append(data[0])
-            prices.append(data[1])
+            yield data
 
-        return timestamps, prices
+    timestamps = []
+    prices = []
+    cnt = 0
+    head = 0
+    scale = 1800000  # half an hour
 
     trend = Blaze(fname, 2)
-    timestamps, prices = trend.reload(reverse=False, callback=get_data)
-    data = {'x': timestamps, 'y': prices}
-    draw_data(data)
+    for timestamp, price in trend.reload(reverse=True, callback=get_data):
+        timestamps.append(timestamp)
+        prices.append(price)
+        cnt += 1
+
+        if 31 & cnt == 0:
+            if timestamps[head] - timestamp > scale:
+                h = datetime.utcfromtimestamp(timestamps[cnt] * 0.001).strftime('%Y-%m-%dT%H%M%S')
+                t = datetime.utcfromtimestamp(timestamps[head] * 0.001).strftime('%Y-%m-%dT%H%M%S')
+                draw.draw_plot_xy(
+                    list(reversed(list(map(int, timestamps[head:cnt])))),
+                    list(reversed(list(map(float, prices[head:cnt])))),
+                    f'{h} {t}') # (]
+                head = cnt
 
 
 if __name__ == '__main__':
