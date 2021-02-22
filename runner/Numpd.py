@@ -53,5 +53,3 @@ class Numpd(Numpp):
             self.fp.write(self.sep.join(map(str, line_list)) + '\n')
         except Exception as e:
             print(f'Numpd::append exception is: {e}, data: {line_list}')
-
-

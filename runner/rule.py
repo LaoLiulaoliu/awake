@@ -4,6 +4,7 @@
 from datetime import datetime
 
 from .Numpd import Numpd
+from .Blaze import Blaze
 from .OkexSpot import OkexSpot
 from .strategy import *
 from .State import State
@@ -12,7 +13,7 @@ from .State import State
 def r20210219(capital=200, do_trade=False):
     spot = OkexSpot(use_trade_key=True)
     state = State()
-    tradeinfo = Numpd(f'TRADE_{VALUTA_IDX}.py', 5)
+    tradeinfo = Blaze(f'TRADE_{VALUTA_IDX}.py', 5)
     tradeinfo.load()
 
     high_24h, low_24h, last_price_init, begin_time = get_high_low_lastest(spot)

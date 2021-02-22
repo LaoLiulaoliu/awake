@@ -37,6 +37,9 @@ class Blaze(Numpp):
             self.enlarge()
         self.info[:len(arr), :] = arr
 
+    def append(self, line_list):
+        self.push_back(line_list)
+
     def delete(self, idx):
         """np.delete(self.info, idx, axis=0) copy a new array
            not support persist to disk yet.
