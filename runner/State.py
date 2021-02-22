@@ -4,7 +4,7 @@
 import time
 from .OkexSpot import INSTRUMENT
 from .Tool import Tool
-from .const import MIN_60, MIN_30, MIN_12, VALUTA_IDX, TIME_PRECISION
+from .const import MIN_60, MIN_42, MIN_30, MIN_12, VALUTA_IDX, TIME_PRECISION
 
 
 class State(object):
@@ -12,11 +12,13 @@ class State(object):
         # p60: pair of 60 minutes
         # h: high_price, l: low_price, i: last_period_time_index,
         self.p60 = {'h': 0, 'l': 0, 'i': 0}
+
+        self.p42 = {'h': 0, 'l': 0, 'i': 0}
         self.p30 = {'h': 0, 'l': 0, 'i': 0}
         self.p12 = {'h': 0, 'l': 0, 'i': 0}
 
-        self.pair = [self.p12, self.p30, self.p60]
-        self.compare_time = [MIN_12, MIN_30, MIN_60]
+        self.pair = [self.p12, self.p30, self.p42]
+        self.compare_time = [MIN_12, MIN_30, MIN_42]
 
     def set_init_state(self, high, low, idx):
         for pair in self.pair:
@@ -91,11 +93,12 @@ class State(object):
                     break
 
             if high_need_sort or low_need_sort:
-                sorted_price_list = sorted([i[1] for i in trend.get_range(pair['i'])])
-                if high_need_sort:
-                    pair['h'] = sorted_price_list[-1]
-                if low_need_sort:
-                    pair['l'] = sorted_price_list[0]
+                r = trend.get_range(pair['i'])
+                if r is not None:
+                    if high_need_sort:
+                        pair['h'] = r[:, 1].max()
+                    if low_need_sort:
+                        pair['l'] = r[:, 1].min()
 
     def trace_trend_update_state(self, spot, trend):
         r = spot.ticker(INSTRUMENT[VALUTA_IDX])
@@ -128,9 +131,16 @@ class State(object):
     def get_60min(self):
         return self.p60
 
+    def get_42min(self):
+        return self.p42
+
     def get_30min(self):
         return self.p30
 
     def get_12min(self):
         return self.p12
 
+    def get_time_segment_max_min(self, trend):
+        r = trend.get_range(self.p42['i'], self.p12['i'])
+        if r is not None:
+            return r[:, 1].max(), r[:, 1].min()
