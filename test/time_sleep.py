@@ -10,4 +10,5 @@ for i in range(1000):
     s = time.time()
     time.sleep(0.01)
     l.append(time.time() - s)
-print(np.mean(l))
+
+print(np.mean(l))  # 0.010239732742309571
