@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import time
 from datetime import datetime
-from functools import partial
 
 from .Blaze import Blaze
 from .OkexSpot import OkexSpot
 from .strategy import *
-from State import State
+from .State import State
 
 
 def r20210219(capital=200, do_trade=False):
@@ -22,7 +20,7 @@ def r20210219(capital=200, do_trade=False):
 
     trend = Blaze(f"TREND_{datetime.utcnow().strftime('%Y-%m-%d')}.txt", 2)
     trend.trend_load()
-    state.set_restart_state(trend, begin_time, last_price_init)
+    state.set_restart_state(trend, spot, begin_time, last_price_init)
 
     print(trend.data.status())
     # high_precent = [high_24h * 0.01 * i for i in range(100, 70, -1)]  # math.log2(30) = 5    # high_precent_index = {}
@@ -33,21 +31,20 @@ def r20210219(capital=200, do_trade=False):
     filled_buy_orderid_prices_size = []
     while True:
         t = time.time()
-        r = get_open_buy_orders(spot)
-        if r is not None:
-            open_buy_orderid_prices = r
+        ret = get_open_buy_orders(spot)
+        if ret is not None:
+            open_buy_orderid_prices = ret
 
         open_buy_orders_t = time.time()
-        r = trace_trend(spot, trend, last_half_hour_idx, high_hh, low_hh)
+        ret = state.trace_trend_update_state(spot, trend)
         ticket_t = time.time()
 
-        if r is not None:
-            last_half_hour_idx, high_hh, low_hh = r
+        if ret:
             timestamp, last_price = trend.last()
 
             if do_trade:
+                high_hh = state.get_30min()['h']
                 # buy strategy
-                print(high_hh, low_hh, last_price)
                 if high_hh - diff_boundary > last_price:
                     if have_around_open_orders(last_price - 50, last_price + 50, list(open_buy_orderid_prices.values())) is False:
                         if have_around_filled_orders(last_price - 50, last_price + 50, trade) is False:
@@ -64,7 +61,7 @@ def r20210219(capital=200, do_trade=False):
                 for oid, p, size in filled_buy_orderid_prices_size:
                     if p + diff_boundary < last_price:
                         order_id = place_sell_order(spot, last_price, size)
-                        if order_id in trade:  # Do I need to trade.pop(order_id), write whole not poped to file periodically
+                        if order_id in trade:  # need trade.pop(order_id)? write whole not poped to file periodically
                             trade[order_id][0] = 2  # state filled
                             trade[order_id][3] = 1  # save to pocket
                         else:
