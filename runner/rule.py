@@ -3,7 +3,7 @@
 
 from datetime import datetime
 
-from .Blaze import Blaze
+from .Numpd import Numpd
 from .OkexSpot import OkexSpot
 from .strategy import *
 from .State import State
@@ -12,13 +12,13 @@ from .State import State
 def r20210219(capital=200, do_trade=False):
     spot = OkexSpot(use_trade_key=True)
     state = State()
-    tradeinfo = Blaze(f'TRADE_{VALUTA_IDX}.py', 5)
+    tradeinfo = Numpd(f'TRADE_{VALUTA_IDX}.py', 5)
     tradeinfo.load()
 
     high_24h, low_24h, last_price_init, begin_time = get_high_low_lastest(spot)
     # pickup_leak_place_buy(low_24h, capital, spot, tradeinfo)
 
-    trend = Blaze(f"TREND_{datetime.utcnow().strftime('%Y-%m-%d')}.txt", 2)
+    trend = Numpd(f"TREND_{datetime.utcnow().strftime('%Y-%m-%d')}.txt", 2)
     trend.trend_load()
     state.set_restart_state(trend, spot, begin_time, last_price_init)
 

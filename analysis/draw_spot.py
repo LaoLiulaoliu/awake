@@ -4,7 +4,7 @@
 import json
 from datetime import datetime
 from runner.Tool import Tool
-from runner.Blaze import Blaze
+from runner.Numpd import Numpd
 from .Draw import Draw
 
 print(__name__, __package__)
@@ -70,7 +70,7 @@ def draw_trend_txt(fname):
     scale = 1800000  # half an hour
 
     draw = Draw()
-    trend = Blaze(fname, 2)
+    trend = Numpd(fname, 2)
     for i, data in trend.reload(reverse=True, callback=get_data):
         timestamp, price = data
         timestamps.append(timestamp)

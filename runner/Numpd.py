@@ -4,7 +4,7 @@
 from .Numpp import Numpp
 
 
-class Blaze(object):
+class Numpd(object):
     def __init__(self, fname, col_dim, init_row_num=1000, sep='\t'):
         """
         col_dim: timestamp price size instrument_id order_id
@@ -45,7 +45,7 @@ class Blaze(object):
             self.data.append(line_list)
             self.fp.write(self.sep.join(map(str, line_list)) + '\n')
         except Exception as e:
-            print(f'Blaze::append exception is: {e}, data: {line_list}')
+            print(f'Numpd::append exception is: {e}, data: {line_list}')
 
     def flush(self):
         self.fp.flush()

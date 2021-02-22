@@ -3,20 +3,21 @@
 
 import sys
 import getopt
-from test.blaze_test import blaze_test
+from test.numpd_test import numpd_test
 from runner.rule import r20210219
 from runner.OkexSpot import OkexSpot, INSTRUMENT
 
+
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, 'bd:hos:u:z:', ['draw=', 'save=', 'dump=', 'trade='])
+        opts, args = getopt.getopt(argv, 'd:hnos:u:z:', ['draw=', 'save=', 'dump=', 'trade='])
     except getopt.GetoptError:
         print('main.py -s leveldb_name -t')
         sys.exit(2)
 
     for opt, arg in opts:
-        if opt in ('-b', '--blaze'):
-            blaze_test()
+        if opt in ('-n', '--numpd'):
+            numpd_test()
         elif opt == '-h':
             print('python main.py -s leveldb_name -t')
             sys.exit()

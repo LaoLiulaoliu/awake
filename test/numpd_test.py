@@ -1,12 +1,12 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from runner.Blaze import Blaze
+from runner.Numpd import Numpd
 
 
-def blaze_test():
+def numpd_test():
     data = [1, 2, 3, 4]
-    tradeinfo = Blaze('friend.txt', len(data), 3)
+    tradeinfo = Numpd('friend.txt', len(data), 3)
     tradeinfo.load()
     print(tradeinfo.data.status())
 
