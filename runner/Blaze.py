@@ -6,7 +6,8 @@ from .Numpp import Numpp
 
 
 class Blaze(Numpp):
-    """write to log file, when load file to memory, reorganize.
+    """ For in memory, high performance, small data.
+        synchronous to hard disk in real time.
     """
     def __init__(self, fname, col_dim, init_row_num=1000):
         super(Numpd, self).__init__(col_dim, init_row_num)
@@ -39,6 +40,7 @@ class Blaze(Numpp):
 
     def append(self, line_list):
         self.push_back(line_list)
+        self.flush()
 
     def delete(self, idx):
         """np.delete(self.info, idx, axis=0) copy a new array

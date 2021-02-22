@@ -6,8 +6,10 @@ from .Numpp import Numpp
 
 class Numpd(Numpp):
     def __init__(self, fname, col_dim, init_row_num=1000, sep='\t'):
-        """
-        col_dim: timestamp price size instrument_id order_id
+        """ For large scale data, only support sequential write, not support modify operation.
+        modify plan: write to log file, when load file to memory, reorganize it.
+
+        param: col_dim, timestamp price size instrument_id order_id
         """
         super(Numpd, self).__init__(col_dim, init_row_num)
 

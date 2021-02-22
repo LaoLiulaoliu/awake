@@ -12,7 +12,7 @@ def npsave(data, func):
         t = time.time()
         for i in range(1000):
             func(f, data)
-        print(time.time() - t)  # 0.23
+        print(time.time() - t)
 
 
 def np_test_save(data):
