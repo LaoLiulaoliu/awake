@@ -14,7 +14,7 @@ class Numpp(object):
 
         self.info = np.zeros((init_row_num, column_dim))
 
-    def append(self, line_list):
+    def push_back(self, line_list):
         if len(line_list) != self.column_dim:
             raise Exception(f'line size[{len(line_list)}] != column dimension[{self.column_dim}]')
 
