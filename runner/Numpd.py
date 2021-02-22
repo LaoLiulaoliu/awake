@@ -25,6 +25,9 @@ class Numpd(object):
         if self.fp:
             self.fp.close()
 
+    def flush(self):
+        self.fp.flush()
+
     def load(self, convert=None):
         self.fp.seek(0, 0)
         if convert:
@@ -46,9 +49,6 @@ class Numpd(object):
             self.fp.write(self.sep.join(map(str, line_list)) + '\n')
         except Exception as e:
             print(f'Numpd::append exception is: {e}, data: {line_list}')
-
-    def flush(self):
-        self.fp.flush()
         
     def first(self):
         return self.data.first()

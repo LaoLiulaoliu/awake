@@ -10,6 +10,8 @@ class Numpp(object):
 
         self.row_size = init_row_num
         self.current_size = 0
+        assert self.current_size < self.row_size
+
         self.info = np.zeros((init_row_num, column_dim))
 
     def append(self, line_list):
@@ -42,6 +44,9 @@ class Numpp(object):
     def get_idx(self, idx):
         return self.info[idx, :]
 
+    def get_all(self):
+        return self.info[0:self.current_size, :]
+
     def get_range(self, start, end=None):
         if end is None:
             return None if start >= self.current_size else self.info[start:self.current_size, :]
@@ -67,3 +72,13 @@ class Numpp(object):
         else:
             for i in range(self.current_size):
                 yield i, self.info[i, :]
+
+    def delete(self, idx):
+        """np.delete(self.info, idx, axis=0) copy a new array
+           not support Numpd yet.
+        """
+        if 0 <= idx < self.current_size:  # self.current_size < self.row_size
+            for i in range(idx, self.current_size):
+                self.info[i, :] = self.info[i+1, :]
+
+            self.current_size -= 1
