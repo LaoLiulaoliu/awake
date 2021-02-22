@@ -50,6 +50,12 @@ class Numpp(object):
             end = self.current_size
         return None if start >= end else self.info[start:end, :]
 
+    def get_double_range(self, start):
+        if start >= self.current_size:
+            return None
+        begin = self.current_size - (self.current_size - start) * 2
+        return self.info[0:self.current_size, :] if begin < 0 else self.info[begin:self.current_size, :]
+
     def pop_last(self):
         if self.current_size > 0:
             self.info[self.current_size - 1, :] = [0] * self.column_dim

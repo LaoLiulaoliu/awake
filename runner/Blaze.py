@@ -65,6 +65,9 @@ class Blaze(object):
     def get_range(self, start, end=None):
         return self.data.get_range(start, end)
 
+    def get_double_range(self, start):
+        return self.data.get_double_range(start)
+
     def pop_last(self):
         self.data.pop_last()
 
