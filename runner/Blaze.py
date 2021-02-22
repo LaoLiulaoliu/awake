@@ -10,7 +10,7 @@ class Blaze(Numpp):
         synchronous to hard disk in real time.
     """
     def __init__(self, fname, col_dim, init_row_num=1000):
-        super(Numpd, self).__init__(col_dim, init_row_num)
+        super(Blaze, self).__init__(col_dim, init_row_num)
 
         self.fp = None
         self.fname = fname
@@ -32,7 +32,10 @@ class Blaze(Numpp):
     def load(self):
         """Only use after self.__init__
         """
-        arr = np.load(self.fname)
+        try:
+            arr = np.load(self.fname)
+        except ValueError:  # empty file
+            return
         length = len(arr)
         if length == 0:
             return
