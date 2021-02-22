@@ -9,6 +9,7 @@ from .const import MIN_60, MIN_42, MIN_30, MIN_12, VALUTA_IDX, TIME_PRECISION
 
 class State(object):
     def __init__(self):
+        self.flush_trend = 0
         # p60: pair of 60 minutes
         # h: high_price, l: low_price, i: last_period_time_index,
         self.p60 = {'h': 0, 'l': 0, 'i': 0}
@@ -107,6 +108,8 @@ class State(object):
             if 'timestamp' not in r:
                 print('timestamp not in r:', r)
                 return
+            self.flush_trend_nearly_one_hour(trend)
+
             timestamp = Tool.convert_time_str(r['timestamp'], TIME_PRECISION)
             current_price = float(r['last'])
             trend.append((timestamp, current_price))
@@ -116,11 +119,11 @@ class State(object):
             return True
         return False
 
-    def first_30_no_bid(self, spot, trend):
-        while True:
-            r = self.trace_trend_update_state(spot, trend)
-            if r and self.p30['i'] > 0:
-                break
+    def flush_trend_nearly_one_hour(self, trend):
+        self.flush_trend += 1
+        if 8191 & self.flush_trend == 0:
+            self.flush_trend = 1
+            trend.flush()
 
     def first_several_minutes_no_bid(self, spot, trend, idx):
         while True:
