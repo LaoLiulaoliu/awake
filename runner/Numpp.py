@@ -23,7 +23,7 @@ class Numpp(object):
         self.current_size += 1
 
     def enlarge(self):
-        self.info = np.vstack((self.info, np.zeros((self.row_size, self.column_dim))))
+        self.info = np.concatenate((self.info, np.zeros((self.row_size, self.column_dim))), axis=0)
         self.row_size *= 2
 
     def status(self):
