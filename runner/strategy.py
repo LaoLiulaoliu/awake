@@ -50,9 +50,9 @@ def place_buy_order_saveinfo(spot, tradeinfo, capital, last_price):
        0 stands for open state
     """
     size = round(capital / last_price, 8)
-    order_id = place_buy_order(spot, last_price, size)
-    if order_id is not None:  # if no enough balance(usdt)
-        tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, order_id, 0])
+    buy_order_id = place_buy_order(spot, last_price, size)
+    if buy_order_id is not None:  # if no enough balance(usdt)
+        tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, buy_order_id, 0, 0])
         return True
     return False
 
