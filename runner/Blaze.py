@@ -12,6 +12,8 @@ class Blaze(object):
 
         self.row_size = init_row_num
         self.current_size = 0
+        assert self.current_size < self.row_size
+
         self.info = np.zeros((init_row_num, column_dim))
 
     def append(self, line_list):
@@ -32,7 +34,10 @@ class Blaze(object):
         return f'Total row: {self.row_size}, data shape: {self.info.shape}, current row: {self.current_size}'
 
     def delete(self, idx):
-        if 0 < idx < self.current_size:
-            np.delete(self.info, idx, axis=0)
+        """np.delete(self.info, idx, axis=0) copy a new array
+        """
+        if 0 <= idx < self.current_size:  # self.current_size < self.row_size
+            for i in range(idx, self.current_size):
+                self.info[i, :] = self.info[i+1, :]
+
             self.current_size -= 1
-            self.row_size -= 2
