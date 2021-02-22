@@ -34,9 +34,11 @@ class Blaze(Numpp):
         """
         arr = np.load(self.fname)
         length = len(arr)
+        if length == 0:
+            return
         while length > self.row_size:
             self.enlarge()
-        self.info[:len(arr), :] = arr
+        self.info[:length, :] = arr
 
     def append(self, line_list):
         self.push_back(line_list)

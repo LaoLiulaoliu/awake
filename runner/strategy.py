@@ -72,7 +72,6 @@ def pickup_leak_place_buy(low_24h, capital, spot, tradeinfo):
     pick_idx_by_hand = [2, 4, 6, 8, 10]
     for i in pick_idx_by_hand:
         place_buy_order_saveinfo(spot, tradeinfo, capital, low_precent[i])
-    tradeinfo.flush()
 
 
 def have_around_open_orders(low, high, prices):
