@@ -32,4 +32,7 @@ class Blaze(object):
         return f'Total row: {self.row_size}, data shape: {self.info.shape}, current row: {self.current_size}'
 
     def delete(self, idx):
-        np.delete(self.info, idx, axis=0)
+        if 0 < idx < self.current_size:
+            np.delete(self.info, idx, axis=0)
+            self.current_size -= 1
+            self.row_size -= 2
