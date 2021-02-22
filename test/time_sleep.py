@@ -6,8 +6,8 @@ import time
 import numpy as np
 
 l = []
-for i in range(100):
+for i in range(1000):
     s = time.time()
-    time.sleep(0.1)
+    time.sleep(0.01)
     l.append(time.time() - s)
 print(np.mean(l))
