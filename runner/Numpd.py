@@ -37,6 +37,10 @@ class Numpd(Numpp):
             for line in self.fp:
                 self.push_back(line.split(self.sep))
 
+    def reload(self, convert=None, reverse=True, callback=lambda x: None):
+        self.load(convert)
+        return callback(self.iterator(reverse=reverse))
+
     def trend_load(self):
         self.fp.seek(0, 0)
         for line in self.fp:
@@ -50,7 +54,4 @@ class Numpd(Numpp):
         except Exception as e:
             print(f'Numpd::append exception is: {e}, data: {line_list}')
 
-    def reload(self, convert=None, reverse=True, callback=lambda x: None):
-        self.load(convert)
-        return callback(self.iterator(reverse=reverse))
 

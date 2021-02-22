@@ -5,15 +5,15 @@ import numpy as np
 from .Numpp import Numpp
 
 
-class Blaze(object):
+class Blaze(Numpp):
     """write to log file, when load file to memory, reorganize.
     """
     def __init__(self, fname, col_dim, init_row_num=1000):
+        super(Numpd, self).__init__(col_dim, init_row_num)
+
         self.fp = None
         self.fname = fname
-        self.fp = self.open(fname, 'wb')
-
-        self.data = Numpp(col_dim, init_row_num)
+        self.fp = self.open(fname)
 
     def open(self, fname=None):
         if self.fp is None:
@@ -26,4 +26,23 @@ class Blaze(object):
 
     def flush(self):
         self.fp.seek(0, 0)  # simulate closing & reopening file
-        np.save(self.fp, self.data.get_all())
+        np.save(self.fp, self.get_all())
+
+    def load(self):
+        """Only use after self.__init__
+        """
+        arr = np.load(self.fname)
+        length = len(arr)
+        while length > self.row_size:
+            self.enlarge()
+        self.info[:len(arr), :] = arr
+
+    def delete(self, idx):
+        """np.delete(self.info, idx, axis=0) copy a new array
+           not support persist to disk yet.
+        """
+        if 0 <= idx < self.current_size:  # self.current_size < self.row_size
+            for i in range(idx, self.current_size):
+                self.info[i, :] = self.info[i+1, :]
+
+            self.current_size -= 1

@@ -73,12 +73,3 @@ class Numpp(object):
             for i in range(self.current_size):
                 yield i, self.info[i, :]
 
-    def delete(self, idx):
-        """np.delete(self.info, idx, axis=0) copy a new array
-           not support Numpd yet.
-        """
-        if 0 <= idx < self.current_size:  # self.current_size < self.row_size
-            for i in range(idx, self.current_size):
-                self.info[i, :] = self.info[i+1, :]
-
-            self.current_size -= 1
