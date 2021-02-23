@@ -10,17 +10,23 @@ from runner.OkexSpot import OkexSpot, INSTRUMENT
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, 'd:hnos:u:z:', ['draw=', 'save=', 'dump=', 'trade='])
+        opts, args = getopt.getopt(argv, 'd:fhnos:u:z:', ['draw=', 'save=', 'dump=', 'trade='])
     except getopt.GetoptError:
         print('main.py -s leveldb_name -t')
         sys.exit(2)
 
     for opt, arg in opts:
-        if opt in ('-n', '--numpd'):
-            numpd_test()
+        if opt in ('-d', '--draw'):
+            from analysis.draw_spot import load_and_draw, draw_trend_txt
+            draw_trend_txt(arg)
+        elif opt == '-f':
+            from runner.fast_order import do_order
+            do_order()
         elif opt == '-h':
             print('python main.py -s leveldb_name -t')
             sys.exit()
+        elif opt in ('-n', '--numpd'):
+            numpd_test()
         elif opt in ('-o', '--spot'):
             VALUTA_IDX = 0
             spot = OkexSpot(use_trade_key=True)
@@ -36,9 +42,6 @@ def main(argv):
             arg = arg if arg else None
             from analysis.saveBid import save
             save(0, arg)
-        elif opt in ('-d', '--draw'):
-            from analysis.draw_spot import load_and_draw, draw_trend_txt
-            draw_trend_txt(arg)
         elif opt in ('-u', '--dump'):
             from analysis.draw_spot import dump_data
             dump_data(arg)
