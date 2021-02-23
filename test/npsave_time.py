@@ -19,7 +19,7 @@ def np_test_save(data):
     f = open(FNAME, 'wb')
     np.save(f, data)
 
-    f.seek(0, 0)  # simulate closing & reopening file
+    f.seek(0, 0)  # simulate closing and reopening file
     np.save(f, np.zeros((2, 5)))
 
     with open(FNAME, 'rb') as fd:

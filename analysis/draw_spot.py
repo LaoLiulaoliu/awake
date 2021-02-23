@@ -10,7 +10,7 @@ from .Draw import Draw
 print(__name__, __package__)
 
 
-def get_data(key):
+def get_leveldb_data(key):
     from .DBHandler import DBHandler
     X = 'x'
     Y = 'y'
@@ -23,7 +23,7 @@ def get_data(key):
     return data
 
 
-def draw_data(data):
+def draw_leveldb_data(data):
     """
     need change Y to float, or else, it will disorder
     cut the data tail which not exceed 1 hour
@@ -47,22 +47,18 @@ def draw_data(data):
             head = i
 
 
-def dump_data(key):
-    data = get_data(key)
-    with open('a.txt', 'w') as fd:
-        json.dump(data, fd)
+def get_leveldb_and_draw(key):
+    data = get_leveldb_data(key)
+    draw_leveldb_data(data)
 
 
-def load_and_draw():
-    with open('a.txt', 'r') as fd:
-        data = json.load(fd)
-    draw_data(data)
-
+def flush_trend_nearly_one_hour(self, trend):
+    self.flush_trend += 1
+    if 8191 & self.flush_trend == 0:
+        self.flush_trend = 1
+        trend.flush()
 
 def draw_trend_txt(fname):
-    def get_data(iterator):
-        return iterator
-
     timestamps = []
     prices = []
     cnt = 0
@@ -71,7 +67,8 @@ def draw_trend_txt(fname):
 
     draw = Draw()
     trend = Numpd(fname, 2)
-    for i, data in trend.reload(reverse=True, callback=get_data):
+    trend.trend_load()
+    for i, data in trend.iterator(reverse=True):
         timestamp, price = data
         timestamps.append(timestamp)
         prices.append(price)
@@ -79,15 +76,14 @@ def draw_trend_txt(fname):
 
         if 31 & cnt == 0:
             if timestamps[head] - timestamp > scale:
-                h = datetime.utcfromtimestamp(timestamps[cnt-1] * 0.001).strftime('%Y-%m-%dT%H%M%S')
+                f = datetime.utcfromtimestamp(timestamps[cnt-1] * 0.001).strftime('%Y-%m-%dT%H%M%S')
                 t = datetime.utcfromtimestamp(timestamps[head] * 0.001).strftime('%Y-%m-%dT%H%M%S')
                 draw.draw_plot_xy(
-                    list(reversed(list(map(int, timestamps[head:cnt])))),
-                    list(reversed(list(map(float, prices[head:cnt])))),
-                    f'{h} {t}') # (]
+                    list(reversed(timestamps[head:cnt])),
+                    list(reversed(prices[head:cnt])),
+                    f'{f} {t}') # (]
                 head = cnt
 
 
 if __name__ == '__main__':
-    # dump_data('2021-02-19T08-44-22')
-    load_and_draw()
+    draw_trend_txt('TREND_0.txt')
