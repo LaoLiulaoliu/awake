@@ -6,8 +6,8 @@ from .strategy import place_buy_order
 
 
 TOP = 58000
-SECTION = int(TOP * (0.8 - 0.7)) # 5800
-PART = int(SECTION / 10)  # 580
+SECTION = int(TOP * (0.8 - 0.6)) # 11600
+PART = int(SECTION / 10)  # 1160
 capital = 50
 
 def do_order():
