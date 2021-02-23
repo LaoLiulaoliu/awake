@@ -15,6 +15,7 @@ def place_buy_order(spot, bid_price, size):
         order_id = print_error_or_get_order_id(r)
         if order_id:
             return order_id
+        time.sleep(0.01)
 
 
 def place_sell_order(spot, bid_price, size):
@@ -25,6 +26,7 @@ def place_sell_order(spot, bid_price, size):
         order_id = print_error_or_get_order_id(r)
         if order_id:
             return order_id
+        time.sleep(0.01)
 
 
 def get_open_buy_orders(spot):
@@ -34,6 +36,7 @@ def get_open_buy_orders(spot):
         r = spot.open_orders(INSTRUMENT[VALUTA_IDX])
         if 'error_code' not in r and len(r) > 0:
             return {i['order_id']: float(i['price']) for i in r if i['side'] == 'buy'}
+        time.sleep(0.01)
 
 
 def get_filled_buy_orders(spot, before=None):
@@ -43,6 +46,7 @@ def get_filled_buy_orders(spot, before=None):
         r = spot.orders(2, INSTRUMENT[VALUTA_IDX], before)
         if 'error_code' not in r and len(r) > 0:
             return [(i['order_id'], float(i['price']), i['size']) for i in r if i['side'] == 'buy']
+        time.sleep(0.01)
 
 
 def place_buy_order_saveinfo(spot, tradeinfo, capital, last_price):
