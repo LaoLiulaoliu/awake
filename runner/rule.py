@@ -13,7 +13,7 @@ from .State import State
 def r20210219(capital=200, do_trade=False):
     spot = OkexSpot(use_trade_key=True)
     state = State()
-    tradeinfo = Blaze(f'TRADE_{VALUTA_IDX}.py', 5)
+    tradeinfo = Blaze(f'TRADE_{VALUTA_IDX}.py', 6)
     tradeinfo.load()
 
     high_24h, low_24h, last_price_init, begin_time = get_high_low_lastest(spot)
@@ -50,10 +50,9 @@ def r20210219(capital=200, do_trade=False):
                     if have_around_open_orders(last_price - 50, last_price + 50, list(open_buy_orderid_prices.values())) is False:
                         if have_around_filled_orders(last_price - 50, last_price + 50, trade) is False:
                             size = round(capital / last_price, 8)
-                            order_id = place_buy_order(spot, last_price, size)
-                            if order_id is not None:  # if no enough balance(usdt)
-                                tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, order_id, 0])
-                                trade[order_id] = [0, last_price, size, 0]  # order_id: state, price, size, pocket
+                            buy_order_id = place_buy_order(spot, last_price, size)
+                            if buy_order_id is not None:  # if no enough balance(usdt)
+                                tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, buy_order_id, 0, 0])
 
                 # sell strategy
                 r = get_filled_buy_orders(spot, '6494679719429120')
@@ -62,7 +61,7 @@ def r20210219(capital=200, do_trade=False):
                 for oid, p, size in filled_buy_orderid_prices_size:
                     if p + diff_boundary < last_price:
                         order_id = place_sell_order(spot, last_price, size)
-                        if order_id in trade:  # need trade.pop(order_id)? write whole not poped to file periodically
+                        if order_id in trade:  #
                             trade[order_id][0] = 2  # state filled
                             trade[order_id][3] = 1  # save to pocket
                         else:
