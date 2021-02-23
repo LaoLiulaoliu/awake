@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from .OkexSpot import OkexSpot
+from .strategy import place_buy_order
 
 
 TOP = 58000
-SECTION = int(TOP * (0.8 - 0.6)) # 11600
+SECTION = int(TOP * (0.8 - 0.7)) # 11600
 PART = int(SECTION / 10)  # 1160
 capital = 50
 
