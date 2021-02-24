@@ -58,7 +58,7 @@ def r20210219(capital=200, do_trade=False):
                         buy_order_id = place_buy_order(spot, last_price, size)
                         time.sleep(0.01)
                         if buy_order_id is not None:  # if no enough balance(usdt)
-                            trade.append([int(time.time() * TIME_PRECISION), last_price, size, 0, buy_order_id, 0, 0])
+                            trade.append([int(time.time() * TIME_PRECISION), last_price, size, 0, buy_order_id, 0, 1])
 
             # sell strategy
             r = trade.select_filled_buy_orders()
