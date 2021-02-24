@@ -64,16 +64,17 @@ def r20210219(capital=200, do_trade=False):
             r = trade.select_filled_buy_orders()
             if r.size > 0:
                 sell_orders = []
+                sell_order_of_buy_orderid = []
                 for filled_buy_order in r:
-                    if filled_buy_order[1] + diff_boundary < last_price:
+                    if filled_buy_order[1] + diff_boundary < last_price:  # maybe place after buy filled?
                         sell_orders.append({'price': last_price, 'size': size, 'side': 'sell',
                                             'instrument_id': INSTRUMENT[VALUTA_IDX]})
+                        sell_order_of_buy_orderid.append(filled_buy_order[4])
                 if len(sell_orders) > 0:
-                    sell_order_info = place_batch_sell_orders(spot, sell_orders)
-                    if sell_order_info is not None:
-                        for i in sell_order_info:
-                            trade.append([])
-
+                    sell_order_ids = place_batch_sell_orders(spot, sell_orders)
+                    for sell_id, buy_id in zip(sell_order_ids, sell_order_of_buy_orderid):
+                        if sell_id != 0:
+                        trade.append([0, 0, 0, 0, buy_id, i, 9])
                 time.sleep(0.01)
 
         strategy_t = time.time()

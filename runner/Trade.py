@@ -8,7 +8,7 @@ from .strategy import get_open_buy_orders, get_open_sell_orders
 
 
 class Trade(object):
-    """ 0: timestamp, 1: buy_price, 2: size, 3: sell_price, 4. buy_order_id, 5: sell_order_id,
+    """ 0: buy_timestamp, 1: buy_price, 2: size, 3: sell_price, 4. buy_order_id, 5: sell_order_id,
         6: 1-open buy, 2-fill buy, 9-open sell. do not use 0 in np.zeros data
     """
 
@@ -21,15 +21,14 @@ class Trade(object):
         self.sell_finished = Numpd('sell_finished_orders.txt', 7)
 
     def append(self, line_list):
-        """change order_id to int for numpy, okex is 16bit char with digital.
+        """change order_id to int for numpy in api return, okex is 16bit char with digital.
         coded state 1 9
         """
         if line_list[self.state_bit] == 1:
-            line_list[4] = int(line_list[4])
             self.trade.append(line_list)
         elif line_list[self.state_bit] == 9:
-            line_list[5] = int(line_list[5])
-            self.trade.info[:, self.buy_order_bit] = 1
+            idx = np.argwhere(self.trade.info[:, self.buy_order_bit] == line_list[self.buy_order_bit])[0][0]
+            self.trade.info[idx, self.sell_order_bit:self.state_bit+1] = line_list[self.sell_order_bit:self.state_bit+1]
 
     def load(self):
         self.trade.load()

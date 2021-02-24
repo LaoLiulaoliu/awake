@@ -32,7 +32,14 @@ def place_batch_sell_orders(spot, sell_orders):
     """
     for i in range(RETRY - 1):
         r = spot.batch_orders(sell_orders)
-        return r
+        sell_order_ids = []
+        for order in r[INSTRUMENT[VALUTA_IDX]]:
+            if 'error_code' in order and order['error_code'] != '0':
+                print(order)
+                sell_order_ids.append(0)
+            else:
+                sell_order_ids.append(int(order['order_id']))
+        return sell_order_ids
 
 
 def get_open_orders(spot, side):

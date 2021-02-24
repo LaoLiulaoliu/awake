@@ -5,7 +5,7 @@ import sys
 import getopt
 from test.numpd_test import numpd_test
 from api.OkexSpot import OkexSpot, INSTRUMENT
-
+from runner.strategy import place_batch_sell_orders
 
 def main(argv):
     try:
@@ -25,11 +25,12 @@ def main(argv):
             # print(spot.trad_fee())
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494679719429120')) bingo
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
+
             orders = [
                 {'price': 60000, 'size': 0.00001, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
                 {'price': 60001, 'size': 0.00001, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
             ]
-            print(spot.batch_orders(orders))
+            print(place_batch_sell_orders(orders))
         else:
             print(None)
 
