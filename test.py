@@ -24,7 +24,7 @@ def main(argv):
             # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
             # print(spot.trad_fee())
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494679719429120')) bingo
-            print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
+            # print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
             orders = [
                 {'price': 60000, 'size': 0.00001, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
                 {'price': 60001, 'size': 0.00001, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
