@@ -17,7 +17,7 @@ class Trade(object):
         self.sell_order_bit = 5
         self.state_bit = 6
 
-        self.trade = Blaze(fname, 7)
+        self.trade = Blaze(fname, 7, 200)
         self.sell_finished = Numpd('sell_finished_orders.txt', 7)
 
     def append(self, line_list):
@@ -57,7 +57,6 @@ class Trade(object):
         if r is not None:
             open_buy_order_idx = set()
             for order_id in list(r.keys()):
-                print(type(order_id), order_id, type(self.trade.info[:, self.buy_order_bit]), self.trade.info[:, self.buy_order_bit].shape)
                 condition = self.trade.info[:, self.buy_order_bit] == order_id
                 if np.any(condition):  # initial load have historical human placed orders, not added
                     open_buy_order_idx.add(np.argwhere(condition)[0][0])
