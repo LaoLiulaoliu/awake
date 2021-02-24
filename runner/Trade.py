@@ -85,7 +85,8 @@ class Trade(object):
         return False
 
     def get_open_sell_order_update_filled(self, spot):
-        """(self.trade.info[: 6] == 9) - open sell orders, 剩下的状态是9的，置2
+        """(self.trade.info[: 6] == 9) - open sell orders, 剩下的状态是9的，置8,
+           delete_sell_order
         """
         r = get_open_sell_orders(spot)
         if r is not None:
@@ -98,7 +99,7 @@ class Trade(object):
             rest_idx = list(trade_open_sell_order_idx - open_sell_order_idx)
             if len(rest_idx) > 0:
                 self.trade.info[rest_idx, self.state_bit] = 8
+                for i in rest_idx:
+                    self.sell_finished.append(self.trade.info[i, :])
+                    self.trade.delete(i)
             return r
-
-    def del_sell_order(self):
-        pass
