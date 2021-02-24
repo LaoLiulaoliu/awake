@@ -5,10 +5,10 @@ from datetime import datetime
 
 from storage.Numpd import Numpd
 from .Trade import Trade
-from .OkexSpot import OkexSpot
+from api.OkexSpot import OkexSpot
 from .strategy import *
 from .State import State
-from .const import INSTRUMENT, VALUTA_IDX
+from const import INSTRUMENT, VALUTA_IDX
 
 
 def r20210219(capital=200, do_trade=False):

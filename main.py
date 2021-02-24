@@ -5,7 +5,7 @@ import sys
 import getopt
 from test.numpd_test import numpd_test
 from runner.rule import r20210219
-from runner.OkexSpot import OkexSpot, INSTRUMENT
+from api.OkexSpot import OkexSpot, INSTRUMENT
 
 
 def main(argv):

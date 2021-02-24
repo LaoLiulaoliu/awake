@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import time
-from .OkexSpot import print_error_or_get_order_id
+from api.OkexSpot import print_error_or_get_order_id
 from .Tool import Tool
-from .const import VALUTA_IDX, TIME_PRECISION, RETRY, INSTRUMENT
+from const import VALUTA_IDX, TIME_PRECISION, RETRY, INSTRUMENT
 
 
 def place_buy_order(spot, bid_price, size):

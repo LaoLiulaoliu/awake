@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from .OkexSpot import OkexSpot
+from api.OkexSpot import OkexSpot
 from .strategy import place_buy_order
 
 TOP = 58000

@@ -3,7 +3,7 @@
 
 import time
 from .Tool import Tool
-from .const import MIN_60, MIN_42, MIN_30, MIN_12, VALUTA_IDX, TIME_PRECISION, INSTRUMENT
+from const import MIN_60, MIN_42, MIN_30, MIN_12, VALUTA_IDX, TIME_PRECISION, INSTRUMENT
 
 
 class State(object):

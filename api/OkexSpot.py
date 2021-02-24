@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from .HttpUtil import HttpUtil
-from .const import INSTRUMENT
+from const import INSTRUMENT
 
 
 class OkexSpot(object):
