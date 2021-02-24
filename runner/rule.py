@@ -24,7 +24,7 @@ def r20210219(capital=200, do_trade=False):
     trend.trend_load()
     state.set_restart_state(trend, spot, begin_time, last_price_init)
 
-    print(trend.info.status())
+    print(trend.status())
     # high_precent = [high_24h * 0.01 * i for i in range(100, 70, -1)]  # math.log2(30) = 5    # high_precent_index = {}
     
     diff_boundary = 150
