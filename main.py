@@ -17,7 +17,7 @@ def main(argv):
 
     for opt, arg in opts:
         if opt in ('-d', '--draw'):
-            from analysis.draw_spot import load_and_draw, draw_trend_txt
+            from analysis.draw_spot import draw_trend_txt
             draw_trend_txt(arg)
         elif opt == '-f':
             from runner.fast_order import do_order

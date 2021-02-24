@@ -4,18 +4,18 @@
 import json
 from datetime import datetime
 from runner.Tool import Tool
-from runner.Numpd import Numpd
+from storage.Numpd import Numpd
 from .Draw import Draw
 
 print(__name__, __package__)
 
 
 def get_leveldb_data(key):
-    from .DBHandler import DBHandler
+    from .KVDB import KVDB
     X = 'x'
     Y = 'y'
     data = {X: [], Y: []}
-    db = DBHandler(key)
+    db = KVDB(key)
 
     for k, v in db.iterator_kv():
         data[X].append(k)

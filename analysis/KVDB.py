@@ -7,15 +7,15 @@ import gevent.lock
 import json
 
 
-class DBHandler(object):
+class KVDB(object):
     __sem = gevent.lock.BoundedSemaphore(1)
 
     def __new__(cls, *args, **kwargs):
-        if not hasattr(DBHandler, '_instance'):
-            with DBHandler.__sem:
-                if not hasattr(DBHandler, '_instance'):
-                    DBHandler._instance = object.__new__(cls)
-        return DBHandler._instance
+        if not hasattr(KVDB, '_instance'):
+            with KVDB.__sem:
+                if not hasattr(KVDB, '_instance'):
+                    KVDB._instance = object.__new__(cls)
+        return KVDB._instance
 
     def __init__(self, name):
         self.db = leveldb.LevelDB(name)
@@ -63,5 +63,5 @@ class DBHandler(object):
 
 
 if __name__ == '__main__':
-    db = DBHandler('2021-02-19T03-20-36')
+    db = KVDB('2021-02-19T03-20-36')
     db.display()

@@ -3,8 +3,8 @@
 
 from datetime import datetime
 
-from .Numpd import Numpd
-from .Blaze import Blaze
+from storage.Numpd import Numpd
+from storage.Blaze import Blaze
 from .OkexSpot import OkexSpot
 from .strategy import *
 from .State import State

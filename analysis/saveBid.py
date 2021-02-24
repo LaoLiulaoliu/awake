@@ -4,13 +4,13 @@
 import time
 from datetime import datetime
 
-from analysis.DBHandler import DBHandler
+from analysis.KVDB import KVDB
 from runner.OkexSpot import OkexSpot, INSTRUMENT
 
 
 def init(name='test'):
     if not hasattr(init, '_db'):
-        setattr(init, '_db', DBHandler(name))
+        setattr(init, '_db', KVDB(name))
     if not hasattr(init, '_spot'):
         setattr(init, '_spot', OkexSpot(use_trade_key=False))
     return init._db, init._spot

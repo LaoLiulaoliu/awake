@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from .Blaze import Blaze
-from .const import VALUTA_IDX
+import numpy as np
+from storage.Blaze import Blaze
+from .OkexSpot import OkexSpot
 from .strategy import get_open_buy_orders
+
 
 class Trade(object):
     """ 0: timestamp, 1: price, 2: size, 3: buy_order_id, 4: sell_order_id,
         5: 0-open buy, 2-fill buy, 9-open sell
     """
+
     def __init__(self):
         self.spot = OkexSpot(use_trade_key=True)
         self.trade = Blaze('Trade_{VALUTA_IDX}.txt', 6)
@@ -30,7 +33,7 @@ class Trade(object):
 
             for order_id in list(r.keys()):
                 cond = self.trade.info[:, 3] == order_id
-                #record = np.compress(cond, self.trade.info, axis=0)[0]
+                # record = np.compress(cond, self.trade.info, axis=0)[0]
                 idx = np.argwhere(condition == True)[0]
 
             return r
