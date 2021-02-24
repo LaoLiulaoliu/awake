@@ -90,6 +90,15 @@ class OkexSpot(object):
 
     def batch_orders(self, orders):
         """ orders is an List of dict, dict e.g.: {'instrument_id': 'btc-usdt', 'side': side, 'size': size, 'price': price}
+        {
+            'client_oid': '',
+            'code': '0',
+            'error_code': '0',
+            'error_message': '',
+            'message': '',
+            'order_id': '6516534969978880',
+            'result': True
+        }
         """
         path = '/api/spot/v3/batch_orders'
         params = [
@@ -97,6 +106,9 @@ class OkexSpot(object):
              'price': order['price']}
             for order in orders]
         return self.http.httpPost(path, params)
+
+    def modify_order(self):
+        pass
 
     def cancel_order(self, orderid, instrument_id=INSTRUMENT[0]):
         path = '/api/spot/v3/cancel_orders/' + orderid
