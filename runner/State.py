@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import time
-from .OkexSpot import INSTRUMENT
 from .Tool import Tool
-from .const import MIN_60, MIN_42, MIN_30, MIN_12, VALUTA_IDX, TIME_PRECISION
+from .const import MIN_60, MIN_42, MIN_30, MIN_12, VALUTA_IDX, TIME_PRECISION, INSTRUMENT
 
 
 class State(object):
@@ -103,7 +102,6 @@ class State(object):
 
     def trace_trend_update_state(self, spot, trend):
         r = spot.ticker(INSTRUMENT[VALUTA_IDX])
-        time.sleep(0.1)
         if r:
             if 'timestamp' not in r:
                 print('timestamp not in r:', r)
@@ -130,6 +128,7 @@ class State(object):
             r = self.trace_trend_update_state(spot, trend)
             if r and self.pair[idx]['i'] > 0:
                 break
+            time.sleep(0.1)
 
     def get_60min(self):
         return self.p60

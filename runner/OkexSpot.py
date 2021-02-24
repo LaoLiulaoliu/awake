@@ -2,12 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from .HttpUtil import HttpUtil
-
-INSTRUMENT = {
-    0: 'btc-usdt',
-    1: 'eth-usdt',
-    2: 'doge-usdt'
-}
+from .const import INSTRUMENT
 
 
 class OkexSpot(object):
@@ -216,6 +211,7 @@ class OkexSpot(object):
         """
         path = '/api/spot/v3/instruments/{}/trades'.format(instrument_id)
         return self.http.httpGet(path)
+
 
 def print_error_or_get_order_id(ret):
     if 'error_code' in ret and ret['error_code'] != '0':

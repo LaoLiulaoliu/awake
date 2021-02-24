@@ -4,8 +4,8 @@
 import time
 import numpy as np
 
-
 FNAME = 'd.npy'
+
 
 def npsave(data, func):
     with open(FNAME, 'wb') as f:

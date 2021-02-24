@@ -5,7 +5,8 @@ import time
 from datetime import datetime
 
 from analysis.KVDB import KVDB
-from runner.OkexSpot import OkexSpot, INSTRUMENT
+from runner.OkexSpot import OkexSpot
+from runner.const import INSTRUMENT
 
 
 def init(name='test'):

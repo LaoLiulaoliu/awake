@@ -4,17 +4,18 @@
 from datetime import datetime
 
 from storage.Numpd import Numpd
-from storage.Blaze import Blaze
+from .Trade import Trade
 from .OkexSpot import OkexSpot
 from .strategy import *
 from .State import State
+from .const import INSTRUMENT, VALUTA_IDX
 
 
 def r20210219(capital=200, do_trade=False):
     spot = OkexSpot(use_trade_key=True)
     state = State()
-    tradeinfo = Blaze(f'TRADE_{VALUTA_IDX}.py', 6)
-    tradeinfo.load()
+    trade = Trade(f'TRADE_{VALUTA_IDX}.txt')
+    trade.load()
 
     high_24h, low_24h, last_price_init, begin_time = get_high_low_lastest(spot)
     # pickup_leak_place_buy(low_24h, capital, spot, tradeinfo)
@@ -23,49 +24,57 @@ def r20210219(capital=200, do_trade=False):
     trend.trend_load()
     state.set_restart_state(trend, spot, begin_time, last_price_init)
 
-    print(trend.data.status())
+    print(trend.info.status())
     # high_precent = [high_24h * 0.01 * i for i in range(100, 70, -1)]  # math.log2(30) = 5    # high_precent_index = {}
     
     diff_boundary = 150
-    trade = {}
-    open_buy_orderid_prices = {}
+    bias = 50
+    #trade = {}
     filled_buy_orderid_prices_size = []
     while True:
         t = time.time()
-        ret = get_open_buy_orders(spot)
-        if ret is not None:
-            open_buy_orderid_prices = ret
-
-        open_buy_orders_t = time.time()
         ret = state.trace_trend_update_state(spot, trend)
-        ticket_t = time.time()
+        time.sleep(0.01)
+        if not ret:
+            continue
+        trace_t = time.time()
 
-        if ret:
-            timestamp, last_price = trend.last()
+        ret = trade.get_open_buy_order_update_filled(spot)
+        time.sleep(0.01)
+        if ret is None:
+            continue
+        open_buy_orders_t = time.time()
 
-            if do_trade:
-                high_hh = state.get_30min()['h']
-                # buy strategy
-                if high_hh - diff_boundary > last_price:
-                    if have_around_open_orders(last_price - 50, last_price + 50, list(open_buy_orderid_prices.values())) is False:
-                        if have_around_filled_orders(last_price - 50, last_price + 50, trade) is False:
-                            size = round(capital / last_price, 8)
-                            buy_order_id = place_buy_order(spot, last_price, size)
-                            if buy_order_id is not None:  # if no enough balance(usdt)
-                                tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, buy_order_id, 0, 0])
+        open_buy_orderid_prices = ret
+        timestamp, last_price = trend.last()
 
-                # sell strategy
-                r = get_filled_buy_orders(spot, '6494679719429120')
-                if r is not None:
-                    filled_buy_orderid_prices_size = r
-                for oid, p, size in filled_buy_orderid_prices_size:
-                    if p + diff_boundary < last_price:
-                        order_id = place_sell_order(spot, last_price, size)
-                        if order_id in trade:  #
-                            trade[order_id][0] = 2  # state filled
-                            trade[order_id][3] = 1  # save to pocket
-                        else:
-                            print(f'order_id not in trade: {order_id}, {trade}')
+        if do_trade:
+            high_hh = state.get_30min()['h']
+            # buy strategy
+            if high_hh - diff_boundary > last_price:
+                if have_around_open_orders(last_price - bias, last_price + bias, list(open_buy_orderid_prices.values())) is False:
+                    if trade.have_around_filled_buy_orders(last_price - bias, last_price + bias) is False:
+                        size = round(capital / last_price, 8)
+                        buy_order_id = place_buy_order(spot, last_price, size)
+                        time.sleep(0.01)
+                        if buy_order_id is not None:  # if no enough balance(usdt)
+                            trade.append([int(time.time() * TIME_PRECISION), last_price, size, 0, buy_order_id, 0, 0])
+
+            # sell strategy
+            r = trade.select_filled_buy_orders()
+            if r.size > 0:
+                sell_orders = []
+                for filled_buy_order in r:
+                    if filled_buy_order[1] + diff_boundary < last_price:
+                        sell_orders.append({'price': last_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]})
+                if len(sell_orders) > 0:
+                    sell_order_info = place_batch_sell_orders(spot, sell_orders)
+                    if sell_order_info is not None:
+                        for i in sell_order_info:
+                            trade.append([])
+
+                time.sleep(0.01)
+
 
         strategy_t = time.time()
-        print(f'circle: {strategy_t - t}, order: {open_buy_orders_t - t}, ticket: {ticket_t - open_buy_orders_t}, strategy: {strategy_t - ticket_t}')
+        print(f'circle: {strategy_t - t}, trace: {trace_t - t}, order: {open_buy_orders_t - trace_t}, strategy: {strategy_t - open_buy_orders_t}')
