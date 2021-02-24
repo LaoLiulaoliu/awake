@@ -3,14 +3,13 @@
 
 import sys
 import getopt
-from test.numpd_test import numpd_test
 from runner.rule import r20210219
 from api.OkexSpot import OkexSpot, INSTRUMENT
 
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, 'd:fhnos:u:z:', ['draw=', 'save=', 'dump=', 'trade='])
+        opts, args = getopt.getopt(argv, 'd:fhs:u:z:', ['draw=', 'save=', 'dump=', 'trade='])
     except getopt.GetoptError:
         print('main.py -s leveldb_name -t')
         sys.exit(2)
@@ -25,18 +24,6 @@ def main(argv):
         elif opt == '-h':
             print('python main.py -s leveldb_name -t')
             sys.exit()
-        elif opt in ('-n', '--numpd'):
-            numpd_test()
-        elif opt in ('-o', '--spot'):
-            VALUTA_IDX = 0
-            spot = OkexSpot(use_trade_key=True)
-            # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
-            # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
-            # print(spot.trad_fee())
-            # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494562570233856'))
-            # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494679719429120')) bingo
-            print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
-            # print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
         elif opt in ('-s', '--save'):
             # '2021-02-19T12-17-16'
             arg = arg if arg else None
