@@ -9,7 +9,7 @@ from .strategy import get_open_buy_orders, get_open_sell_orders
 
 class Trade(object):
     """ 0: buy_timestamp, 1: buy_price, 2: size, 3: sell_price, 4. buy_order_id, 5: sell_order_id,
-        6: 1-open buy, 2-fill buy, 9-open sell. do not use 0 in np.zeros data
+        6: 1-open buy, 2-fill buy, 9-open sell, 8-delete sell. do not use 0 in np.zeros data
     """
 
     def __init__(self, fname):
@@ -50,7 +50,7 @@ class Trade(object):
         return np.compress(self.trade.info[:, self.state_bit] == 9, self.trade.info, axis=0)
 
     def get_open_buy_order_update_filled(self, spot):
-        """(self.trade.info[: 6] == 0) - open buys orders, 剩下的状态是0的，置2
+        """(self.trade.info[: 6] == 1) - open buy orders, 剩下的状态是1的，置2
         """
         r = get_open_buy_orders(spot)
         if r is not None:
@@ -85,19 +85,19 @@ class Trade(object):
         return False
 
     def get_open_sell_order_update_filled(self, spot):
-        """ not implemented yet
+        """(self.trade.info[: 6] == 9) - open sell orders, 剩下的状态是9的，置2
         """
         r = get_open_sell_orders(spot)
         if r is not None:
             open_sell_order_idx = set()
             for order_id in list(r.keys()):
-                condition = self.trade.info[:, self.buy_order_bit] == order_id
+                condition = self.trade.info[:, self.sell_order_bit] == order_id
                 open_sell_order_idx.add(np.argwhere(condition)[0][0])
 
-            trade_open_buy_order_idx = set(np.argwhere(self.trade.info[: self.state_bit] == 9).ravel())
-            rest_idx = list(trade_open_buy_order_idx - open_sell_order_idx)
+            trade_open_sell_order_idx = set(np.argwhere(self.trade.info[: self.state_bit] == 9).ravel())
+            rest_idx = list(trade_open_sell_order_idx - open_sell_order_idx)
             if len(rest_idx) > 0:
-                self.trade.info[rest_idx, self.state_bit] = 2
+                self.trade.info[rest_idx, self.state_bit] = 8
             return r
 
     def del_sell_order(self):
