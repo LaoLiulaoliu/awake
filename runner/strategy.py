@@ -14,7 +14,7 @@ def place_buy_order(spot, bid_price, size):
         r = spot.place_order('buy', INSTRUMENT[VALUTA_IDX], bid_price, size)
         order_id = print_error_or_get_order_id(r)
         if order_id:
-            return order_id
+            return int(order_id)
 
 
 def place_sell_order(spot, bid_price, size):
@@ -24,7 +24,7 @@ def place_sell_order(spot, bid_price, size):
         r = spot.place_order('sell', INSTRUMENT[VALUTA_IDX], bid_price, size)
         order_id = print_error_or_get_order_id(r)
         if order_id:
-            return order_id
+            return int(order_id)
 
 
 def place_batch_sell_orders(spot, sell_orders):
@@ -42,7 +42,7 @@ def get_open_orders(spot, side):
     for i in range(RETRY - 2):
         r = spot.open_orders(INSTRUMENT[VALUTA_IDX])
         if 'error_code' not in r and len(r) > 0:
-            return {i['order_id']: float(i['price']) for i in r if i['side'] == side}
+            return {int(i['order_id']): float(i['price']) for i in r if i['side'] == side}
 
 
 def get_open_buy_orders(spot):
@@ -59,18 +59,18 @@ def get_filled_buy_orders(spot, before=None):
     for i in range(RETRY - 3):
         r = spot.orders(2, INSTRUMENT[VALUTA_IDX], before)
         if 'error_code' not in r and len(r) > 0:
-            return [(i['order_id'], float(i['price']), i['size']) for i in r if i['side'] == 'buy']
+            return [(int(i['order_id']), float(i['price']), i['size']) for i in r if i['side'] == 'buy']
         time.sleep(0.01)
 
 
-def place_buy_order_saveinfo(spot, tradeinfo, capital, last_price):
+def place_buy_order_saveinfo(spot, trade, capital, last_price):
     """8 is ok system precision
        0 stands for open state
     """
     size = round(capital / last_price, 8)
     buy_order_id = place_buy_order(spot, last_price, size)
     if buy_order_id is not None:  # if no enough balance(usdt)
-        tradeinfo.append([int(time.time() * TIME_PRECISION), last_price, size, 0, buy_order_id, 0, 0])
+        trade.append([int(time.time() * TIME_PRECISION), last_price, size, 0, buy_order_id, 0, 0])
         return True
     return False
 
@@ -85,11 +85,11 @@ def get_high_low_lastest(spot):
                     Tool.convert_time_str(r['timestamp'], TIME_PRECISION))
 
 
-def pickup_leak_place_buy(low_24h, capital, spot, tradeinfo):
+def pickup_leak_place_buy(low_24h, capital, spot, trade):
     low_precent = [low_24h * 0.01 * i for i in range(100, 70, -1)]
     pick_idx_by_hand = [2, 4, 6, 8, 10]
     for i in pick_idx_by_hand:
-        place_buy_order_saveinfo(spot, tradeinfo, capital, low_precent[i])
+        place_buy_order_saveinfo(spot, trade, capital, low_precent[i])
 
 
 def have_around_open_orders(low, high, prices):

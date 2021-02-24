@@ -18,7 +18,7 @@ def r20210219(capital=200, do_trade=False):
     trade.load()
 
     high_24h, low_24h, last_price_init, begin_time = get_high_low_lastest(spot)
-    # pickup_leak_place_buy(low_24h, capital, spot, tradeinfo)
+    # pickup_leak_place_buy(low_24h, capital, spot, trade)
 
     trend = Numpd(f"TREND_{datetime.utcnow().strftime('%Y-%m-%d')}.txt", 2)
     trend.trend_load()
@@ -26,10 +26,9 @@ def r20210219(capital=200, do_trade=False):
 
     print(trend.status())
     # high_precent = [high_24h * 0.01 * i for i in range(100, 70, -1)]  # math.log2(30) = 5    # high_precent_index = {}
-    
+
     diff_boundary = 150
     bias = 50
-    #trade = {}
     filled_buy_orderid_prices_size = []
     while True:
         t = time.time()
@@ -52,7 +51,8 @@ def r20210219(capital=200, do_trade=False):
             high_hh = state.get_30min()['h']
             # buy strategy
             if high_hh - diff_boundary > last_price:
-                if have_around_open_orders(last_price - bias, last_price + bias, list(open_buy_orderid_prices.values())) is False:
+                if have_around_open_orders(last_price - bias, last_price + bias,
+                                           list(open_buy_orderid_prices.values())) is False:
                     if trade.have_around_filled_buy_orders(last_price - bias, last_price + bias) is False:
                         size = round(capital / last_price, 8)
                         buy_order_id = place_buy_order(spot, last_price, size)
@@ -66,7 +66,8 @@ def r20210219(capital=200, do_trade=False):
                 sell_orders = []
                 for filled_buy_order in r:
                     if filled_buy_order[1] + diff_boundary < last_price:
-                        sell_orders.append({'price': last_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]})
+                        sell_orders.append({'price': last_price, 'size': size, 'side': 'sell',
+                                            'instrument_id': INSTRUMENT[VALUTA_IDX]})
                 if len(sell_orders) > 0:
                     sell_order_info = place_batch_sell_orders(spot, sell_orders)
                     if sell_order_info is not None:
@@ -75,6 +76,6 @@ def r20210219(capital=200, do_trade=False):
 
                 time.sleep(0.01)
 
-
         strategy_t = time.time()
-        print(f'circle: {strategy_t - t}, trace: {trace_t - t}, order: {open_buy_orders_t - trace_t}, strategy: {strategy_t - open_buy_orders_t}')
+        print(
+            f'circle: {strategy_t - t}, trace: {trace_t - t}, order: {open_buy_orders_t - trace_t}, strategy: {strategy_t - open_buy_orders_t}')
