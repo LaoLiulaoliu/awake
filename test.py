@@ -7,6 +7,7 @@ from test.numpd_test import numpd_test
 from api.OkexSpot import OkexSpot, INSTRUMENT
 from runner.strategy import place_batch_sell_orders
 
+
 def main(argv):
     try:
         opts, args = getopt.getopt(argv, 'no', ['numpd=', 'spot='])

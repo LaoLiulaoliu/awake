@@ -74,7 +74,7 @@ def r20210219(capital=200, do_trade=False):
                     sell_order_ids = place_batch_sell_orders(spot, sell_orders)
                     for sell_id, buy_id in zip(sell_order_ids, sell_order_of_buy_orderid):
                         if sell_id != 0:
-                        trade.append([0, 0, 0, 0, buy_id, i, 9])
+                            trade.append([0, 0, 0, 0, buy_id, sell_id, 9])
                 time.sleep(0.01)
 
         strategy_t = time.time()

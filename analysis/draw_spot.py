@@ -58,6 +58,7 @@ def flush_trend_nearly_one_hour(self, trend):
         self.flush_trend = 1
         trend.flush()
 
+
 def draw_trend_txt(fname):
     timestamps = []
     prices = []
@@ -76,12 +77,12 @@ def draw_trend_txt(fname):
 
         if 31 & cnt == 0:
             if timestamps[head] - timestamp > scale:
-                f = datetime.utcfromtimestamp(timestamps[cnt-1] * 0.001).strftime('%Y-%m-%dT%H%M%S')
+                f = datetime.utcfromtimestamp(timestamps[cnt - 1] * 0.001).strftime('%Y-%m-%dT%H%M%S')
                 t = datetime.utcfromtimestamp(timestamps[head] * 0.001).strftime('%Y-%m-%dT%H%M%S')
                 draw.draw_plot_xy(
                     list(reversed(timestamps[head:cnt])),
                     list(reversed(prices[head:cnt])),
-                    f'{f} {t}') # (]
+                    f'{f} {t}')  # (]
                 head = cnt
 
 
