@@ -4,10 +4,9 @@
 from ruler.FakeState import FakeState
 from ruler.FakeTrade import FakeTrade
 from const import INSTRUMENT, VALUTA_IDX
-from api.apiwrapper import have_around_open_orders
 
 
-def r20210219(capital, trend_fname):
+def r20210219(trend_fname, capital=10):
     trade = FakeTrade(f'TRADE_{VALUTA_IDX}.txt')
     trade.load()
 
@@ -48,3 +47,6 @@ def r20210219(capital, trend_fname):
                 for sell_id, buy_id in zip(sell_order_ids, sell_order_of_buy_orderid):
                     if sell_id != 0:
                         trade.append([0, 0, 0, last_price, buy_id, sell_id, 9])
+
+    trade.get_open_sell_order_update_filled()
+    trade.settlement()

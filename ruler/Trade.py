@@ -110,3 +110,21 @@ class Trade(object):
                     self.sell_finished.append(self.trade.info[i, :])
                     self.trade.delete(i)
             return r
+
+    def settlement(self):
+        earn = np.sum([(i[3] - i[1]) * i[2] for i in self.sell_finished.iterator()])
+
+        open_buy = 0
+        btc = 0
+        for i in np.compress(self.trade.info[:, self.state_bit] == 1, self.trade.info, axis=0):
+            open_buy += i[1] * i[2]
+
+        for i in np.compress(self.trade.info[:, self.state_bit] == 2, self.trade.info, axis=0):
+            btc += i[2]
+
+        for i in np.compress(self.trade.info[:, self.state_bit] == 9, self.trade.info, axis=0):
+            btc += i[2]
+
+        print(f'earned: {earn}, open buy money: {open_buy}, btc in repo: {btc}')
+
+
