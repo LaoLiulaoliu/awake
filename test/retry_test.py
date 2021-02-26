@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from retrying import retry
-import time
 
 
 def retry_if_error(exception):

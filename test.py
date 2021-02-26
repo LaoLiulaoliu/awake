@@ -5,7 +5,7 @@ import sys
 import getopt
 from test.numpd_test import numpd_test
 from api.OkexSpot import OkexSpot, INSTRUMENT
-from runner.strategy import place_batch_sell_orders
+from api.apiwrapper import place_batch_sell_orders
 
 
 def main(argv):

@@ -3,8 +3,7 @@
 
 import sys
 import getopt
-from runner.rule import r20210219
-from api.OkexSpot import OkexSpot, INSTRUMENT
+from ruler.rule import r20210219
 
 
 def main(argv):
@@ -19,7 +18,7 @@ def main(argv):
             from analysis.draw_spot import draw_trend_txt
             draw_trend_txt(arg)
         elif opt == '-f':
-            from runner.fast_order import do_order
+            from ruler.fast_order import do_order
             do_order()
         elif opt == '-h':
             print('python main.py -s leveldb_name -t')

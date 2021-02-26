@@ -6,7 +6,7 @@ from datetime import datetime
 from storage.Numpd import Numpd
 from .Trade import Trade
 from api.OkexSpot import OkexSpot
-from .strategy import *
+from api.apiwrapper import *
 from .State import State
 from const import INSTRUMENT, VALUTA_IDX
 

@@ -3,7 +3,7 @@
 
 import time
 from api.OkexSpot import print_error_or_get_order_id
-from .Tool import Tool
+from ruler.Tool import Tool
 from const import VALUTA_IDX, TIME_PRECISION, RETRY, INSTRUMENT
 
 

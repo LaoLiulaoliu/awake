@@ -4,7 +4,7 @@
 import numpy as np
 from storage.Blaze import Blaze
 from storage.Numpd import Numpd
-from .strategy import get_open_buy_orders, get_open_sell_orders
+from api.apiwrapper import get_open_buy_orders, get_open_sell_orders
 
 
 class Trade(object):

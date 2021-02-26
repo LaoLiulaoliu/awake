@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from api.OkexSpot import OkexSpot
-from .strategy import place_buy_order
+from api.apiwrapper import place_buy_order
 
 TOP = 58000
 SECTION = int(TOP * (0.8 - 0.6))  # 11600
