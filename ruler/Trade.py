@@ -28,7 +28,7 @@ class Trade(object):
             self.trade.append(line_list)
         elif line_list[self.state_bit] == 9:
             idx = np.argwhere(self.trade.info[:, self.buy_order_bit] == line_list[self.buy_order_bit])[0][0]
-            self.trade.info[idx, self.sell_order_bit:self.state_bit+1] = line_list[self.sell_order_bit:self.state_bit+1]
+            self.trade.info[idx, 3:self.state_bit+1] = line_list[3:self.state_bit+1]
 
     def load(self):
         self.trade.load()
@@ -49,10 +49,10 @@ class Trade(object):
         """
         return np.compress(self.trade.info[:, self.state_bit] == 9, self.trade.info, axis=0)
 
-    def get_open_buy_order_update_filled(self, spot):
+    def get_open_buy_order_update_filled(self):
         """(self.trade.info[: 6] == 1) - open buy orders, 剩下的状态是1的，置2
         """
-        r = get_open_buy_orders(spot)
+        r = get_open_buy_orders()
         if r is not None:
             open_buy_order_idx = set()
             for order_id in list(r.keys()):
@@ -75,6 +75,13 @@ class Trade(object):
             return np.any((open_records[:, 1] > low) & (open_records[:, 1] < high))
         return False
 
+    @staticmethod
+    def have_around_open_orders(low, high, prices):
+        for p in prices:
+            if low < p < high:
+                return True
+        return False
+
     def have_around_filled_buy_orders(self, low, high):
         """coded state 2
         """
@@ -84,11 +91,11 @@ class Trade(object):
             return np.any((filled_records[:, 1] > low) & (filled_records[:, 1] < high))
         return False
 
-    def get_open_sell_order_update_filled(self, spot):
+    def get_open_sell_order_update_filled(self):
         """(self.trade.info[: 6] == 9) - open sell orders, 剩下的状态是9的，置8,
            delete_sell_order
         """
-        r = get_open_sell_orders(spot)
+        r = get_open_sell_orders()
         if r is not None:
             open_sell_order_idx = set()
             for order_id in list(r.keys()):

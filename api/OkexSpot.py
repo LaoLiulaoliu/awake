@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import gevent.lock
 from .HttpUtil import HttpUtil
 from const import INSTRUMENT
 
@@ -8,6 +9,14 @@ from const import INSTRUMENT
 class OkexSpot(object):
     """ 币币api
     """
+    __sem = gevent.lock.BoundedSemaphore(1)
+
+    def __new__(cls, *args, **kwargs):
+        if not hasattr(OkexSpot, '_instance'):
+            with OkexSpot.__sem:
+                if not hasattr(OkexSpot, '_instance'):
+                    OkexSpot._instance = object.__new__(cls)
+        return OkexSpot._instance
 
     def __init__(self, use_trade_key=False):
         self.http = HttpUtil(use_trade_key)

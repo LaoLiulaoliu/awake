@@ -3,7 +3,8 @@
 
 import time
 from .Tool import Tool
-from const import MIN_60, MIN_42, MIN_30, MIN_12, VALUTA_IDX, TIME_PRECISION, INSTRUMENT
+from const import MIN_60, MIN_42, MIN_30, MIN_12, TIME_PRECISION
+from api.apiwrapper import get_ticket
 
 
 class State(object):
@@ -26,7 +27,7 @@ class State(object):
             pair['l'] = low
             pair['i'] = idx
 
-    def set_restart_state(self, trend, spot, begin_time, begin_price):
+    def set_restart_state(self, trend, begin_time, begin_price):
         """1. data is too short, less than 12 minutes, need traverse 3 times. seted all True
            2. data expired largest period(60), no care long short. seted all False
            3. data expired short period, not expired long period. seted half False, half True
@@ -60,9 +61,9 @@ class State(object):
         if False in seted:
             trend.append((begin_time, begin_price))
             if seted[1] is False:
-                self.first_several_minutes_no_bid(spot, trend, 1)
+                self.first_several_minutes_no_bid(trend, 1)
             elif seted[0] is False:
-                self.first_several_minutes_no_bid(spot, trend, 0)
+                self.first_several_minutes_no_bid(trend, 0)
 
     def compare_set_current_high_low(self, current_price):
         """ 当前值是最大最小值，设置之
@@ -102,8 +103,8 @@ class State(object):
                     if low_need_sort:
                         pair['l'] = r[:, 1].min()
 
-    def trace_trend_update_state(self, spot, trend):
-        r = spot.ticker(INSTRUMENT[VALUTA_IDX])
+    def trace_trend_update_state(self, trend):
+        r = get_ticket()
         if r:
             if 'timestamp' not in r:
                 print('timestamp not in r:', r)
@@ -124,9 +125,9 @@ class State(object):
             self.flush_trend = 1
             trend.flush()
 
-    def first_several_minutes_no_bid(self, spot, trend, idx):
+    def first_several_minutes_no_bid(self, trend, idx):
         while True:
-            r = self.trace_trend_update_state(spot, trend)
+            r = self.trace_trend_update_state(trend)
             if r is not None and self.pair[idx]['i'] > 0:
                 break
             time.sleep(0.01)
