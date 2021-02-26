@@ -128,7 +128,7 @@ class State(object):
             r = self.trace_trend_update_state(spot, trend)
             if r and self.pair[idx]['i'] > 0:
                 break
-            time.sleep(0.1)
+            time.sleep(0.01)
 
     def get_60min(self):
         return self.p60
