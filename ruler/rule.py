@@ -34,8 +34,9 @@ def r20210219(capital=200, do_trade=False):
         t = time.time()
         ret = state.trace_trend_update_state(spot, trend)
         time.sleep(0.01)
-        if not ret:
+        if ret is None:
             continue
+        timestamp, last_price = ret
         trace_t = time.time()
 
         ret = trade.get_open_buy_order_update_filled(spot)
@@ -45,7 +46,6 @@ def r20210219(capital=200, do_trade=False):
         open_buy_orders_t = time.time()
 
         open_buy_orderid_prices = ret
-        timestamp, last_price = trend.last()
 
         if do_trade:
             high_hh = state.get_30min()['h']

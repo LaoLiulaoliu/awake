@@ -73,11 +73,13 @@ class State(object):
             if current_price < pair['l']:
                 pair['l'] = current_price
 
-    def update_high_low_idx(self, timestamp, trend):
+    def update_high_low_idx(self, timestamp, trend, trend_replay_current_idx=None):
         """if 当前时间 - 前12分钟时间点的data[index] > 12分钟:
                时间点前进一步
            if 淘汰时间点有最大最小值:
                当下12分钟时间数据list排序
+
+        :param trend_replay_current_idx: only used for replay trend
         """
         for pair, compare_time in zip(self.pair, self.compare_time):
             high_need_sort, low_need_sort = False, False
@@ -93,7 +95,7 @@ class State(object):
                     break
 
             if high_need_sort or low_need_sort:
-                r = trend.get_range(pair['i'])
+                r = trend.get_range(pair['i'], trend_replay_current_idx)
                 if r is not None:
                     if high_need_sort:
                         pair['h'] = r[:, 1].max()
@@ -114,8 +116,7 @@ class State(object):
 
             self.compare_set_current_high_low(current_price)
             self.update_high_low_idx(timestamp, trend)
-            return True
-        return False
+            return timestamp, current_price
 
     def flush_trend_nearly_one_hour(self, trend):
         self.flush_trend += 1
@@ -126,7 +127,7 @@ class State(object):
     def first_several_minutes_no_bid(self, spot, trend, idx):
         while True:
             r = self.trace_trend_update_state(spot, trend)
-            if r and self.pair[idx]['i'] > 0:
+            if r is not None and self.pair[idx]['i'] > 0:
                 break
             time.sleep(0.01)
 

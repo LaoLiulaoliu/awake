@@ -12,25 +12,23 @@ class FakeState(State):
     def __init__(self, trend_fname):
         super(FakeState, self).__init__()
         self.trend = Numpd(trend_fname, 2)
-
-        self.first_several_minutes_no_bid(1)
+        self.trend.trend_load()
 
     def init(self):
         for i, data in self.trend.iterator(reverse=False):
             timestamp, price = data
             self.set_init_state(price, price, 0)
             break
+        self.first_thirty_minutes_no_bid(1)
 
-    def trace_trend_update_state(self):
+    def trend_iter_state(self):
         for i, data in self.trend.iterator(reverse=False):
             timestamp, price = data
             self.compare_set_current_high_low(price)
-            self.update_high_low_idx(timestamp, trend)
-            return True
-        return False
+            self.update_high_low_idx(timestamp, self.trend, i)
+            yield timestamp, price
 
-    def first_several_minutes_no_bid(self, idx):
-        while True:
-            r = self.trace_trend_update_state()
-            if r and self.pair[idx]['i'] > 0:
+    def first_thirty_minutes_no_bid(self, idx):
+        for r in self.trend_iter_state():
+            if r is not None and self.pair[idx]['i'] > 0:
                 break
