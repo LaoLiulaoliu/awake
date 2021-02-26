@@ -38,9 +38,7 @@ def r20210219(capital=200, do_trade=False):
 
         ret = trade.get_open_buy_order_update_filled()
         time.sleep(0.01)
-        if ret is None:
-            continue
-        open_buy_orderid_prices = ret
+        open_buy_orderid_prices = ret  # {} or have content
         open_buy_orders_t = time.time()
 
         if do_trade:

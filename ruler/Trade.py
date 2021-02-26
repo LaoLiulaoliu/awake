@@ -53,7 +53,7 @@ class Trade(object):
         """(self.trade.info[: 6] == 1) - open buy orders, 剩下的状态是1的，置2
         """
         r = get_open_buy_orders()
-        if r is not None:
+        if len(r) > 0:
             open_buy_order_idx = set()
             for order_id in list(r.keys()):
                 condition = self.trade.info[:, self.buy_order_bit] == order_id
@@ -64,7 +64,7 @@ class Trade(object):
             rest_idx = list(trade_open_buy_order_idx - open_buy_order_idx)  # {1,2,3} - {1, 5}
             if len(rest_idx) > 0:
                 self.trade.info[rest_idx, self.state_bit] = 2
-            return r
+        return r
 
     def have_around_open_buy_orders(self, low, high):
         """coded state 1
@@ -96,7 +96,7 @@ class Trade(object):
            delete_sell_order
         """
         r = get_open_sell_orders()
-        if r is not None:
+        if len(r) > 0:
             open_sell_order_idx = set()
             for order_id in list(r.keys()):
                 condition = self.trade.info[:, self.sell_order_bit] == order_id
@@ -109,7 +109,7 @@ class Trade(object):
                 for i in rest_idx:
                     self.sell_finished.append(self.trade.info[i, :])
                     self.trade.delete(i)
-            return r
+        return r
 
     def settlement(self):
         earn = np.sum([(i[3] - i[1]) * i[2] for i in self.sell_finished.iterator()])

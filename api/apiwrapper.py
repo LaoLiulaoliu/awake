@@ -50,8 +50,11 @@ def get_open_orders(side):
     """
     for i in range(RETRY - 2):
         r = OK_SPOT.open_orders(INSTRUMENT[VALUTA_IDX])
+        if len(r) == 0:
+            return {}
         if 'error_code' not in r and len(r) > 0:
             return {int(i['order_id']): float(i['price']) for i in r if i['side'] == side}
+    return {}
 
 
 def get_open_buy_orders():

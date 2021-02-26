@@ -11,15 +11,15 @@ class FakeTrade(Trade):
 
     def get_open_buy_order_update_filled(self, last_price):
         condition = self.trade.info[: self.state_bit] == 1
+        open_buy_orderid_prices = {}
         if np.any(condition):
-            open_buy_orderid_prices = {}
             for open_buy_order_idx in np.argwhere(condition).ravel():
                 buy_price = self.trade.info[open_buy_order_idx, 1]
                 if last_price <= buy_price:
                     self.trade.info[open_buy_order_idx, self.state_bit] = 2
                 else:
                     open_buy_orderid_prices[self.trade.info[open_buy_order_idx, self.buy_order_bit]] = buy_price
-            return open_buy_orderid_prices
+        return open_buy_orderid_prices
 
     @staticmethod
     def place_buy_order(last_price, size):

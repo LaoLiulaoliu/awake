@@ -26,7 +26,7 @@ class FakeState(State):
             timestamp, price = data
             self.compare_set_current_high_low(price)
             self.update_high_low_idx(timestamp, self.trend, i)
-            yield timestamp, price
+            yield int(timestamp), price
 
     def first_thirty_minutes_no_bid(self, idx):
         for r in self.trend_iter_state():

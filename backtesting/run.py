@@ -17,9 +17,7 @@ def r20210219(trend_fname, capital=10):
     bias = 50
     for timestamp, last_price in state.trend_iter_state():
         ret = trade.get_open_buy_order_update_filled(last_price)
-        if ret is None:
-            continue
-        open_buy_orderid_prices = ret
+        open_buy_orderid_prices = ret  # {} or have content
 
         high_hh = state.get_30min()['h']
         # buy strategy
