@@ -2,12 +2,22 @@
 # -*- coding: utf-8 -*-
 
 import time
+import gevent
 from .Tool import Tool
 from const import MIN_60, MIN_42, MIN_30, MIN_12, TIME_PRECISION
 from api.apiwrapper import get_ticket
 
 
 class State(object):
+    __sem = gevent.lock.BoundedSemaphore(1)
+
+    def __new__(cls, *args, **kwargs):
+        if not hasattr(State, '_instance'):
+            with State.__sem:
+                if not hasattr(State, '_instance'):
+                    State._instance = object.__new__(cls)
+        return State._instance
+
     def __init__(self):
         self.flush_trend = 0
         # p60: pair of 60 minutes
@@ -148,3 +158,8 @@ class State(object):
         r = trend.get_range(self.p42['i'], self.p12['i'])
         if r is not None:
             return r[:, 1].max(), r[:, 1].min()
+
+    def restart_schedule(self):
+        pass
+    def schedule(self):
+        pass

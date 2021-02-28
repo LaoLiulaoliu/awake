@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import time
 from ruler.FakeState import FakeState
 from ruler.FakeTrade import FakeTrade
 from const import INSTRUMENT, VALUTA_IDX
@@ -16,6 +17,7 @@ def r20210219(trend_fname, capital=10):
     diff_boundary = 150
     bias = 50
     for timestamp, last_price in state.trend_iter_state():
+        s = time.time()
         ret = trade.get_open_buy_order_update_filled(last_price)
         open_buy_orderid_prices = ret  # {} or have content
 
@@ -45,6 +47,7 @@ def r20210219(trend_fname, capital=10):
                 for sell_id, buy_id in zip(sell_order_ids, sell_order_of_buy_orderid):
                     if sell_id != 0:
                         trade.append([0, 0, 0, last_price, buy_id, sell_id, 9])
+        print(time.time() -s)
 
     trade.get_open_sell_order_update_filled()
     trade.settlement()
