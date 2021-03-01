@@ -3,7 +3,7 @@
 
 import json
 import time
-import threading
+import gevent
 import zlib
 from datetime import datetime
 from websocket import WebSocketApp
@@ -44,8 +44,8 @@ class OkexWS(HttpUtil):
         if self.__sub_connect:
             self.__sub_connect.send(json.dumps({'op': 'subscribe', 'args': subs}))
         else:
-            t = threading.Thread(target=self.__ws_sub_create)
-            t.start()
+            g = gevent.spawn(self.__ws_sub_create)
+            g.join()
 
     def unsubscription(self, unsub_list):
         subs = []

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from gevent import monkey; monkey.patch_all()
+
 import sys
 import getopt
 from test.numpd_test import numpd_test
