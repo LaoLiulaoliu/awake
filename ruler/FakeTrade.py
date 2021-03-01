@@ -16,7 +16,7 @@ class FakeTrade(Trade):
             for open_buy_order_idx in np.argwhere(condition).ravel():
                 buy_price = self.trade.info[open_buy_order_idx, 1]
                 if last_price <= buy_price:
-                    self.trade.info[open_buy_order_idx, self.state_bit] = 2
+                    self.trade.modify_bits([open_buy_order_idx], self.state_bit, 2)
                 else:
                     open_buy_orderid_prices[self.trade.info[open_buy_order_idx, self.buy_order_bit]] = buy_price
         return open_buy_orderid_prices
