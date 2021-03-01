@@ -9,7 +9,6 @@ from datetime import datetime
 from websocket import WebSocketApp
 from .HttpUtil import HttpUtil
 
-# WS_URL = 'ws://echo.websocket.org/'
 WS_URL = 'wss://real.okex.com:8443/ws/v3'
 
 
@@ -17,22 +16,21 @@ class OkexWS(HttpUtil):
     def __init__(self, use_trade_key=False):
         super(OkexWS, self).__init__(use_trade_key)
 
-        self.__sub_connect = None
+        self.__connection = None
         self.__ws_subs = []
-        self.__direct = None
 
-    def __ws_sub_create(self):
+    def ws_create(self):
         try:
-            self.__sub_connect = WebSocketApp(WS_URL,
+            self.__connection = WebSocketApp(WS_URL,
                                               on_message=self.on_message,
                                               on_close=self.on_close,
                                               on_error=self.on_error)
-            self.__sub_connect.on_open = self.on_open
-            self.__sub_connect.run_forever(ping_interval=20)
+            self.__connection.on_open = self.on_open
+            self.__connection.run_forever(ping_interval=20)
         except Exception as e:
-            print('__ws_sub_create exception: {e}')
+            print('ws_create exception: {e}')
             time.sleep(5)
-            self.__ws_sub_create()
+            self.ws_create()
 
     def subscription(self, sub_list):
         subs = []
@@ -41,10 +39,10 @@ class OkexWS(HttpUtil):
                 subs.append(f'{sub.trade_kind}/{sub.frequency}:{sub.instrument_id}')
                 self.__ws_subs.append(sub)
 
-        if self.__sub_connect:
-            self.__sub_connect.send(json.dumps({'op': 'subscribe', 'args': subs}))
+        if self.__connection:
+            self.__connection.send(json.dumps({'op': 'subscribe', 'args': subs}))
         else:
-            g = gevent.spawn(self.__ws_sub_create)
+            g = gevent.spawn(self.ws_create)
             g.join()
 
     def unsubscription(self, unsub_list):
@@ -52,7 +50,7 @@ class OkexWS(HttpUtil):
         for sub in unsub_list:
             subs.append(f'{sub.trade_kind}/{sub.frequency}:{sub.instrument_id}')
             self.__ws_subs.remove(sub)
-        self.__sub_connect.send(json.dumps({'op': 'unsubscribe', 'args': subs}))
+        self.__connection.send(json.dumps({'op': 'unsubscribe', 'args': subs}))
 
     def login(self, ws):
         endpoint = '/users/self/verify'
@@ -64,18 +62,18 @@ class OkexWS(HttpUtil):
 
     def on_open(self):
         print('ws_on_open', self.__ws_subs)
-        self.login(self.__sub_connect)
+        self.login(self.__connection)
         time.sleep(0.1)
 
         subs = [f'{sub.trade_kind}/{sub.frequency}:{sub.instrument_id}' for sub in self.__ws_subs]
-        self.__sub_connect.send(json.dumps({'op': 'subscribe', 'args': subs}))
+        self.__connection.send(json.dumps({'op': 'subscribe', 'args': subs}))
 
     def on_error(self, error):
-        print('ws_on_error', self.__sub_connect, error)
+        print('ws_on_error', self.__connection, error)
 
     def on_close(self):
-        print('ws_on_close', self.__sub_connect, self.__ws_subs)
-        self.__sub_connect = None
+        print('ws_on_close', self.__connection, self.__ws_subs)
+        self.__connection = None
 
     def on_message(self, message):
         data = json.loads(self.inflate(message))
@@ -120,12 +118,10 @@ class OkexWS(HttpUtil):
         elif 'event' in data:
             if data['event'] == 'login':
                 subs = [f'{sub.trade_kind}/{sub.frequency}:{sub.instrument_id}' for sub in self.__ws_subs]
-                self.__sub_connect.send(json.dumps({'op': 'subscribe', 'args': subs}))
+                self.__connection.send(json.dumps({'op': 'subscribe', 'args': subs}))
 
     def inflate(self, data):
-        decompress = zlib.decompressobj(
-            -zlib.MAX_WBITS
-        )
+        decompress = zlib.decompressobj(-zlib.MAX_WBITS)
         inflated = decompress.decompress(data)
         inflated += decompress.flush()
         return inflated

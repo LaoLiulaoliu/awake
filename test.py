@@ -8,12 +8,13 @@ import getopt
 from test.numpd_test import numpd_test
 from api.OkexSpot import OkexSpot, INSTRUMENT
 from api.apiwrapper import place_batch_sell_orders, get_open_orders
+from api.OkexWS import OkexWS
 from backtesting.run import r20210219
 
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, 'nor', ['numpd=', 'spot=', 'run='])
+        opts, args = getopt.getopt(argv, 'nors', ['numpd=', 'spot=', 'run=', 'socket='])
     except getopt.GetoptError:
         print('test.py -n')
         sys.exit(2)
@@ -35,6 +36,10 @@ def main(argv):
                 {'price': 60001, 'size': 0.00001, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
             ]
             print(place_batch_sell_orders(orders))
+        elif opt in ('-s', '--socket'):
+            ws = OkexWS()
+            ws.ws_create()
+            ws.subscription(['spot/ticker:BTC-USDT'])
         elif opt in ('-r', '--run'):
             r20210219('TREND_2021-02-24.txt')
         else:
