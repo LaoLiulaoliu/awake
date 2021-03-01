@@ -19,8 +19,6 @@ OK_ACCESS_TIMESTAMP = 'OK-ACCESS-TIMESTAMP'
 OK_ACCESS_PASSPHRASE = 'OK-ACCESS-PASSPHRASE'
 
 BASE_URL = 'https://www.okex.com'
-# WS_URL = 'ws://echo.websocket.org/'
-WS_URL = 'wss://real.okex.com:8443/ws/v3'
 
 
 class HttpUtil(object):
