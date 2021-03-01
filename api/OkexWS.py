@@ -81,34 +81,14 @@ class OkexWS(HttpUtil):
             table = data['table']
             if table.find('spot/ticker') != -1:
                 self.client.ws_ticker(data['data'])
-            elif table.find('futures/ticker') != -1:
-                self.client.ws_f_ticker(data['data'])
             elif table.find('spot/candle') != -1:
                 self.client.ws_kline(data)
-            elif table.find('futures/candle') != -1:
-                self.client.ws_f_kline(data)
-            elif table.find('swap/candle') != -1:
-                self.client.ws_sf_kline(data)
             elif table.find('spot/trade') != -1:
                 self.client.ws_trade(data['data'])
             elif table.find('spot/account') != -1:
                 self.client.ws_account(data['data'])
-            elif table.find('spot/margin_account') != -1:
-                self.client.ws_l_account(data['data'])
-            elif table.find('futures/account') != -1:
-                self.client.ws_f_account(data['data'])
-            elif table.find('swap/account') != -1:
-                self.client.ws_sf_account(data['data'])
             elif table.find('spot/order') != -1:
                 self.client.ws_order(data['data'])
-            elif table.find('futures/order') != -1:
-                self.client.ws_f_order(data['data'])
-            elif table.find('swap/order') != -1:
-                self.client.ws_sf_order(data['data'])
-            elif table.find('futures/position') != -1:
-                self.client.ws_f_position(data['data'])
-            elif table.find('swap/position') != -1:
-                self.client.ws_sf_position(data['data'])
             elif table.find('depth') != -1:
                 self.client.ws_depth(data['data'])
             elif table.find('depth5') != -1:
