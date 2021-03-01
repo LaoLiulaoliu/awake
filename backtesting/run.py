@@ -4,11 +4,11 @@
 import time
 from ruler.FakeState import FakeState
 from ruler.FakeTrade import FakeTrade
-from const import INSTRUMENT, VALUTA_IDX
+from const import INSTRUMENT, VALUTA_IDX, TRADE_NAME
 
 
 def r20210219(trend_fname, capital=10):
-    trade = FakeTrade(f'TRADE_{VALUTA_IDX}.txt')
+    trade = FakeTrade(TRADE_NAME.format(VALUTA_IDX))
     trade.load()
 
     state = FakeState(trend_fname)

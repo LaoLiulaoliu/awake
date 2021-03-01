@@ -11,3 +11,8 @@ INSTRUMENT = {
     1: 'eth-usdt',
     2: 'doge-usdt'
 }
+
+TREND_NAME = 'trend_{}.txt'
+TRADE_NAME = 'trade_log_{}.txt'
+TRADE_FINISHED = 'trade_finished.txt'
+STATE_INDICATOR = 'state_indicator.txt'

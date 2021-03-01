@@ -7,18 +7,18 @@ from storage.Numpd import Numpd
 from .Trade import Trade
 from api.apiwrapper import *
 from .State import State
-from const import INSTRUMENT, VALUTA_IDX
+from const import INSTRUMENT, VALUTA_IDX, TREND_NAME, TRADE_NAME
 
 
 def r20210219(capital=200, do_trade=False):
     state = State()
-    trade = Trade(f'TRADE_{VALUTA_IDX}.txt')
+    trade = Trade(TRADE_NAME.format(VALUTA_IDX))
     trade.load()
 
     high_24h, low_24h, last_price_init, begin_time = get_high_low_lastest()
     # pickup_leak_place_buy(low_24h, capital, trade)
 
-    trend = Numpd(f"TREND_{datetime.utcnow().strftime('%Y-%m-%d')}.txt", 2)
+    trend = Numpd(TREND_NAME.format(datetime.utcnow().strftime('%Y-%m-%d')), 2)
     trend.trend_load()
     state.set_restart_state(trend, begin_time, last_price_init)
 

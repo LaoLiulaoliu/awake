@@ -5,6 +5,7 @@ import numpy as np
 from storage.Blaze import Blaze
 from storage.Numpd import Numpd
 from api.apiwrapper import get_open_buy_orders, get_open_sell_orders
+from const import TRADE_FINISHED
 
 
 class Trade(object):
@@ -18,7 +19,7 @@ class Trade(object):
         self.state_bit = 6
 
         self.trade = Blaze(fname, 7, 200)
-        self.sell_finished = Numpd('sell_finished_orders.txt', 7)
+        self.sell_finished = Numpd(TRADE_FINISHED, 7)
 
     def append(self, line_list):
         """change order_id to int for numpy in api return, okex is 16bit char with digital.
@@ -28,10 +29,10 @@ class Trade(object):
             self.trade.append(line_list)
         elif line_list[self.state_bit] == 9:
             idx = np.argwhere(self.trade.info[:, self.buy_order_bit] == line_list[self.buy_order_bit])[0][0]
-            self.trade.info[idx, 3:self.state_bit+1] = line_list[3:self.state_bit+1]
+            self.trade.modify(idx, 3, self.state_bit+1, line_list)
 
     def load(self):
-        self.trade.load()
+        self.trade.load(4, [int, float, float, float, int, int, int])
         self.sell_finished.load()
 
     def select_open_buy_orders(self):
@@ -63,7 +64,7 @@ class Trade(object):
             trade_open_buy_order_idx = set(np.argwhere(self.trade.info[: self.state_bit] == 1).ravel())
             rest_idx = list(trade_open_buy_order_idx - open_buy_order_idx)  # {1,2,3} - {1, 5}
             if len(rest_idx) > 0:
-                self.trade.info[rest_idx, self.state_bit] = 2
+                self.trade.modify_bits(rest_idx, self.state_bit, 2)
         return r
 
     def have_around_open_buy_orders(self, low, high):
@@ -105,7 +106,6 @@ class Trade(object):
             trade_open_sell_order_idx = set(np.argwhere(self.trade.info[: self.state_bit] == 9).ravel())
             rest_idx = list(trade_open_sell_order_idx - open_sell_order_idx)
             if len(rest_idx) > 0:
-                self.trade.info[rest_idx, self.state_bit] = 8
                 for i in rest_idx:
                     self.sell_finished.append(self.trade.info[i, :])
                     self.trade.delete(i)
