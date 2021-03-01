@@ -36,7 +36,7 @@ class OkexWS(HttpUtil):
         subs = []
         for sub in sub_list:
             if sub not in self.__ws_subs:
-                subs.append(f'{sub.trade_kind}/{sub.frequency}:{sub.instrument_id}')
+                subs.append(sub)
                 self.__ws_subs.append(sub)
 
         if self.__connection:
@@ -48,7 +48,7 @@ class OkexWS(HttpUtil):
     def unsubscription(self, unsub_list):
         subs = []
         for sub in unsub_list:
-            subs.append(f'{sub.trade_kind}/{sub.frequency}:{sub.instrument_id}')
+            subs.append(sub)
             self.__ws_subs.remove(sub)
         self.__connection.send(json.dumps({'op': 'unsubscribe', 'args': subs}))
 
@@ -65,8 +65,7 @@ class OkexWS(HttpUtil):
         self.login(self.__connection)
         time.sleep(0.1)
 
-        subs = [f'{sub.trade_kind}/{sub.frequency}:{sub.instrument_id}' for sub in self.__ws_subs]
-        self.__connection.send(json.dumps({'op': 'subscribe', 'args': subs}))
+        self.__connection.send(json.dumps({'op': 'subscribe', 'args': self.__ws_subs}))
 
     def on_error(self, error):
         print('ws_on_error', self.__connection, error)
