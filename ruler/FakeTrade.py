@@ -21,7 +21,7 @@ class FakeTrade(Trade):
                     open_buy_orderid_prices[self.trade.info[open_buy_order_idx, self.buy_order_bit]] = buy_price
         return open_buy_orderid_prices
 
-    def get_open_sell_order_update_filled(self):
+    def get_open_sell_order_update_filled(self, last_price):
         condition = self.trade.info[: self.state_bit] == 9
         open_sell_orderid_prices = {}
         if np.any(condition):

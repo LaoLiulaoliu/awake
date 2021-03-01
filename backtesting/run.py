@@ -48,6 +48,6 @@ def r20210219(trend_fname, capital=10):
                     if sell_id != 0:
                         trade.append([0, 0, 0, last_price, buy_id, sell_id, 9])
         print(time.time() -s)
-
-    trade.get_open_sell_order_update_filled()
-    trade.settlement()
+    else:
+        trade.get_open_sell_order_update_filled(last_price)
+        trade.settlement()
