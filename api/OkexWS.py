@@ -19,14 +19,18 @@ class OkexWS(HttpUtil):
         self.__connection = None
         self.__ws_subs = []
 
-    def ws_create(self):
+    def ws_create(self, run_in_background=False):
         try:
             self.__connection = WebSocketApp(WS_URL,
                                               on_message=self.on_message,
                                               on_close=self.on_close,
                                               on_error=self.on_error)
             self.__connection.on_open = self.on_open
-            self.__connection.run_forever(ping_interval=20)
+            if run_in_background:
+                g = gevent.spawn(self.ws_create, True)
+                g.join()
+            else:
+                self.__connection.run_forever(ping_interval=20)
         except Exception as e:
             print(f'ws_create exception: {e}')
             time.sleep(5)
@@ -41,9 +45,6 @@ class OkexWS(HttpUtil):
 
         if self.__connection:
             self.__connection.send(json.dumps({'op': 'subscribe', 'args': subs}))
-        else:
-            g = gevent.spawn(self.ws_create)
-            g.join()
 
     def unsubscription(self, unsub_list):
         subs = []

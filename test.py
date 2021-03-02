@@ -5,6 +5,7 @@ from gevent import monkey; monkey.patch_all()
 
 import sys
 import getopt
+import time
 from test.numpd_test import numpd_test
 from api.OkexSpot import OkexSpot, INSTRUMENT
 from api.apiwrapper import place_batch_sell_orders, get_open_orders
@@ -41,6 +42,8 @@ def main(argv):
             ws.ws_create()
             print('login: ', ws.login())
             ws.subscription(['spot/ticker:BTC-USDT'])
+            print('go to sleep')
+            time.sleep(100)
         elif opt in ('-r', '--run'):
             r20210219('TREND_2021-02-24.txt')
         else:
