@@ -39,6 +39,7 @@ def main(argv):
         elif opt in ('-s', '--socket'):
             ws = OkexWS()
             ws.ws_create()
+            ws.login()
             ws.subscription(['spot/ticker:BTC-USDT'])
         elif opt in ('-r', '--run'):
             r20210219('TREND_2021-02-24.txt')

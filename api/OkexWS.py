@@ -52,17 +52,17 @@ class OkexWS(HttpUtil):
             self.__ws_subs.remove(sub)
         self.__connection.send(json.dumps({'op': 'unsubscribe', 'args': subs}))
 
-    def login(self, ws):
+    def login(self):
         endpoint = '/users/self/verify'
         timestamp = self.timestamp()
         sign = self.signature(timestamp, 'GET', endpoint, '')
 
         sub = {'op': 'login', 'args': [self.__apikey, self.__passphrase, timestamp, sign.decode('utf-8')]}
-        return ws.send(json.dumps(sub))
+        return self.__connection.send(json.dumps(sub))
 
     def on_open(self):
         print('ws_on_open', self.__ws_subs)
-        self.login(self.__connection)
+        self.login()
         time.sleep(0.1)
 
         self.__connection.send(json.dumps({'op': 'subscribe', 'args': self.__ws_subs}))
@@ -96,8 +96,7 @@ class OkexWS(HttpUtil):
 
         elif 'event' in data:
             if data['event'] == 'login':
-                subs = [f'{sub.trade_kind}/{sub.frequency}:{sub.instrument_id}' for sub in self.__ws_subs]
-                self.__connection.send(json.dumps({'op': 'subscribe', 'args': subs}))
+                self.__connection.send(json.dumps({'op': 'subscribe', 'args': self.__ws_subs}))
 
     def inflate(self, data):
         decompress = zlib.decompressobj(-zlib.MAX_WBITS)
