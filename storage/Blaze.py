@@ -37,17 +37,18 @@ class Blaze(Numpp):
     def load(self, write_search_idx, data_type):
         """
         data_type list of type, e.g. [int, float, float, float, int, int, int]
+        ValueError: invalid literal for int() with base 10: '0.0'
         """
         self.fp.seek(0, 0)
         for l in self.fp:
             flag, rest = l.split(self.sep, maxsplit=1)
             if flag == 'A':
-                self.push_back([t(d) for d, t in zip(rest.split(), data_type)])
+                self.push_back([t(float(d)) for d, t in zip(rest.split(), data_type)])
             elif flag == 'M':
-                line_list = [t(d) for d, t in zip(rest.split(), data_type)]
+                line_list = [t(float(d)) for d, t in zip(rest.split(), data_type)]
                 self.info[np.argwhere(self.info[:, write_search_idx] == line_list[write_search_idx])[0][0], :] = line_list
             elif flag == 'D':
-                line_list = [t(d) for d, t in zip(rest.split(), data_type)]
+                line_list = [t(float(d)) for d, t in zip(rest.split(), data_type)]
                 idx = np.argwhere(self.info[:, write_search_idx] == line_list[write_search_idx])[0][0]
                 for i in range(idx, self.current_size):
                     self.info[i, :] = self.info[i+1, :]
