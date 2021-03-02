@@ -38,12 +38,8 @@ def main(argv):
             ]
             print(place_batch_sell_orders(orders))
         elif opt in ('-s', '--socket'):
-            ws = OkexWS()
-            ws.ws_create()
-            print('login: ', ws.login())
-            ws.subscription(['spot/ticker:BTC-USDT'])
-            print('go to sleep')
-            time.sleep(100)
+            ws = OkexWS(sub_list=['spot/ticker:BTC-USDT'], use_trade_key=True)
+            ws.ws_create(run_in_background=True)
         elif opt in ('-r', '--run'):
             r20210219('TREND_2021-02-24.txt')
         else:

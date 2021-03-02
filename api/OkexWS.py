@@ -8,16 +8,30 @@ import zlib
 from datetime import datetime
 from websocket import WebSocketApp
 from .HttpUtil import HttpUtil
+from .secret import *
+from .tradesecret import *
 
 WS_URL = 'wss://real.okex.com:8443/ws/v3'
 
 
 class OkexWS(HttpUtil):
-    def __init__(self, use_trade_key=False):
+    def __init__(self, sub_list=None, use_trade_key=False):
         super(OkexWS, self).__init__(use_trade_key)
 
+        if use_trade_key:
+            self.__apikey = apikey
+            self.__secretkey = secretkey
+            self.__passphrase = passphrase
+        else:
+            self.__apikey = API_KEY
+            self.__secretkey = SECRET_KEY
+            self.__passphrase = PASS_PHRASE
+
         self.__connection = None
-        self.__ws_subs = []
+        self.__ws_subs = []  # 'spot/ticker:BTC-USDT'
+
+        if isinstance(sub_list, list):
+            self.__ws_subs = [sub for sub in sub_list if sub not in self.__ws_subs]
 
     def ws_create(self, run_in_background=False):
         try:
@@ -27,7 +41,7 @@ class OkexWS(HttpUtil):
                                               on_error=self.on_error)
             self.__connection.on_open = self.on_open
             if run_in_background:
-                g = gevent.spawn(self.ws_create, True)
+                g = gevent.spawn(self.ws_create, False)
                 g.join()
             else:
                 self.__connection.run_forever(ping_interval=20)
@@ -55,15 +69,15 @@ class OkexWS(HttpUtil):
 
     def login(self):
         endpoint = '/users/self/verify'
-        timestamp = self.timestamp()
+        timestamp = str(round(datetime.now().timestamp(), 3))
         sign = self.signature(timestamp, 'GET', endpoint, '')
 
         sub = {'op': 'login', 'args': [self.__apikey, self.__passphrase, timestamp, sign.decode('utf-8')]}
         return self.__connection.send(json.dumps(sub))
 
     def on_open(self):
-        print('ws_on_open', self.__ws_subs)
-        print('on_open login: ', self.login())
+        print('ws_on_open: ', self.__ws_subs)
+        self.login()
         time.sleep(0.1)
 
         self.__connection.send(json.dumps({'op': 'subscribe', 'args': self.__ws_subs}))
@@ -81,6 +95,7 @@ class OkexWS(HttpUtil):
         if 'table' in data:
             table = data['table']
             if table.find('spot/ticker') != -1:
+                # ws_on_message {'table': 'spot/ticker', 'data': [{'last': '49338.5', 'open_24h': '47991.9', 'best_bid': '49326.7', 'high_24h': '50210.1', 'low_24h': '47907.2', 'open_utc0': '49597.5', 'open_utc8': '49188.4', 'base_volume_24h': '9467.36886712', 'quote_volume_24h': '462894723.35643254', 'best_ask': '49326.8', 'instrument_id': 'BTC-USDT', 'timestamp': '2021-03-02T14:15:12.522Z', 'best_bid_size': '0.56306288', 'best_ask_size': '0.13743411', 'last_qty': '0.0089648'}]}
                 self.client.ws_ticker(data['data'])
             elif table.find('spot/candle') != -1:
                 self.client.ws_kline(data)
@@ -97,7 +112,9 @@ class OkexWS(HttpUtil):
 
         elif 'event' in data:
             if data['event'] == 'login':
-                self.__connection.send(json.dumps({'op': 'subscribe', 'args': self.__ws_subs}))
+                print('success: ', data['success'])
+            if data['event'] == 'subscribe':
+                print('channel: ', data['channel'])
 
     def inflate(self, data):
         decompress = zlib.decompressobj(-zlib.MAX_WBITS)
