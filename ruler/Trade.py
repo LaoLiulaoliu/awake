@@ -66,7 +66,7 @@ class Trade(object):
             if len(rest_idx) > 0:
                 self.trade.modify_bits(rest_idx, self.state_bit, 2)
             print(f'get_open_buy_order_update_filled: {trade_open_buy_order_idx} - {open_buy_order_idx} = rest_idx')
-            print('data: ', self.trade.info, self.trade.info[:30])
+            print('data: ', self.trade.info[:30])
         return r
 
     def have_around_open_buy_orders(self, low, high):

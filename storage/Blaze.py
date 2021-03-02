@@ -56,7 +56,7 @@ class Blaze(Numpp):
 
         self.fp.truncate(0)
         [self.fp.write('A' + self.sep + self.sep.join(map(str, l)) + '\n')
-                for l in self.iterator(False)]
+                for i, l in self.iterator(False)]
 
     def append(self, line_list):
         try:
