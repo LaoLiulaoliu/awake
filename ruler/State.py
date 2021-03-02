@@ -140,7 +140,7 @@ class State(object):
             r = self.trace_trend_update_state(trend)
             if r is not None and self.pair[idx]['i'] > 0:
                 break
-            time.sleep(0.01)
+            time.sleep(0.1)
 
     def get_60min(self):
         return self.p60
