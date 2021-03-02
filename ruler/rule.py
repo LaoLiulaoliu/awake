@@ -27,6 +27,7 @@ def r20210219(capital=200, do_trade=False):
 
     diff_boundary = 150
     bias = 50
+    count = 0
     while True:
         t = time.time()
         ret = state.trace_trend_update_state(trend)
@@ -71,6 +72,10 @@ def r20210219(capital=200, do_trade=False):
                             trade.append([0, 0, 0, last_price, buy_id, sell_id, 9])
                 time.sleep(0.01)
 
-        strategy_t = time.time()
-        print(
-            f'circle: {strategy_t - t}, trace: {trace_t - t}, order: {open_buy_orders_t - trace_t}, strategy: {strategy_t - open_buy_orders_t}')
+        count += 1
+        if 1023 & count == 0:
+            count = 1
+            trade.get_open_sell_order_update_filled()
+            strategy_t = time.time()
+            print(
+                f'circle: {strategy_t - t}, trace: {trace_t - t}, order: {open_buy_orders_t - trace_t}, strategy: {strategy_t - open_buy_orders_t}')

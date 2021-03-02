@@ -32,7 +32,7 @@ def main(argv):
             from analysis.draw_spot import dump_data
             dump_data(arg)
         elif opt in ('-z', '--trade'):
-            r20210219(int(arg), do_trade=False)
+            r20210219(int(arg), do_trade=True)
         else:
             print(None)
 
