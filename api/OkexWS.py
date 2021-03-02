@@ -28,7 +28,7 @@ class OkexWS(HttpUtil):
             self.__connection.on_open = self.on_open
             self.__connection.run_forever(ping_interval=20)
         except Exception as e:
-            print('ws_create exception: {e}')
+            print(f'ws_create exception: {e}')
             time.sleep(5)
             self.ws_create()
 
