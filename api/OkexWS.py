@@ -62,7 +62,7 @@ class OkexWS(HttpUtil):
 
     def on_open(self):
         print('ws_on_open', self.__ws_subs)
-        self.login()
+        print('on_open login: ', self.login())
         time.sleep(0.1)
 
         self.__connection.send(json.dumps({'op': 'subscribe', 'args': self.__ws_subs}))
