@@ -101,7 +101,8 @@ class Trade(object):
             open_sell_order_idx = set()
             for order_id in list(r.keys()):
                 condition = self.trade.info[:, self.sell_order_bit] == order_id
-                open_sell_order_idx.add(np.argwhere(condition)[0][0])
+                if np.any(condition):
+                    open_sell_order_idx.add(np.argwhere(condition)[0][0])
 
             trade_open_sell_order_idx = set(np.argwhere(self.trade.info[: self.state_bit] == 9).ravel())
             rest_idx = list(trade_open_sell_order_idx - open_sell_order_idx)
