@@ -29,7 +29,7 @@ class Numpp(object):
         self.row_size *= 2
 
     def status(self):
-        return f'Total row: {self.row_size}, data shape: {self.info.shape}, current row: {self.current_size}'
+        return f'Total row: {self.row_size}, data shape: {self.info.shape}, current size: {self.current_size}'
 
     def first(self):
         return self.info[0, :]
