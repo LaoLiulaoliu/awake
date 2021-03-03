@@ -61,11 +61,11 @@ class Trade(object):
                 if np.any(condition):  # initial load have historical human placed orders, not added
                     open_buy_order_idx.add(np.argwhere(condition)[0][0])
 
-            trade_open_buy_order_idx = set(np.argwhere(self.trade.info[: self.state_bit] == 1).ravel())
+            trade_open_buy_order_idx = set(np.argwhere(self.trade.info[:, self.state_bit] == 1).ravel())
             rest_idx = list(trade_open_buy_order_idx - open_buy_order_idx)  # {1,2,3} - {1, 5}
             if len(rest_idx) > 0:
                 self.trade.modify_bits(rest_idx, self.state_bit, 2)
-            print(f'get_open_buy_order_update_filled: {trade_open_buy_order_idx} - {open_buy_order_idx} = rest_idx')
+            print(f'get_open_buy_order_update_filled: {trade_open_buy_order_idx} - {open_buy_order_idx} = {rest_idx}')
             print('data: ', self.trade.info[:30])
         return r
 
@@ -106,7 +106,7 @@ class Trade(object):
                 if np.any(condition):
                     open_sell_order_idx.add(np.argwhere(condition)[0][0])
 
-            trade_open_sell_order_idx = set(np.argwhere(self.trade.info[: self.state_bit] == 9).ravel())
+            trade_open_sell_order_idx = set(np.argwhere(self.trade.info[:, self.state_bit] == 9).ravel())
             rest_idx = list(trade_open_sell_order_idx - open_sell_order_idx)
             if len(rest_idx) > 0:
                 for i in rest_idx:
