@@ -4,6 +4,18 @@
 import time
 import numpy as np
 import numba
+import functools
+
+
+def time_decoator(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        t = time.time()
+        ret = func(*args, **kwargs)
+        print(time.time() - t)
+        return ret
+    return wrapper
+
 
 class A(object):
 
@@ -77,4 +89,22 @@ def test_convert_int():
         int('123')
     print('int convert cost: ', time.time() - t)
 
-test_convert_int()
+
+def float_close(a, b, precision=1e5):
+    if precision * abs(a - b) < 1:
+        return True
+    return False
+
+@time_decoator
+def test_float_close():
+    for i in range(10000):
+        float_close(1.001, 1.0001)
+
+@time_decoator
+def test_npfloat_close():
+    for i in range(10000):
+        np.isclose(1.001, 1.0001)
+
+
+test_float_close()
+test_npfloat_close()

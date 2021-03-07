@@ -3,6 +3,7 @@
 
 import time
 import gevent
+import numpy as np
 from .Tool import Tool
 from const import MIN_60, MIN_42, MIN_30, MIN_12, TIME_PRECISION
 from api.apiwrapper import get_ticket
@@ -122,7 +123,7 @@ class State(object):
             self.flush_trend_nearly_one_hour(trend)
 
             timestamp = Tool.convert_time_str(r['timestamp'], TIME_PRECISION)
-            current_price = float(r['last'])
+            current_price = np.float64(r['last'])
             trend.append((timestamp, current_price))
 
             self.compare_set_current_high_low(current_price)
