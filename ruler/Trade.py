@@ -35,6 +35,8 @@ class Trade(object):
         self.trade.load(self.buy_order_bit,
                         [int, np.float64, np.float64, np.float64, int, int, int])
         self.sell_finished.load()
+        for i in range(15):
+            print(', '.join(map(str, self.trade.info[i])))
 
     def select_open_buy_orders(self):
         """coded state 1
@@ -65,9 +67,11 @@ class Trade(object):
             trade_open_buy_order_idx = set(np.argwhere(self.trade.info[:, self.state_bit] == 1).ravel())
             rest_idx = list(trade_open_buy_order_idx - open_buy_order_idx)  # {1,2,3} - {1, 5}
             if len(rest_idx) > 0:
+                print(f'get_open_buy_order_update_filled: {trade_open_buy_order_idx} - {open_buy_order_idx} = {rest_idx}')
+                for i in range(15):
+                    print(', '.join(map(str, self.trade.info[i])))
                 self.trade.modify_bits(rest_idx, self.state_bit, 2)
-            print(f'get_open_buy_order_update_filled: {trade_open_buy_order_idx} - {open_buy_order_idx} = {rest_idx}')
-            print('data: ', self.trade.info[:30])
+                time.sleep(900)
         return r
 
     def have_around_open_buy_orders(self, low, high):
