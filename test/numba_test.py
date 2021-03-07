@@ -16,7 +16,7 @@ class A(object):
         return False
 
     @staticmethod
-#    @numba.vectorize('float64(float64, float64, float64)', target='parallel', nopython=True)
+    @numba.vectorize('float64(float64, float64, float64)', target='parallel', nopython=True)
     def rule_with_parallel(y, a, b):
         if y < a:
             return a
@@ -38,7 +38,6 @@ def another_run_multi_times():
             A.rule_with_parallel(j, 9.1, 3.2)
     print(time.time() - t)  # 0.0154, python 5.22e-05
 
-another_run_multi_times()
 
 def numba_list_cost():
     from numba.typed import List
@@ -47,7 +46,7 @@ def numba_list_cost():
     print('numba List cost too much time: ', time.time() - t)
 
 
-def test():
+def test_array_list():
     t = time.time()
     a = A()
     b = {1:2.1, 3:4.2}
@@ -56,4 +55,26 @@ def test():
     print(np.asarray(c) is c)  # False
     r = a.func(9.1, 3.2, np.asarray(c, dtype=np.float32))
 
-# test()
+def test_convert_float():
+    t = time.time()
+    for i in range(10000):
+        np.float64('123')
+    print('np.float64 convert cost: ', time.time() - t)
+
+    t = time.time()
+    for i in range(10000):
+        float('123')
+    print('float convert cost: ', time.time() - t)
+
+def test_convert_int():
+    t = time.time()
+    for i in range(10000):
+        np.int64('123')
+    print('np.int64 convert cost: ', time.time() - t)
+
+    t = time.time()
+    for i in range(10000):
+        int('123')
+    print('int convert cost: ', time.time() - t)
+
+test_convert_int()
