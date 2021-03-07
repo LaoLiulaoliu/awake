@@ -98,12 +98,12 @@ def float_close(a, b, precision=1e5):
 @time_decoator
 def test_float_close():
     for i in range(10000):
-        float_close(1.001, 1.0001)
+        float_close(np.float64(1.001), np.float64(1.0001))
 
 @time_decoator
 def test_npfloat_close():
     for i in range(10000):
-        np.isclose(1.001, 1.0001)
+        np.isclose(np.float64(1.001), np.float64(1.0001))
 
 
 test_float_close()

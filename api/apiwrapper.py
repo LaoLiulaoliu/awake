@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import time
+import numpy as np
 from .OkexSpot import print_error_or_get_order_id, OkexSpot
 from ruler.Tool import Tool
 from const import VALUTA_IDX, TIME_PRECISION, RETRY, INSTRUMENT
@@ -53,7 +54,7 @@ def get_open_orders(side):
         if len(r) == 0:
             return {}
         if 'error_code' not in r and len(r) > 0:
-            return {int(i['order_id']): float(i['price']) for i in r if i['side'] == side}
+            return {int(i['order_id']): np.float64(i['price']) for i in r if i['side'] == side}
     return {}
 
 
@@ -75,7 +76,7 @@ def get_filled_buy_orders(before=None):
     for i in range(RETRY - 3):
         r = OK_SPOT.orders(2, INSTRUMENT[VALUTA_IDX], before)
         if 'error_code' not in r and len(r) > 0:
-            return [(int(i['order_id']), float(i['price']), i['size']) for i in r if i['side'] == 'buy']
+            return [(int(i['order_id']), np.float64(i['price']), i['size']) for i in r if i['side'] == 'buy']
         time.sleep(0.01)
 
 
@@ -95,9 +96,9 @@ def get_high_low_lastest():
     for i in range(RETRY - 4):
         r = OK_SPOT.ticker(INSTRUMENT[VALUTA_IDX])
         if r:
-            return (float(r['high_24h']),
-                    float(r['low_24h']),
-                    float(r['last']),
+            return (np.float64(r['high_24h']),
+                    np.float64(r['low_24h']),
+                    np.float64(r['last']),
                     Tool.convert_time_str(r['timestamp'], TIME_PRECISION))
 
 
