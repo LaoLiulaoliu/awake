@@ -32,7 +32,8 @@ class Trade(object):
             self.trade.modify(idx, 3, self.state_bit+1, line_list)
 
     def load(self):
-        self.trade.load(self.buy_order_bit, [int, float, float, float, int, int, int])
+        self.trade.load(self.buy_order_bit,
+                        [int, np.float, np.float, np.float, int, int, int])
         self.sell_finished.load()
 
     def select_open_buy_orders(self):

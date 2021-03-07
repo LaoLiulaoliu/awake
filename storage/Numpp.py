@@ -5,14 +5,15 @@ import numpy as np
 
 
 class Numpp(object):
-    def __init__(self, column_dim, init_row_num=1000):
+    def __init__(self, column_dim, init_row_num=1000, dtype=np.float64):
         self.column_dim = column_dim
 
         self.row_size = init_row_num
         self.current_size = 0
         assert self.current_size < self.row_size
+        self.dtype = dtype
 
-        self.info = np.zeros((init_row_num, column_dim))
+        self.info = np.zeros((init_row_num, column_dim), dtype=dtype)
 
     def push_back(self, line_list):
         if len(line_list) != self.column_dim:
@@ -25,7 +26,9 @@ class Numpp(object):
         self.current_size += 1
 
     def enlarge(self):
-        self.info = np.concatenate((self.info, np.zeros((self.row_size, self.column_dim))), axis=0)
+        self.info = np.concatenate(
+            (self.info, np.zeros((self.row_size, self.column_dim), dtype=self.dtype)),
+            axis=0)
         self.row_size *= 2
 
     def status(self):
