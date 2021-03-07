@@ -33,7 +33,7 @@ class Trade(object):
 
     def load(self):
         self.trade.load(self.buy_order_bit,
-                        [int, np.float, np.float, np.float, int, int, int])
+                        [int, np.float64, np.float64, np.float64, int, int, int])
         self.sell_finished.load()
 
     def select_open_buy_orders(self):
