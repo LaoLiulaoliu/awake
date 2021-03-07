@@ -35,8 +35,6 @@ class Trade(object):
         self.trade.load(self.buy_order_bit,
                         [int, np.float64, np.float64, np.float64, int, int, int])
         self.sell_finished.load()
-        for i in range(15):
-            print(', '.join(map(str, self.trade.info[i])))
 
     def select_open_buy_orders(self):
         """coded state 1
@@ -71,7 +69,6 @@ class Trade(object):
                 for i in range(15):
                     print(', '.join(map(str, self.trade.info[i])))
                 self.trade.modify_bits(rest_idx, self.state_bit, 2)
-                time.sleep(900)
         return r
 
     def have_around_open_buy_orders(self, low, high):
