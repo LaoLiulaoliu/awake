@@ -18,10 +18,9 @@ def handle_websocket():
 
     while True:
         try:
-            # message = web_socket.receive()
-            # print('get: ', message)
+            message = web_socket.receive()
+            print('get: ', message)
             web_socket.send('got your message')
-            time.sleep(1)
         except WebSocketError as e:
             print(f'WebSocketError: {e}')
             users.remove(web_socket)
