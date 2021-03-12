@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import numpy as np
 from .Numpp import Numpp
 
 
@@ -47,7 +48,7 @@ class Numpd(Numpp):
         self.fp.seek(0, 0)
         for line in self.fp:
             timestamp, price = line.split(self.sep)
-            self.push_back((int(timestamp), float(price)))
+            self.push_back((int(timestamp), np.float64(price)))
 
     def append(self, line_list):
         try:
