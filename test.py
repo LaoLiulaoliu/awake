@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import gevent
 from gevent import monkey; monkey.patch_all()
 
 import sys
@@ -39,7 +40,7 @@ def main(argv):
             print(place_batch_sell_orders(orders))
         elif opt in ('-s', '--socket'):
             ws = OkexWS(sub_list=['spot/ticker:BTC-USDT'], use_trade_key=True)
-            greenlet = ws.ws_create(run_in_background=True)
+            greenlet = gevent.spawn(ws.ws_create)
             print('already create websocket')
             greenlet.join()
         elif opt in ('-r', '--run'):

@@ -11,13 +11,18 @@ def fn(n):
         print(gevent.getcurrent(), i)
         gevent.sleep(2)
 
-greenlet1 = gevent.spawn(fn, 3)
-greenlet2 = gevent.spawn(fn, 2)
 
-# 等待greenlet1执行结束
-greenlet1.join()
-greenlet2.join()
-print('greenlet run over')
+def run():
+    greenlet1 = gevent.spawn(fn, 3)
+    greenlet2 = gevent.spawn(fn, 2)
 
-# 获取fn的返回值
-print(greenlet1.value)
+    # 等待greenlet1执行结束
+    greenlet1.join()
+    greenlet2.join()
+    print('greenlet run over')
+
+    # 获取fn的返回值
+    print(greenlet1.value)
+
+g = gevent.spawn(run)
+g.join()
