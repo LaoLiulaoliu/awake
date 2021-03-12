@@ -13,6 +13,10 @@ from .tradesecret import *
 
 WS_URL = 'wss://real.okex.com:8443/ws/v3'
 
+def func(data):
+    print(gevent.getcurrent(), data)
+    gevent.sleep(2)
+
 
 class OkexWS(HttpUtil):
     def __init__(self, sub_list=None, use_trade_key=False):
@@ -41,14 +45,13 @@ class OkexWS(HttpUtil):
                                               on_error=self.on_error)
             self.__connection.on_open = self.on_open
             if run_in_background:
-                g = gevent.spawn(self.ws_create, False)
-                g.join()
+                return gevent.spawn(self.ws_create, False)
             else:
                 self.__connection.run_forever(ping_interval=20)
         except Exception as e:
             print(f'ws_create exception: {e}')
             time.sleep(5)
-            self.ws_create()
+            self.ws_create(run_in_background)
 
     def subscription(self, sub_list):
         subs = []
@@ -91,12 +94,14 @@ class OkexWS(HttpUtil):
 
     def on_message(self, message):
         data = json.loads(self.inflate(message))
-        print('ws_on_message', data)
+        # print('ws_on_message', data)
         if 'table' in data:
             table = data['table']
             if table.find('spot/ticker') != -1:
                 # ws_on_message {'table': 'spot/ticker', 'data': [{'last': '49338.5', 'open_24h': '47991.9', 'best_bid': '49326.7', 'high_24h': '50210.1', 'low_24h': '47907.2', 'open_utc0': '49597.5', 'open_utc8': '49188.4', 'base_volume_24h': '9467.36886712', 'quote_volume_24h': '462894723.35643254', 'best_ask': '49326.8', 'instrument_id': 'BTC-USDT', 'timestamp': '2021-03-02T14:15:12.522Z', 'best_bid_size': '0.56306288', 'best_ask_size': '0.13743411', 'last_qty': '0.0089648'}]}
-                self.client.ws_ticker(data['data'])
+                g = gevent.spwan(func, data['data'])
+                g.join()
+                print('finish', g)
             elif table.find('spot/candle') != -1:
                 self.client.ws_kline(data)
             elif table.find('spot/trade') != -1:
