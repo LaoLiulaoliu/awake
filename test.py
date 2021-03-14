@@ -26,18 +26,20 @@ def main(argv):
             numpd_test()
         elif opt in ('-o', '--spot'):
             VALUTA_IDX = 0
-            spot = OkexSpot(use_trade_key=True)
+            spot = OkexSpot(use_trade_key=False)
             # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
             # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
-            # print(spot.trad_fee())
+            # print(spot.trad_fee(INSTRUMENT[VALUTA_IDX]))
+            # print(spot.account())
+            print(spot.ticker())
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494679719429120')) bingo
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
 
-            orders = [
-                {'price': 60000, 'size': 0.00001, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
-                {'price': 60001, 'size': 0.00001, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
-            ]
-            print(place_batch_sell_orders(orders))
+            # orders = [
+            #     {'price': 60000, 'size': 0.00001, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
+            #     {'price': 60001, 'size': 0.00001, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
+            # ]
+            # print(place_batch_sell_orders(orders))
         elif opt in ('-s', '--socket'):
             ws = OkexWS(sub_list=['spot/ticker:BTC-USDT'], use_trade_key=True)
             greenlet = gevent.spawn(ws.ws_create)

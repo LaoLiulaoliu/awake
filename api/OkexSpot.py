@@ -46,8 +46,13 @@ class OkexSpot(object):
 
     def account(self, currency=None):
         """ instrument_id
+        return all the currency you have now, it is a list.
         BTC: {'frozen': '0', 'hold': '0', 'id': '', 'currency': 'BTC', 'balance': '0.0067287', 'available': '0.0067287', 'holds': '0'}
         USDT: {'frozen': '0', 'hold': '0', 'id': '', 'currency': 'USDT', 'balance': '0.00027828', 'available': '0.00027828', 'holds': '0'}
+
+        available: How many you can use now
+        frozen(hold,holds): How many you are used on the order which is not been finished
+        balance: How many you have. available + frozen
         """
         path = '/api/spot/v3/accounts/' + currency if currency else '/api/spot/v3/accounts/'
         return self.http.httpGet(path)
@@ -215,6 +220,10 @@ class OkexSpot(object):
         return self.http.httpGet(path, params)
 
     def trad_fee(self, instrument_id=INSTRUMENT[0]):
+        """
+        {'category': '1', 'maker': '0.0008', 'taker': '0.001', 'timestamp': '2021-03-14T10:56:06.349Z'}
+        maker is the precentage of normal order fee
+        """
         path = '/api/spot/v3/trade_fee/'
         params = {'instrument_id': instrument_id}
         return self.http.httpGet(path, params)
