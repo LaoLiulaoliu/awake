@@ -16,11 +16,14 @@ class Juncang(object):
         self.B = self.jys.Amount
         self.money = self.jys.Balance
         now_price = self.jys.last
-        
+        if now_price == '---':
+            return False
+
         self.total_money = self.B * now_price + self.money
         self.half_money = self.total_money / 2
         self.need_buy = (self.half_money - self.B * now_price) / now_price
         self.need_sell = (self.half_money - self.money) / now_price
+        return True
     
     def do_juncang(self):
         if self.need_buy > 0.002:
@@ -31,6 +34,7 @@ class Juncang(object):
             self.Sell_count += 1
         
         Log('Buy_times:', self.Buy_count , 'Sell_times:', self.Sell_count)
+        Log(self.money, self.B, self.money + self.B * self.jys.last)
         
     
     def if_need_trade(self, condition, prama):
@@ -50,5 +54,5 @@ def main():
     
     while True:
         Sleep(1000)
-        test_juncang.make_need_account_info()
-        test_juncang.if_need_trade('price', 0.05)
+        if test_juncang.make_need_account_info():
+            test_juncang.if_need_trade('price', 0.05)
