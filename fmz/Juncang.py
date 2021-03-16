@@ -33,8 +33,8 @@ class Juncang(object):
             self.jys.create_order( 'sell', self.jys.high , self.need_sell ) 
             self.Sell_count += 1
         
-        Log('Buy_times:', self.Buy_count , 'Sell_times:', self.Sell_count)
-        Log(self.money, self.B, self.money + self.B * self.jys.last)
+        Log('Buy_times:', self.Buy_count, 'Sell_times:', self.Sell_count)
+        Log('coin: ', self.B + self.money / self.jys.last, 'money: ', self.money + self.B * self.jys.last)
         
     
     def if_need_trade(self, condition, prama):
