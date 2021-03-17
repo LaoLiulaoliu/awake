@@ -195,7 +195,7 @@ def main():
         Sleep(1000)
         test_zuoshi.refreash_data()
         
-        if times%100 == 1:
+        if times % 100 == 1:
             test_zuoshi.juncang( juncany_ratio_on_percentage )
         else:
             if len( test_zuoshi.traded_pair['pan_kou'] ) < gua_N:
