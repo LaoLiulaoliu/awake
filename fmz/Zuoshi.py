@@ -14,6 +14,9 @@ class zuoshi():
         self.price_N = price_N
         
     def trade_duiqiao(self, trade_dict):
+        """先买后卖
+        先卖后买
+        """
         self.jys.create_order( 'buy', trade_dict['price'] , trade_dict['amount'] ) 
         self.jys.create_order( 'sell',trade_dict['price'] , trade_dict['amount'] ) 
         self.done_amount += trade_dict['amount']
@@ -54,7 +57,7 @@ def main():
     
     while test_duiqiao.done_amount < set_amount:
         test_duiqiao.deal_with_frozen()
-        Sleep(np.random.randint(1, 60) * 1000) # 不被人发现规律, else 更大盘子吃掉你
+        Sleep(np.random.randint(1, 60) * 1000) # 不被人发现规律, else 更大盘子让你踏空, 先卖给你再抛售，让你卖不出
         trade_dict = test_duiqiao.make_duiqiao_trade_dict(set_amount, every_time_amount)
         if trade_dict['do_trade']:
             test_duiqiao.trade_duiqiao( trade_dict )
