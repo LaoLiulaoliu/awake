@@ -32,13 +32,11 @@ class Zuoshi(object):
             
     
     def refreash_data(self):
-        
         self.jys.refreash_data()
         self.B = self.jys.Amount
         self.money = self.jys.Balance
-        self.can_buy_B = self.money/ self.jys.Buy
-        self.mid_price = ( self.jys.Sell + self.jys.Buy )/2
-        
+        self.can_buy_B = self.money / self.jys.Buy
+        self.mid_price = (self.jys.Sell + self.jys.Buy) / 2
         return 
     
         
@@ -176,14 +174,12 @@ class Zuoshi(object):
                 
                 
 def main():
-    
-    times = 0
-    
     Set_amount_N = 4
     Set_price_N = 4
     set_amount = 1000
     gua_N = 5
     
+    times = 0
     price_range = 50
     min_price_len = 1
     every_time_amount = 0.01
@@ -193,8 +189,8 @@ def main():
     Log(test_mid.refreash_data())
     test_zuoshi = Zuoshi(test_mid, Set_amount_N, Set_price_N, gua_N)
     
-    while( test_zuoshi.done_amount['pan_kou'] < set_amount):
-        
+    while test_zuoshi.done_amount['pan_kou'] < set_amount:
+
         test_zuoshi.check_if_traded(times)
         Sleep(1000)
         test_zuoshi.refreash_data()
