@@ -27,10 +27,10 @@ class Juncang(object):
     
     def do_juncang(self):
         if self.need_buy > 0.002:
-            self.jys.create_order( 'buy', self.jys.low , self.need_buy ) 
+            self.jys.create_order( 'buy', self.jys.Sell , self.need_buy ) 
             self.Buy_count += 1
         elif self.need_sell > 0.002:
-            self.jys.create_order( 'sell', self.jys.high , self.need_sell ) 
+            self.jys.create_order( 'sell', self.jys.Buy , self.need_sell ) 
             self.Sell_count += 1
         
         Log('Buy_times:', self.Buy_count, 'Sell_times:', self.Sell_count)
