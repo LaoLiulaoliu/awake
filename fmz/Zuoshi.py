@@ -28,9 +28,7 @@ class Zuoshi(object):
         
         self.traded_pair = {'pan_kou':[], 'dui_qiao':[]}
         self.undo_state = []
-        self.had_gua_times = {}
-        for i in range( gua_num ):
-            self.had_gua_times[i] = 0
+        self.had_gua_times = {i: 0 for i in range(gua_num)}
             
     
     def refreash_data(self):
