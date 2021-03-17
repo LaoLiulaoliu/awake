@@ -60,10 +60,10 @@ class midClass():
 
             self.high = self.ticker['High']
             self.low = self.ticker['Low']
-            self.Sell =  self.ticker['Sell']
-            self.Buy =  self.ticker['Buy']
-            self.last =  self.ticker['Last']
-            self.Volume = self.ticker['Volume']
+            self.Sell =  self.ticker['Sell'] # 卖一价 ask
+            self.Buy =  self.ticker['Buy'] # 买一价 bid
+            self.last =  self.ticker['Last'] # 最后成交价
+            self.Volume = self.ticker['Volume'] # 最近成交量
             return True
         except:
             return False
