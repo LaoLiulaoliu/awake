@@ -11,9 +11,13 @@ class Zuoshi(object):
 实盘做市吃游离单，回测不会有游离单。
 
 买不了，都变成币了；卖不了，都变成钱了。全卖完了，一上涨就亏了，要加入均仓。均仓里面空闲资金可以做对敲。
-提高利用率，同时做多个盘口。
     """
     def __init__(self, mid_class, amount_N, price_N, gua_num):
+        """
+        param amount_N: round amount
+        param price_N:  round price
+        param gua_num: 提高利用率，同时做多个盘口。
+        """
         self.jys = mid_class
         self.done_amount = {'pan_kou':0, 'dui_qiao':0}
         self.init_time = time.time()
@@ -131,7 +135,7 @@ class Zuoshi(object):
             if { this_sell_state['Status'], this_buy_state['Status'] } == {0, 0}:
                 if now_times% 50 ==0 :
                     Log(this_buy_state['Status'], this_sell_state['Status'], now_times% 50 )
-#                 if ( time.time() - traded_id['init_time'] )/1000/60 > self.wait_time:
+#                 if ( time.time() - traded_id['init_time'] )/1000/60 > self.wait_time: # 回测取不到当时时间
                     self.jys.cancel_order( traded_id['buy_id'] )
                     self.jys.cancel_order( traded_id['sell_id'] )
                     self.had_gua_times[traded_id['guadan_times_id']] += random.randint(1,3) 
@@ -187,9 +191,9 @@ def main():
     every_time_amount = 0.01
     juncany_ratio_on_percentage = 2
     
-    test_mid = mid_class(exchange)
+    test_mid = midClass(exchange)
     Log(test_mid.refreash_data())
-    test_zuoshi = zuoshi(test_mid, Set_amount_N, Set_price_N, gua_N)
+    test_zuoshi = Zuoshi(test_mid, Set_amount_N, Set_price_N, gua_N)
     
     while( test_zuoshi.done_amount['pan_kou'] < set_amount):
         
