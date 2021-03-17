@@ -127,6 +127,10 @@ class midClass():
 
         return order_id
 
+    def get_orders(self):
+        self.undo_ordes = self.exchange.GetOrders()
+        return self.undo_ordes
+
     def cancel_order(self, order_id):
         '''
         取消一个挂单信息
