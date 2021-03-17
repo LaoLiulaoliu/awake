@@ -198,8 +198,8 @@ def main():
         if times % 100 == 1:
             test_zuoshi.juncang(juncany_ratio_on_percentage)
         else:
-            if len( test_zuoshi.traded_pair['pan_kou'] ) < gua_N:
-                trade_dicts = test_zuoshi.make_pankou_dict( price_range , min_price_len, every_time_amount )
+            if len(test_zuoshi.traded_pair['pan_kou']) < gua_N:
+                trade_dicts = test_zuoshi.make_pankou_dict(price_range , min_price_len, every_time_amount)
                 test_zuoshi.make_trade_by_dict( trade_dicts )
                 Log( test_zuoshi.done_amount['pan_kou']  )
 
