@@ -160,9 +160,9 @@ class Zuoshi(object):
                 Log(traded_id)
                 
 
-                
-        self.half_B = 0.5* (self.can_buy_B + self.B)
-        condition_tsd = (condition_ratio/100 )*2*self.half_B
+    def juncang(self, condition_ratio=2):       
+        self.half_B = 0.5 * (self.can_buy_B + self.B)
+        condition_tsd = (condition_ratio / 100) * 2 * self.half_B
         
         need_sell_amount = self.B - self.half_B
         need_buy_amount = self.can_buy_B - self.half_B
@@ -196,7 +196,7 @@ def main():
         test_zuoshi.refreash_data()
         
         if times % 100 == 1:
-            test_zuoshi.juncang( juncany_ratio_on_percentage )
+            test_zuoshi.juncang(juncany_ratio_on_percentage)
         else:
             if len( test_zuoshi.traded_pair['pan_kou'] ) < gua_N:
                 trade_dicts = test_zuoshi.make_pankou_dict( price_range , min_price_len, every_time_amount )
