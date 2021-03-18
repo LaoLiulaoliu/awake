@@ -69,7 +69,7 @@ class qushi():
         
         '''
         self.min_trade_B = (self.can_buy_B + self.B) / hands_num
-        self.min_buy_B = min(self.min_trade_B, self.can_buy_B)
+        self.min_buy_B = min(self.min_trade_B, self.can_buy_B) # 一直买，有可能资产不足
         self.min_sell_B = min(self.min_trade_B, self.B)
         
         # 如果吃掉别人卖单，这里可以用self.jys.Sell
@@ -92,6 +92,7 @@ class qushi():
         mean_price = sum( [x['Close'] for x in self.jys.ohlc_data[-12*24:]])/(12*24)
         # 假设追涨杀跌
         do_buy = self.jys.Buy > mean_price * (100.0 + change_pct) / 100.0
+        # 两种计算方式略微不同: 1 / (1 + 0.2) = 0.83,  1 * (1 - 0.2) = 0.8
         do_sell = self.jys.Sell < mean_price / ((100.0 + change_pct )/100.0)
         
         if do_buy or do_sell:
@@ -104,11 +105,12 @@ class qushi():
         rt = self.condition_qushi( change_pct )
         this_trade_dicts = []
 
+        # 如果一直涨，会一下买很多，设置两次买之间的条件，比如5min
         if rt == 'Buy':
-            if self.min_buy_B > 10**-self.amount_N:
+            if self.min_buy_B > 10**-self.amount_N: # 一直买，有可能资产不足，大于最小（最好计算手续费在内）
                 this_trade_dicts.append({
                     'side':'buy',
-                    'price':self.jys.Buy,
+                    'price':self.jys.Buy, # 想吃别人单，用self.jys.Sell, 吃单手续费高
                     'amount':self.min_buy_B
                 })
         elif rt == 'Sell':
