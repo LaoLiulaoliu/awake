@@ -72,7 +72,8 @@ class qushi():
         self.min_buy_B = min(self.min_trade_B, self.can_buy_B)
         self.min_sell_B = min(self.min_trade_B, self.B)
         
-        self.min_trade_money = self.min_trade_B* self.jys.Buy
+        # 如果吃掉别人卖单，这里可以用self.jys.Sell
+        self.min_trade_money = self.min_trade_B * self.jys.Buy
 
 
     
@@ -87,13 +88,14 @@ class qushi():
             min_trade_money: 一手最多交易的计价币数量
         
         '''
+        # 5min 一个蜡烛图，12个一小时，列表越往后时间越新，先忽略nan
         mean_price = sum( [x['Close'] for x in self.jys.ohlc_data[-12*24:]])/(12*24)
-        do_buy = self.jys.Buy > mean_price* (100.0 + change_pct )/100.0
-        do_sell = self.jys.Sell < mean_price/ ((100.0 + change_pct )/100.0)
+        # 假设追涨杀跌
+        do_buy = self.jys.Buy > mean_price * (100.0 + change_pct) / 100.0
+        do_sell = self.jys.Sell < mean_price / ((100.0 + change_pct )/100.0)
         
         if do_buy or do_sell:
-            rt = 'Buy' if do_buy else 'Sell'
-            return rt
+            return 'Buy' if do_buy else 'Sell'
         else:
             return False
     
