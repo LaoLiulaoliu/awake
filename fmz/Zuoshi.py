@@ -43,8 +43,8 @@ class Zuoshi(object):
     def make_trade_by_dict(self, trade_dicts):
         for trade_dict in trade_dicts:
             if trade_dict['do_trade']:
-                buy_id = self.jys.create_order( 'buy', trade_dict['buy_price'] , trade_dict['amount'] ) 
-                sell_id = self.jys.create_order( 'sell',trade_dict['sell_price'] , trade_dict['amount'] ) 
+                buy_id = self.jys.create_order('buy', trade_dict['buy_price'], trade_dict['amount']) 
+                sell_id = self.jys.create_order('sell', trade_dict['sell_price'] , trade_dict['amount']) 
                 
                 if trade_dict['buy_price'] == trade_dict['sell_price']:
                     self.done_amount['dui_qiao'] += trade_dict['amount']
@@ -58,33 +58,31 @@ class Zuoshi(object):
                 self.last_time = time.time()
         
     def make_duiqiao_trade_dict(self, set_amount, every_time_amount):
-        
         trade_price = self.mid_price
         trade_price = round(trade_price, self.price_N)
         
-        if trade_price > self.jys.Buy and trade_price< self.jys.Sell:            
-            do_trade = self.B > every_time_amount
-            do_trade = do_trade and self.can_buy_B > every_time_amount
-            trade_dict = {'do_trade':do_trade,
+        if trade_price > self.jys.Buy and trade_price < self.jys.Sell:
+            do_trade = self.B > every_time_amount and self.can_buy_B > every_time_amount
+            trade_dict = {'do_trade': do_trade,
                           'buy_price': trade_price,
                           'sell_price':trade_price,
-                          'amount':every_time_amount,
-                         'guadan_times_id':0}
+                          'amount': every_time_amount,
+                          'guadan_times_id': 0}
             
             return [trade_dict]
         
     def deal_with_frozen(self):
         undo_orders = self.jys.get_orders()
-        if len( undo_orders) > 0:
+        if len(undo_orders) > 0:
             for i in undo_orders:
                 self.jys.cancel_order(i['Id'])
                 
-    def make_pankou_dict(self, price_range , min_price_len, every_time_amount ):
+    def make_pankou_dict(self, price_range , min_price_len, every_time_amount):
         trade_dicts = []
         mid_price =  self.mid_price
         price_alphas = {}
-        for i in (self.had_gua_times):
-            price_alphas[i] = price_range - self.had_gua_times[i] * min_price_len* random.randint(0,5) 
+        for i in self.had_gua_times:
+            price_alphas[i] = price_range - self.had_gua_times[i] * min_price_len * random.randint(0, 5) # len(self.had_gua_times)
             if price_alphas[i] < 0:
                 price_alphas[i] = 0
                 self.had_gua_times[i] = 0
@@ -94,31 +92,30 @@ class Zuoshi(object):
             
             buy_price = mid_price - price_alpha
             buy_price = round(buy_price, self.price_N)
-            can_buy_B =  self.money/buy_price
+            can_buy_B =  self.money / buy_price
             
             sell_price = mid_price + price_alpha
             sell_price = round(sell_price, self.price_N)
             
-            
-            do_dict = (self.B > every_time_amount )and (can_buy_B > every_time_amount)
-#             Log(do_dict)
+            do_trade = self.B > every_time_amount and can_buy_B > every_time_amount
+#             Log(do_trade)
 
             amount = every_time_amount
 
-            trade_dict = {    'do_trade':do_dict,
-                              'buy_price': buy_price,
-                              'sell_price':sell_price,
-                              'amount':every_time_amount,
-                             'guadan_times_id':guadan_times_id}
+            trade_dict = {  'do_trade':do_trade,
+                            'buy_price': buy_price,
+                            'sell_price':sell_price,
+                            'amount':every_time_amount,
+                            'guadan_times_id':guadan_times_id}
             trade_dicts.append(trade_dict)
             return trade_dicts
 
     
-    def check_if_traded( self , now_times):
+    def check_if_traded(self , now_times):
         for traded_id in self.traded_pair['pan_kou']:
             try:
                 this_buy_state = self.jys.exchange.GetOrder(traded_id['buy_id'])
-            except:
+            except: # not buy, cancel sell
                 self.jys.cancel_order( traded_id['sell_id'] )
                 self.traded_pair['pan_kou'].remove( traded_id )
             try:
@@ -128,18 +125,18 @@ class Zuoshi(object):
                 self.traded_pair['pan_kou'].remove( traded_id )
             
             
-            if { this_sell_state['Status'], this_buy_state['Status'] } == {0, 0}:
-                if now_times% 50 ==0 :
-                    Log(this_buy_state['Status'], this_sell_state['Status'], now_times% 50 )
-#                 if ( time.time() - traded_id['init_time'] )/1000/60 > self.wait_time: # 回测取不到当时时间
+            if { this_sell_state['Status'], this_buy_state['Status'] } == {0, 0}: # 0:pending, 1:finish
+                if now_times % 50 ==0 :
+                    Log(this_buy_state['Status'], this_sell_state['Status'], now_times % 50 )
+#                 if ( time.time() - traded_id['init_time'] ) /1000/60 > self.wait_time: # 回测取不到当时时间, 次数模拟timeout
                     self.jys.cancel_order( traded_id['buy_id'] )
                     self.jys.cancel_order( traded_id['sell_id'] )
-                    self.had_gua_times[traded_id['guadan_times_id']] += random.randint(1,3) 
+                    self.had_gua_times[traded_id['guadan_times_id']] += random.randint(1, 3) 
                     self.traded_pair['pan_kou'].remove( traded_id )
 
-            elif {this_sell_state['Status'], this_buy_state['Status'] } == { 1, 0}:
-                if now_times% 50 ==0 :
-                    Log(this_buy_state['Status'], this_sell_state['Status'], now_times% 50 )
+            elif { this_sell_state['Status'], this_buy_state['Status'] } == {1, 0}:
+                if now_times % 50 ==0 :
+                    Log(this_buy_state['Status'], this_sell_state['Status'], now_times % 50 )
 #                 if ( time.time() - traded_id['init_time'] )/1000/60 > self.wait_time:
                     if this_buy_state['Status'] == 0:
                         self.jys.cancel_order( traded_id['buy_id'] )
@@ -150,7 +147,7 @@ class Zuoshi(object):
                         self.undo_state.append(['sell', this_sell_state['Status']])
                         self.traded_pair['pan_kou'].remove( traded_id )
                 
-            elif {this_sell_state['Status'], this_buy_state['Status'] } == {1,1}:
+            elif {this_sell_state['Status'], this_buy_state['Status'] } == {1, 1}:
                 Log(this_buy_state['Status'], this_sell_state['Status'], traded_id['amount']  )
                 self.done_amount['pan_kou'] += traded_id['amount'] 
                 self.traded_pair['pan_kou'].remove( traded_id )
