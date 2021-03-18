@@ -1,5 +1,5 @@
 
-class qushi_class():
+class qushi():
     def __init__(self, mid_class, amount_N, price_N):
         '''
         设定好初始需要考虑的参数
@@ -101,24 +101,24 @@ class qushi_class():
         self.condition_chicang(hands_num)
         rt = self.condition_qushi( change_pct )
         this_trade_dicts = []
-        if rt:
-            if rt == 'Buy':
-                if self.min_buy_B > 10**-self.amount_N:
-                    this_trade_dicts.append({
-                        'side':'buy',
-                        'price':self.jys.Buy,
-                        'amount':self.min_buy_B
-                    })
-            else:
-                if self.min_sell_B > 10**-self.amount_N:
-                    this_trade_dicts.append({
-                        'side':'sell',
-                        'price':self.jys.Sell,
-                        'amount':self.min_sell_B
-                    })
-            return this_trade_dicts
+
+        if rt == 'Buy':
+            if self.min_buy_B > 10**-self.amount_N:
+                this_trade_dicts.append({
+                    'side':'buy',
+                    'price':self.jys.Buy,
+                    'amount':self.min_buy_B
+                })
+        elif rt == 'Sell':
+            if self.min_sell_B > 10**-self.amount_N:
+                this_trade_dicts.append({
+                    'side':'sell',
+                    'price':self.jys.Sell,
+                    'amount':self.min_sell_B
+                })
         else:
             return False
+        return this_trade_dicts
 
 
 def main():
@@ -129,9 +129,9 @@ def main():
     hands_num = 20
     price_change_percentage = 2
     
-    test_mid = mid_class(exchange)
+    test_mid = midClass(exchange)
     Log(test_mid.refreash_data())
-    test_qushi = qushi_class(test_mid , Set_amount_N, Set_price_N)
+    test_qushi = qushi(test_mid , Set_amount_N, Set_price_N)
     
     while True:
         
