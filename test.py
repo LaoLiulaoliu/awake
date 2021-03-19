@@ -43,7 +43,7 @@ def main(argv):
             # ]
             # print(place_batch_sell_orders(orders))
         elif opt in ('-s', '--socket'):
-            ws = OkexWS(sub_list=['spot/depth5:BTC-USDT'], use_trade_key=True)
+            ws = OkexWS(sub_list=['spot/depth:BTC-USDT'], use_trade_key=True)
             greenlet = gevent.spawn(ws.ws_create)
             # ws.subscription(['spot/ticker:BTC-USDT'])
             print('websocket created, can do sth in the following coroutine')

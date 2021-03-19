@@ -104,7 +104,7 @@ class OkexWS(HttpUtil):
             elif table.find('spot/order') != -1:
                 self.client.ws_order(data['data'])
             elif table.find('depth') != -1:
-                self.client.ws_depth(data['data'])
+                print(data['data'])
             elif table.find('depth5') != -1:
                 print(data['data'])
 
