@@ -37,7 +37,7 @@ def send_cycle_pub(redispool):
         t = time.time()
         redispool.publish('key', f'value_new_{i}')
         GAP = time.time()
-        print('pub cost: ', GAP - t)
+        print('pub cost: ', GAP - t) # 0.000548942 on my i5 2.4G
         i += 1
         time.sleep(1)
 
@@ -49,11 +49,11 @@ def receive_sub(redispool):
     i = 0
     while True:
         for item in pubsub.listen():
-            if item['type'] == 'message':
-                print(i, item['channel'], item['data'])
-            else:
-                print(item)
-            print('pubsub delay: ', time.time() - GAP)
+            # if item['type'] == 'message':
+            #     print(i, item['channel'], item['data'])
+            # else:
+            #     print(item)
+            print('pubsub delay: ', time.time() - GAP) # 0.000183, sometimes exceed 0.5s - 1s
             i += 1
             time.sleep(0.5)
 
