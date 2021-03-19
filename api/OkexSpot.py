@@ -219,6 +219,11 @@ class OkexSpot(object):
         params = {'granularity': interval, 'start': start, 'end': end}
         return self.http.httpGet(path, params)
 
+    def orderbook(self, instrument_id=INSTRUMENT[0], depth=0.1, size=200):
+        path = f'/api/spot/v3/instruments/{instrument_id}/book'
+        params = {'size': size, 'depth': depth}
+        return self.http.httpGet(path, params)
+
     def trad_fee(self, instrument_id=INSTRUMENT[0]):
         """
         {'category': '1', 'maker': '0.0008', 'taker': '0.001', 'timestamp': '2021-03-14T10:56:06.349Z'}
