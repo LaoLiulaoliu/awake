@@ -43,10 +43,10 @@ def main(argv):
             # ]
             # print(place_batch_sell_orders(orders))
         elif opt in ('-s', '--socket'):
-            ws = OkexWS(sub_list=['spot/ticker:BTC-USDT', 'spot/depth5:BTC-USDT'], use_trade_key=True)
+            ws = OkexWS(sub_list=['spot/depth5:BTC-USDT'], use_trade_key=True)
             greenlet = gevent.spawn(ws.ws_create)
-            ws.subscription([])
-            print('websocket created, can do sth in this coroutine')
+            # ws.subscription(['spot/ticker:BTC-USDT'])
+            print('websocket created, can do sth in the following coroutine')
             greenlet.join()
         elif opt in ('-r', '--run'):
             r20210219('TREND_2021-02-24.txt')

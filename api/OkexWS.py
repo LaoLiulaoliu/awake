@@ -93,7 +93,8 @@ class OkexWS(HttpUtil):
             table = data['table']
             if table.find('spot/ticker') != -1:
                 # ws_on_message {'table': 'spot/ticker', 'data': [{'last': '49338.5', 'open_24h': '47991.9', 'best_bid': '49326.7', 'high_24h': '50210.1', 'low_24h': '47907.2', 'open_utc0': '49597.5', 'open_utc8': '49188.4', 'base_volume_24h': '9467.36886712', 'quote_volume_24h': '462894723.35643254', 'best_ask': '49326.8', 'instrument_id': 'BTC-USDT', 'timestamp': '2021-03-02T14:15:12.522Z', 'best_bid_size': '0.56306288', 'best_ask_size': '0.13743411', 'last_qty': '0.0089648'}]}
-                print('finish', data['data'])
+                # print('finish', data['data'])
+                pass
             elif table.find('spot/candle') != -1:
                 self.client.ws_kline(data)
             elif table.find('spot/trade') != -1:
@@ -105,7 +106,7 @@ class OkexWS(HttpUtil):
             elif table.find('depth') != -1:
                 self.client.ws_depth(data['data'])
             elif table.find('depth5') != -1:
-                pass
+                print(data['data'])
 
         elif 'event' in data:
             if data['event'] == 'login':
