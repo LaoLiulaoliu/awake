@@ -28,10 +28,11 @@ class OkexWS(HttpUtil):
             self.__passphrase = PASS_PHRASE
 
         self.__connection = None
-        self.__ws_subs = []  # 'spot/ticker:BTC-USDT'
 
         if isinstance(sub_list, list):
             self.__ws_subs = [sub for sub in sub_list if sub not in self.__ws_subs]
+        else:
+            self.__ws_subs = []  # 'spot/ticker:BTC-USDT'
 
     def ws_create(self):
         try:
