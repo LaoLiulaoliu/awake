@@ -27,49 +27,38 @@ class RedisPool(object):
         self.redis_pool.disconnect()
 
 GAP = 0
+redispool = RedisPool().get_redis_connection()
 
-def send_cycle_pub():
+def send_cycle_pub(redispool):
     print('enter send_cycle_pub')
     global GAP
-    redispool = RedisPool().get_redis_connection()
     i = 0
     while True:
         t = time.time()
         redispool.publish('key', f'value_new_{i}')
         GAP = time.time()
-        # print('pub cost: ', GAP - t)
+        print('pub cost: ', GAP - t)
         i += 1
         time.sleep(1)
 
-def receive_sub():
+def receive_sub(redispool):
     print('enter receive_sub')
     global GAP
-    redispool = RedisPool().get_redis_connection()
     pubsub = redispool.pubsub()
     pubsub.subscribe('key')
-    message = pubsub.get_message()
-    if message['type'] == 'subscribe':
-        print(message['data'])
     i = 0
     while True:
-        print('enter receive_sub while')
-        message = pubsub.listen()
-        print(message)
-        # print(GAP, message)
-        # for item in message:
-        #     if item['type'] == 'message':
-        #         print(i, item['channel'], item['data'])
-        print('pubsub delay: ', time.time() - GAP)
-        i += 1
+        for item in pubsub.listen():
+            if item['type'] == 'message':
+                print(i, item['channel'], item['data'])
+            else:
+                print(item)
+            print('pubsub delay: ', time.time() - GAP)
+            i += 1
+            time.sleep(0.5)
 
 
-t1 = threading.Thread(target=send_cycle_pub, args=())
-t2 = threading.Thread(target=receive_sub, args=())
+t1 = threading.Thread(target=send_cycle_pub, args=(redispool,))
+t2 = threading.Thread(target=receive_sub, args=(redispool,))
 t1.start()
-print('start 2')
 t2.start()
-print('start 1')
-
-
-
-
