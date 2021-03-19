@@ -31,7 +31,9 @@ def main(argv):
             # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
             # print(spot.trad_fee(INSTRUMENT[VALUTA_IDX]))
             # print(spot.account())
-            print(spot.ticker())
+            # print(spot.ticker())
+            # print(spot.kline(INSTRUMENT[VALUTA_IDX], 3600))
+            print(spot.orderbook())
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494679719429120')) bingo
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
 
