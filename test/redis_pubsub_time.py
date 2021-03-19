@@ -37,7 +37,7 @@ def send_cycle_pub(redispool):
         t = time.time()
         redispool.publish('key', f'value_new_{i}')
         GAP = time.time()
-        print('pub cost: ', GAP - t) # 0.000548942 on my i5 2.4G
+        print('pub cost: ', GAP - t) # 0.000548942 on my mac i5 2.4G
         i += 1
         time.sleep(1)
 
