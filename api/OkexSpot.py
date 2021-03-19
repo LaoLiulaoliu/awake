@@ -239,6 +239,8 @@ class OkexSpot(object):
         """
         {'category': '1', 'maker': '0.0008', 'taker': '0.001', 'timestamp': '2021-03-14T10:56:06.349Z'}
         maker is the precentage of normal order fee
+
+        so exciting found 0 fee coin MASK, etc. {'category': '4', 'maker': '0', 'taker': '0', 'timestamp': '2021-03-19T06:47:57.434Z'}
         """
         path = '/api/spot/v3/trade_fee/'
         params = {'instrument_id': instrument_id}
