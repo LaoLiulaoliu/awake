@@ -88,7 +88,6 @@ class OkexWS(HttpUtil):
 
     def on_message(self, message):
         data = json.loads(self.inflate(message))
-        # print('ws_on_message', data)
         if 'table' in data:
             table = data['table']
             if table == 'spot/ticker':
@@ -96,6 +95,8 @@ class OkexWS(HttpUtil):
                 # print('finish', data['data'])
                 pass
             elif table == 'depth':
+                print(data['action'], data['data'])
+            elif table == 'spot/depth_l2_tbt':
                 print(data['action'], data['data'])
             elif table == 'depth5':
                 print(data['data'])
@@ -107,6 +108,8 @@ class OkexWS(HttpUtil):
                 self.client.ws_account(data['data'])
             elif table.find('spot/order') != -1:
                 self.client.ws_order(data['data'])
+            else:
+                print('ws_on_message:table: ', data)
 
         elif 'event' in data:
             if data['event'] == 'login':
