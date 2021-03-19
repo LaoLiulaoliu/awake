@@ -1,4 +1,44 @@
 
+import time
+from sklearn.linear_model import LinearRegression
+
+def make_MACD(Kline, short_period, long_period, mid_period):
+    DIFF = make_DIF(Kline, short_period, long_period)
+    DEA = make_DEA(DIFF, mid_period)
+    MACDs = []
+    for i in range(len(DEA)):
+        MACDs.append( 2*(DEA[i] - DIFF[i]) )
+    return MACDs
+    
+def make_DIF(Kline, short_period, long_period):
+    EMA_short = make_EMA(Kline, short_period)
+    EMA_long = make_EMA(Kline, long_period)
+    DIFs = []
+    the_len = len(EMA_short)
+    for i in range( the_len ):
+        DIFs.append( EMA_short[ i - the_len ] - EMA_long[ i-the_len ])
+    return DIFs
+
+def make_DEA(DIFF, mid_period):
+    return make_EMA(DIFF, mid_period)
+    
+def make_EMA(Kline, period):
+    this_Kline = Kline[-period:]
+    Log(this_Kline)
+    EMAs = []
+    try:
+        EMAs.append( this_Kline[0]['Close'] )
+        for i in range(len(this_Kline) -1 ):
+            EMAs.append( ( 2*this_Kline[i+1]['Close'] + (period -1)*EMAs[i] )/(period + 1) )
+    except:
+        EMAs.append( this_Kline[0] )
+        for i in range(len(this_Kline) -1 ):
+            EMAs.append( ( 2*this_Kline[i+1] + (period -1)*EMAs[i] )/(period + 1) )
+            
+    return EMAs
+
+
+
 class qushi():
     def __init__(self, mid_class, amount_N, price_N):
         '''
@@ -43,8 +83,8 @@ class qushi():
         self.Buy_price = self.jys.Buy
         self.Sell_price = self.jys.Sell
         self.can_buy_B = self.money/ self.Sell_price
-        self.can_buy_B = _N(self.can_buy_B, self.amount_N )
-        self.can_sell_B = _N(self.B, self.amount_N )
+        self.can_buy_B = round(self.can_buy_B, self.amount_N)
+        self.can_sell_B = round(self.B, self.amount_N)
         
     def make_trade_by_dict(self, trade_dicts):
         '''
@@ -54,7 +94,9 @@ class qushi():
             trade_list:已提交的交易请求的id
         '''
         for this_trade in trade_dicts:
-            this_trade_id = self.jys.create_order( this_trade['side'], this_trade['price'] , this_trade['amount'] ) 
+            this_price = round(this_trade['price'], self.price_N )
+            this_amount = round(this_trade['amount'], self.amount_N )
+            this_trade_id = self.jys.create_order( this_trade['side'], this_price , this_amount ) 
             self.trade_list.append( this_trade_id )
     
     def condition_chicang(self, hands_num):
@@ -99,10 +141,43 @@ class qushi():
             return 'Buy' if do_buy else 'Sell'
         else:
             return False
-    
+
+
+    def condition_qushi_macd(self, macd_threshold, short_period = 12, long_period = 26, mid_period = 9):
+        '''
+        根据市场价格情况来做交易判定的条件
+        Args:
+            short_period：MACD的EMA短周期
+            long_period:MACD的EMA长周期
+            mid_period:DIF的EMA周期
+            macd_threshold:MACD预计变化百分之多少取信
+        Returns：
+            min_trade_B: 一手最多交易的商品币数量
+            min_trade_money: 一手最多交易的计价币数量
+        
+        '''
+        Kline = self.jys.ohlc_data
+        MACD = make_MACD(Kline, short_period, long_period, mid_period)
+        X = [[x+1,x+1] for x in range(mid_period)]
+        y = MACD
+        reg = LinearRegression().fit(X, y)
+        next_macd = reg.predict( [[ mid_period + 1,mid_period + 1]] )
+        mean_macd = sum(MACD)/len(MACD)
+        
+        more_than = (100+macd_threshold)/100
+        less_than = (100-macd_threshold)/100
+        
+        rt = False
+        if  next_macd> macd_threshold and MACD [0] <0 :
+            rt = 'Buy'
+        elif next_macd< -macd_threshold and MACD [0] >0:
+            rt = 'Sell'
+        
+        return rt
+
     def make_trade_dicts(self, hands_num, change_pct ):
         self.condition_chicang(hands_num)
-        rt = self.condition_qushi( change_pct )
+        rt = self.condition_qushi_macd( change_pct )
         this_trade_dicts = []
 
         # 如果一直涨，会一下买很多，设置两次买之间的条件，比如5min
@@ -126,24 +201,23 @@ class qushi():
 
 
 def main():
-    
     Set_amount_N = 4
     Set_price_N = 4
     
     hands_num = 20
     price_change_percentage = 2
+    macd_threshold = 10
     
     test_mid = midClass(exchange)
     Log(test_mid.refreash_data())
     test_qushi = qushi(test_mid , Set_amount_N, Set_price_N)
     
     while True:
-        
         Sleep(1000)
         try:
             test_qushi.refreash_data()
 
-            now_trade_dicts = test_qushi.make_trade_dicts(hands_num, price_change_percentage)
+            now_trade_dicts = test_qushi.make_trade_dicts(hands_num, macd_threshold) # use price_change_percentage before
             if now_trade_dicts:
                 test_qushi.make_trade_by_dict(now_trade_dicts)
                 now_trade_dicts = False
