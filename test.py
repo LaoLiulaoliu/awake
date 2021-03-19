@@ -29,11 +29,11 @@ def main(argv):
             spot = OkexSpot(use_trade_key=False)
             # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
             # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
-            # print(spot.trad_fee(INSTRUMENT[VALUTA_IDX]))
+            print(spot.trad_fee(INSTRUMENT[3]))
             # print(spot.account())
             # print(spot.ticker())
             # print(spot.kline(INSTRUMENT[VALUTA_IDX], 3600))
-            print(spot.orderbook(INSTRUMENT[VALUTA_IDX], 0.1, 10))
+            # print(spot.orderbook(INSTRUMENT[VALUTA_IDX], 0.1, 10))
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494679719429120')) bingo
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
 

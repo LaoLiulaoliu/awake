@@ -9,7 +9,8 @@ MIN_12 = 720000
 INSTRUMENT = {
     0: 'btc-usdt',
     1: 'eth-usdt',
-    2: 'doge-usdt'
+    2: 'doge-usdt',
+    3: 'mask-usdt'
 }
 
 TREND_NAME = 'trend_{}.txt'
