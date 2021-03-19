@@ -33,7 +33,7 @@ def main(argv):
             # print(spot.account())
             # print(spot.ticker())
             # print(spot.kline(INSTRUMENT[VALUTA_IDX], 3600))
-            print(spot.orderbook())
+            print(spot.orderbook(INSTRUMENT[VALUTA_IDX], 0.1, 10))
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494679719429120')) bingo
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
 
@@ -43,9 +43,10 @@ def main(argv):
             # ]
             # print(place_batch_sell_orders(orders))
         elif opt in ('-s', '--socket'):
-            ws = OkexWS(sub_list=['spot/ticker:BTC-USDT'], use_trade_key=True)
+            ws = OkexWS(sub_list=['spot/ticker:BTC-USDT', 'spot/depth5:BTC-USDT'], use_trade_key=True)
             greenlet = gevent.spawn(ws.ws_create)
-            print('already create websocket')
+            ws.subscription([])
+            print('websocket created, can do sth in this coroutine')
             greenlet.join()
         elif opt in ('-r', '--run'):
             r20210219('TREND_2021-02-24.txt')

@@ -17,6 +17,7 @@ class OkexWS(HttpUtil):
     def __init__(self, sub_list=None, use_trade_key=False):
         super(OkexWS, self).__init__(use_trade_key)
 
+        self.use_trade_key = use_trade_key
         if use_trade_key:
             self.__apikey = apikey
             self.__secretkey = secretkey
@@ -38,7 +39,8 @@ class OkexWS(HttpUtil):
                                               on_message=self.on_message,
                                               on_close=self.on_close,
                                               on_error=self.on_error)
-            self.__connection.on_open = self.on_open
+            if self.use_trade_key:
+                self.__connection.on_open = self.on_open
             self.__connection.run_forever(ping_interval=20)
         except Exception as e:
             print(f'ws_create exception: {e}')
@@ -107,9 +109,11 @@ class OkexWS(HttpUtil):
 
         elif 'event' in data:
             if data['event'] == 'login':
-                print('success: ', data['success'])
-            if data['event'] == 'subscribe':
-                print('channel: ', data['channel'])
+                print('event login success: ', data['success'])
+            elif data['event'] == 'subscribe':
+                print('event subscribe channel: ', data['channel'])
+            elif data['event'] == 'error':
+                print('event error: ', data['errorCode'], data['message'])
 
     def inflate(self, data):
         decompress = zlib.decompressobj(-zlib.MAX_WBITS)
