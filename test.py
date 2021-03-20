@@ -13,7 +13,7 @@ from api.OkexSpot import OkexSpot, INSTRUMENT
 from api.apiwrapper import place_batch_sell_orders, get_open_orders
 from api.OkexWS import OkexWS
 from backtesting.run import r20210219
-from const import TRADE_NAME
+from const import TREND_NAME
 from storage.Numpd import Numpd
 from ruler.State import State
 
