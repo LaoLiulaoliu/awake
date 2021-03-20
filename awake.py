@@ -10,7 +10,7 @@ from storage.Numpd import Numpd
 from ruler.State import State
 from ruler.Cron import Cron
 from ruler.Scheduler import Scheduler
-from const import TREND_NAME_TIME
+from const import TREND_NAME_TIME, INSTRUMENT
 
 
 def schedule_rotate_trend_file(method):
@@ -21,14 +21,16 @@ def schedule_rotate_trend_file(method):
     cron.time_sets(crontab)
 
     s = Scheduler()
-    gevent.spawn(s.run, [cron])
+    return gevent.spawn(s.run, [cron])
 
 def main():
     trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 4)
     trend.trend_full_load()
     state = State(trend)
 
-    ws = OkexWS(['spot/ticker:BTC-USDT'], state, use_trade_key=True)
+    ws = OkexWS([f'spot/ticker:{INSTRUMENT[3].upper()}'],
+                state,
+                use_trade_key=True)
     greenlet = gevent.spawn(ws.ws_create)
 
     schedule_rotate_trend_file(trend.reopen)
