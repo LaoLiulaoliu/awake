@@ -100,8 +100,8 @@ class OkexWS(HttpUtil):
                 print(data['data'])
             elif table == 'spot/depth_l2_tbt':
                 print(data['action'], data['data'])
-            elif table.find('spot/candle') != -1:
-                self.client.ws_kline(data)
+            elif table == 'spot/candle60s':
+                print(data)
             elif table.find('spot/trade') != -1:
                 self.client.ws_trade(data['data'])
             elif table.find('spot/account') != -1:
