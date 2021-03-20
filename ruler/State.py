@@ -19,7 +19,8 @@ class State(object):
                     State._instance = object.__new__(cls)
         return State._instance
 
-    def __init__(self):
+    def __init__(self, trend):
+        self.trend = trend
         self.flush_trend = 0
         # p60: pair of 60 minutes
         # h: high_price, l: low_price, i: last_period_time_index,
@@ -38,7 +39,7 @@ class State(object):
             pair['l'] = low
             pair['i'] = idx
 
-    def set_restart_state(self, trend, begin_time, begin_price):
+    def set_restart_state(self, begin_time, begin_price):
         """1. data is too short, less than 12 minutes, need traverse 3 times. seted all True
            2. data expired largest period(60), no care long short. seted all False
            3. data expired short period, not expired long period. seted half False, half True
@@ -51,7 +52,7 @@ class State(object):
         period_idx = 0
 
         for pair, compare_time in zip(self.pair, self.compare_time):
-            for i, data in trend.iterator(reverse=True):
+            for i, data in self.trend.iterator(reverse=True):
                 timestamp, price = data
 
                 if begin_time - timestamp < compare_time:
@@ -70,11 +71,11 @@ class State(object):
                 self.set_init_state(begin_price, begin_price, 0)
 
         if False in seted:
-            trend.append((begin_time, begin_price))
+            self.trend.append((begin_time, begin_price))
             if seted[1] is False:
-                self.first_several_minutes_no_bid(trend, 1)
+                self.first_several_minutes_no_bid(1)
             elif seted[0] is False:
-                self.first_several_minutes_no_bid(trend, 0)
+                self.first_several_minutes_no_bid(0)
 
     def compare_set_current_high_low(self, current_price):
         """ 当前值是最大最小值，设置之
@@ -85,7 +86,7 @@ class State(object):
             if current_price < pair['l']:
                 pair['l'] = current_price
 
-    def update_high_low_idx(self, timestamp, trend, trend_replay_current_idx=None):
+    def update_high_low_idx(self, timestamp, trend_replay_current_idx=None):
         """if 当前时间 - 前12分钟时间点的data[index] > 12分钟:
                时间点前进一步
            if 淘汰时间点有最大最小值:
@@ -96,7 +97,7 @@ class State(object):
         for pair, compare_time in zip(self.pair, self.compare_time):
             high_need_sort, low_need_sort = False, False
             while True:
-                pre_time, pre_price = trend.get_idx(pair['i'])
+                pre_time, pre_price = self.trend.get_idx(pair['i'])
                 if timestamp - pre_time > compare_time:
                     if Tool.float_close(pair['h'], pre_price):
                         high_need_sort = True
@@ -107,38 +108,38 @@ class State(object):
                     break
 
             if high_need_sort or low_need_sort:
-                r = trend.get_range(pair['i'], trend_replay_current_idx)
+                r = self.trend.get_range(pair['i'], trend_replay_current_idx)
                 if r is not None:
                     if high_need_sort:
                         pair['h'] = r[:, 1].max()
                     if low_need_sort:
                         pair['l'] = r[:, 1].min()
 
-    def trace_trend_update_state(self, trend):
+    def trace_trend_update_state(self):
         r = get_ticket()
         if r:
             if 'timestamp' not in r:
                 print('timestamp not in r:', r)
                 return
-            self.flush_trend_nearly_one_hour(trend)
+            self.flush_trend_nearly_one_hour()
 
             timestamp = Tool.convert_time_str(r['timestamp'], TIME_PRECISION)
             current_price = np.float64(r['last'])
-            trend.append((timestamp, current_price))
+            self.trend.append((timestamp, current_price))
 
             self.compare_set_current_high_low(current_price)
-            self.update_high_low_idx(timestamp, trend)
+            self.update_high_low_idx(timestamp)
             return timestamp, current_price
 
-    def flush_trend_nearly_one_hour(self, trend):
+    def flush_trend_nearly_one_hour(self):
         self.flush_trend += 1
         if 8191 & self.flush_trend == 0:
             self.flush_trend = 1
-            trend.flush()
+            self.trend.flush()
 
-    def first_several_minutes_no_bid(self, trend, idx):
+    def first_several_minutes_no_bid(self, idx):
         while True:
-            r = self.trace_trend_update_state(trend)
+            r = self.trace_trend_update_state()
             if r is not None and self.pair[idx]['i'] > 0:
                 break
             time.sleep(0.1)
@@ -155,8 +156,8 @@ class State(object):
     def get_12min(self):
         return self.p12
 
-    def get_time_segment_max_min(self, trend):
-        r = trend.get_range(self.p42['i'], self.p12['i'])
+    def get_time_segment_max_min(self):
+        r = self.trend.get_range(self.p42['i'], self.p12['i'])
         if r is not None:
             return r[:, 1].max(), r[:, 1].min()
 

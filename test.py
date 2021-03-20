@@ -7,11 +7,14 @@ from gevent import monkey; monkey.patch_all()
 import sys
 import getopt
 import time
+from datetime import datetime
 from test.numpd_test import numpd_test
 from api.OkexSpot import OkexSpot, INSTRUMENT
 from api.apiwrapper import place_batch_sell_orders, get_open_orders
 from api.OkexWS import OkexWS
 from backtesting.run import r20210219
+from const import TRADE_NAME
+from ruler.State import State
 
 
 def main(argv):
@@ -43,7 +46,12 @@ def main(argv):
             # ]
             # print(place_batch_sell_orders(orders))
         elif opt in ('-s', '--socket'):
-            ws = OkexWS(sub_list=['spot/depth:BTC-USDT'], use_trade_key=True)
+
+            trend = Numpd(TREND_NAME.format(datetime.utcnow().strftime('%Y-%m-%d')), 4)
+            trend.trend_full_load()
+            state = State(trend)
+
+            ws = OkexWS(['spot/depth:BTC-USDT'], state, use_trade_key=True)
             greenlet = gevent.spawn(ws.ws_create)
             # ws.subscription(['spot/ticker:BTC-USDT'])
             print('websocket created, can do sth in the following coroutine')

@@ -11,16 +11,18 @@ from const import INSTRUMENT, VALUTA_IDX, TREND_NAME, TRADE_NAME
 
 
 def r20210219(capital=200, do_trade=False):
-    state = State()
+    trend = Numpd(TREND_NAME.format(datetime.utcnow().strftime('%Y-%m-%d')), 2)
+    trend.trend_load()
+    state = State(trend)
+
     trade = Trade(TRADE_NAME.format(VALUTA_IDX))
     trade.load()
 
     high_24h, low_24h, last_price_init, begin_time = get_high_low_lastest()
     # pickup_leak_place_buy(low_24h, capital, trade)
 
-    trend = Numpd(TREND_NAME.format(datetime.utcnow().strftime('%Y-%m-%d')), 2)
-    trend.trend_load()
-    state.set_restart_state(trend, begin_time, last_price_init)
+
+    state.set_restart_state(begin_time, last_price_init)
 
     print(trend.status())
     # high_precent = [high_24h * 0.01 * i for i in range(100, 70, -1)]  # math.log2(30) = 5    # high_precent_index = {}
@@ -30,7 +32,7 @@ def r20210219(capital=200, do_trade=False):
     count = 0
     while True:
         t = time.time()
-        ret = state.trace_trend_update_state(trend)
+        ret = state.trace_trend_update_state()
         time.sleep(0.01)
         if ret is None:
             continue
