@@ -22,6 +22,7 @@ class State(object):
     def __init__(self, trend):
         self.trend = trend
         self.flush_trend = 0
+
         # p60: pair of 60 minutes
         # h: high_price, l: low_price, i: last_period_time_index,
         self.p60 = {'h': 0, 'l': 0, 'i': 0}
@@ -173,8 +174,4 @@ class State(object):
 
             timestamp = Tool.convert_time_str(i['timestamp'], TIME_PRECISION)
             current_price = np.float64(i['last'])
-
             self.trend.append((timestamp, current_price, np.float64(i['best_ask']), np.float64(i['best_bid'])))
-
-            self.compare_set_current_high_low(current_price)
-            self.update_high_low_idx(timestamp)
