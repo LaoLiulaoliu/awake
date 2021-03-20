@@ -134,8 +134,8 @@ class State(object):
     def flush_trend_nearly_one_hour(self):
         self.flush_trend += 1
         if 8191 & self.flush_trend == 0:
-            self.flush_trend = 1
             self.trend.flush()
+            self.flush_trend = 1
 
     def first_several_minutes_no_bid(self, idx):
         while True:
@@ -163,5 +163,18 @@ class State(object):
 
     def restart_schedule(self):
         pass
+
     def schedule(self):
         pass
+
+    def parse_ticker(self, message):
+        for i in message:
+            self.flush_trend_nearly_one_hour()
+
+            timestamp = Tool.convert_time_str(i['timestamp'], TIME_PRECISION)
+            current_price = np.float64(i['last'])
+
+            self.trend.append((timestamp, current_price, np.float64(i['best_ask']), np.float64(i['best_bid'])))
+
+            self.compare_set_current_high_low(current_price)
+            self.update_high_low_idx(timestamp)

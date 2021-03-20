@@ -14,10 +14,17 @@ WS_URL = 'wss://real.okex.com:8443/ws/v3'
 
 
 class OkexWS(HttpUtil):
-    def __init__(self, sub_list=None, use_trade_key=False):
+    def __init__(self, sub_list, state, use_trade_key=False):
         super(OkexWS, self).__init__(use_trade_key)
 
+        self.__connection = None
+        self.__ws_subs = []  # 'spot/ticker:BTC-USDT'
+        if isinstance(sub_list, list):
+            self.__ws_subs = [sub for sub in sub_list if sub not in self.__ws_subs]
+
+        self.state = state
         self.use_trade_key = use_trade_key
+
         if use_trade_key:
             self.__apikey = apikey
             self.__secretkey = secretkey
@@ -26,13 +33,6 @@ class OkexWS(HttpUtil):
             self.__apikey = API_KEY
             self.__secretkey = SECRET_KEY
             self.__passphrase = PASS_PHRASE
-
-        self.__connection = None
-
-        if isinstance(sub_list, list):
-            self.__ws_subs = [sub for sub in sub_list if sub not in self.__ws_subs]
-        else:
-            self.__ws_subs = []  # 'spot/ticker:BTC-USDT'
 
     def ws_create(self):
         try:
@@ -92,9 +92,8 @@ class OkexWS(HttpUtil):
         if 'table' in data:
             table = data['table']
             if table == 'spot/ticker':
-                # ws_on_message {'table': 'spot/ticker', 'data': [{'last': '49338.5', 'open_24h': '47991.9', 'best_bid': '49326.7', 'high_24h': '50210.1', 'low_24h': '47907.2', 'open_utc0': '49597.5', 'open_utc8': '49188.4', 'base_volume_24h': '9467.36886712', 'quote_volume_24h': '462894723.35643254', 'best_ask': '49326.8', 'instrument_id': 'BTC-USDT', 'timestamp': '2021-03-02T14:15:12.522Z', 'best_bid_size': '0.56306288', 'best_ask_size': '0.13743411', 'last_qty': '0.0089648'}]}
-                # print('finish', data['data'])
-                pass
+                # {'table': 'spot/ticker', 'data': [{'last': '49338.5', 'open_24h': '47991.9', 'best_bid': '49326.7', 'high_24h': '50210.1', 'low_24h': '47907.2', 'open_utc0': '49597.5', 'open_utc8': '49188.4', 'base_volume_24h': '9467.36886712', 'quote_volume_24h': '462894723.35643254', 'best_ask': '49326.8', 'instrument_id': 'BTC-USDT', 'timestamp': '2021-03-02T14:15:12.522Z', 'best_bid_size': '0.56306288', 'best_ask_size': '0.13743411', 'last_qty': '0.0089648'}]}
+                self.state.parse_ticker(data['data'])
             elif table == 'spot/depth':
                 print(data['action'], data['data'])
             elif table == 'spot/depth5':
