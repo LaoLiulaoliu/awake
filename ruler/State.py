@@ -122,7 +122,7 @@ class State(object):
             if 'timestamp' not in r:
                 print('timestamp not in r:', r)
                 return
-            self.flush_trend_nearly_one_hour()
+            self.flush_trend_nearly_ten_min()
 
             timestamp = Tool.convert_time_str(r['timestamp'], TIME_PRECISION)
             current_price = np.float64(r['last'])
@@ -132,7 +132,9 @@ class State(object):
             self.update_high_low_idx(timestamp)
             return timestamp, current_price
 
-    def flush_trend_nearly_one_hour(self):
+    def flush_trend_nearly_ten_min(self):
+        """ 10 * 60 * 14 = 8400
+        """
         self.flush_trend += 1
         if 8191 & self.flush_trend == 0:
             self.trend.flush()
@@ -170,7 +172,7 @@ class State(object):
 
     def parse_ticker(self, message):
         for i in message:
-            self.flush_trend_nearly_one_hour()
+            self.flush_trend_nearly_ten_min()
 
             timestamp = Tool.convert_time_str(i['timestamp'], TIME_PRECISION)
             current_price = np.float64(i['last'])

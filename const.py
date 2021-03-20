@@ -14,6 +14,7 @@ INSTRUMENT = {
 }
 
 TREND_NAME = 'trend_{}.txt'
+TREND_NAME_TIME = """f'trend_{datetime.utcnow().strftime("%Y-%m-%d")}.txt'"""
 TRADE_NAME = 'trade_log_{}.txt'
 TRADE_FINISHED = 'trade_finished.txt'
 STATE_INDICATOR = 'state_indicator.txt'

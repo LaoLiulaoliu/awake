@@ -31,6 +31,14 @@ class Numpd(Numpp):
     def flush(self):
         self.fp.flush()
 
+    def reopen(self, f_new_name):
+        self.close()
+        self.info.fill(0)
+
+        self.fp = None
+        self.fname = f_new_name
+        self.fp = self.open(f_new_name)
+
     def load(self, convert=None):
         self.fp.seek(0, 0)
         if convert:

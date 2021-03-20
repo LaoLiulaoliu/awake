@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from gevent import monkey; monkey.patch_all()
-import gevent
 from datetime import datetime
 
+
 class Cron(object):
-    def __init__(self, method):
+    def __init__(self, method, arg):
         self.names = ['minute', 'hour', 'dayofmonth', 'month', 'dayofweek']
         self.wholes = {'minute': 60, 'hour': 24, 'dayofmonth': 31, 'month': 12, 'dayofweek': 7}
-        self.tsets = {}
+        self.tsets = {} # {'minute': {1}, 'hour': {1}, 'dayofmonth': {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31}, 'month': {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, 'dayofweek': {0, 1, 2, 3, 4, 5, 6, 7}}
         self.method = method
+        self.arg = arg
 
-    def _time_sets(self, crontab_arguments):
+    def time_sets(self, crontab_arguments):
         args = crontab_arguments.split()
         if len(args) != len(self.names):
             raise ValueError(f'valid crontab expression: {crontab_arguments}')
@@ -44,23 +44,5 @@ class Cron(object):
                 t.month in self.tsets['month'] and \
                 t.weekday() in self.tsets['dayofweek']
 
-
-class Scheduler(object):
-    def execute(method):
-        job = gevent.spawn(method, concurrency=10)
-        job.rawlink(task_completed, method=method)
-
-    def run(self, schedules):
-        while True:
-            # assume this for loop can be finished in less than one minute
-            [execute(s.method) for s in schedules if s.timematch()]
-
-            gevent.sleep(60 - datetime.utcnow().second)
-
-crontab_arguments = '1 1 * * *'
-c = Cron()
-c._time_sets(crontab_arguments)
-print(c.tsets, c.get_crontab_arguments())
-
-scheduler = Scheduler()
-scheduler.run([s])
+    def get_arg(self):
+        return eval(self.arg, globals(), {})

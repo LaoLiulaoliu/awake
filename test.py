@@ -16,11 +16,14 @@ from backtesting.run import r20210219
 from const import TREND_NAME
 from storage.Numpd import Numpd
 from ruler.State import State
+from ruler.Cron import Cron
+from ruler.Scheduler import Scheduler
+from const import TREND_NAME_TIME
 
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, 'nors', ['numpd=', 'spot=', 'run=', 'socket='])
+        opts, args = getopt.getopt(argv, 'anors', ['numpd=', 'spot=', 'run=', 'socket='])
     except getopt.GetoptError:
         print('test.py -n')
         sys.exit(2)
@@ -28,6 +31,23 @@ def main(argv):
     for opt, arg in opts:
         if opt in ('-n', '--numpd'):
             numpd_test()
+        elif opt in ('-a', '--a'):
+            def method(num):
+                print(f'in method: {num}')
+                for i in range(50):
+                    gevent.sleep(0.1)
+                gevent.sleep(0)
+
+            crontab = '*/3 * * * *'
+            cron = Cron(method, TREND_NAME_TIME)
+            cron.time_sets(crontab)
+
+            s = Scheduler()
+            g = gevent.spawn(s.run, [cron])
+            while True:
+                print('main thread')
+                gevent.sleep(10)
+
         elif opt in ('-o', '--spot'):
             VALUTA_IDX = 0
             spot = OkexSpot(use_trade_key=False)
