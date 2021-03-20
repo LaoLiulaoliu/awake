@@ -10,7 +10,11 @@ INSTRUMENT = {
     0: 'btc-usdt',
     1: 'eth-usdt',
     2: 'doge-usdt',
-    3: 'mask-usdt'
+    3: 'alpha-usdt',
+    4: 'flow-usdt',
+    5: 'glm-usdt',
+    6: 'luna-usdt',
+    7: 'mask-usdt'
 }
 
 TREND_NAME = 'trend_{}.txt'
