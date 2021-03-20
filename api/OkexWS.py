@@ -92,7 +92,7 @@ class OkexWS(HttpUtil):
         if 'table' in data:
             table = data['table']
             if table == 'spot/ticker':
-                # {'table': 'spot/ticker', 'data': [{'last': '49338.5', 'open_24h': '47991.9', 'best_bid': '49326.7', 'high_24h': '50210.1', 'low_24h': '47907.2', 'open_utc0': '49597.5', 'open_utc8': '49188.4', 'base_volume_24h': '9467.36886712', 'quote_volume_24h': '462894723.35643254', 'best_ask': '49326.8', 'instrument_id': 'BTC-USDT', 'timestamp': '2021-03-02T14:15:12.522Z', 'best_bid_size': '0.56306288', 'best_ask_size': '0.13743411', 'last_qty': '0.0089648'}]}
+                # [{'last': '49338.5', 'open_24h': '47991.9', 'best_bid': '49326.7', 'high_24h': '50210.1', 'low_24h': '47907.2', 'open_utc0': '49597.5', 'open_utc8': '49188.4', 'base_volume_24h': '9467.36886712', 'quote_volume_24h': '462894723.35643254', 'best_ask': '49326.8', 'instrument_id': 'BTC-USDT', 'timestamp': '2021-03-02T14:15:12.522Z', 'best_bid_size': '0.56306288', 'best_ask_size': '0.13743411', 'last_qty': '0.0089648'}]
                 self.state.parse_ticker(data['data'])
             elif table == 'spot/depth':
                 print(data['action'], data['data'])
@@ -101,7 +101,9 @@ class OkexWS(HttpUtil):
             elif table == 'spot/depth_l2_tbt':
                 print(data['action'], data['data'])
             elif table == 'spot/candle60s':
-                print(data)
+                # [{'candle': ['2021-03-20T06:18:00.000Z', '58219.7', '58222.4', '58212.8', '58222.4', '0.14625923'], 'instrument_id': 'BTC-USDT'}]
+                # data is pushed every 500ms, will duplicated in one minute.
+                print(data['data'])
             elif table.find('spot/trade') != -1:
                 self.client.ws_trade(data['data'])
             elif table.find('spot/account') != -1:
