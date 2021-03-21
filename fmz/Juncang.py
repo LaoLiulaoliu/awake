@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# okex 2020-03-20 2021-03-02 balance 1000 stocks 0.05 fee 0.15
+# 交易次数 114 浮动0.05  least 0.002 return 522 年化 54.8%  drawdown 10.3%  3904
+# 交易次数 140 浮动0.02  least 0.002 return 538 年化 56.5%  drawdown 10.2%  3959
+# 交易次数 152 浮动0.008  least 0.002 return 570 年化 60%  drawdown 9.5%  4007
+# 交易次数 152 浮动0.005  least 0.001 return 489 年化 51%  drawdown 13%  3827
+
 import time
 
 class Juncang(object):

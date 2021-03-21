@@ -19,7 +19,7 @@ def make_MACD(Kline, short_period, long_period, mid_period):
     DEA = make_DEA(DIFF, mid_period)
     MACDs = []
     for i in range(len(DEA)):
-        MACDs.append( 2*(DEA[i] - DIFF[i]) )
+        MACDs.append(2 * (DEA[i] - DIFF[i]))
     return MACDs
     
 def make_DIF(Kline, short_period, long_period):
@@ -27,8 +27,8 @@ def make_DIF(Kline, short_period, long_period):
     EMA_long = make_EMA(Kline, long_period)
     DIFs = []
     the_len = len(EMA_short)
-    for i in range( the_len ):
-        DIFs.append( EMA_short[ i - the_len ] - EMA_long[ i-the_len ])
+    for i in range(the_len):
+        DIFs.append(EMA_short[i - the_len] - EMA_long[i - the_len])
     return DIFs
 
 def make_DEA(DIFF, mid_period):
@@ -40,18 +40,18 @@ def make_EMA(Kline, period):
     EMAs = []
     try:
         EMAs.append( this_Kline[0]['Close'] )
-        for i in range(len(this_Kline) -1 ):
-            EMAs.append( ( 2*this_Kline[i+1]['Close'] + (period -1)*EMAs[i] )/(period + 1) )
-    except:
+        for i in range(len(this_Kline) -1):
+            EMAs.append( (2*this_Kline[i+1]['Close'] + (period - 1)*EMAs[i]) / (period + 1) )
+    except:  # when calculate DIFs
         EMAs.append( this_Kline[0] )
-        for i in range(len(this_Kline) -1 ):
-            EMAs.append( ( 2*this_Kline[i+1] + (period -1)*EMAs[i] )/(period + 1) )
+        for i in range(len(this_Kline) -1):
+            EMAs.append( (2*this_Kline[i+1] + (period - 1)*EMAs[i]) / (period + 1) )
             
     return EMAs
 
 
 
-class qushi():
+class Qushi():
     def __init__(self, mid_class, amount_N, price_N):
         '''
         设定好初始需要考虑的参数
@@ -159,30 +159,30 @@ class qushi():
         '''
         根据市场价格情况来做交易判定的条件
         Args:
-            short_period：MACD的EMA短周期
-            long_period:MACD的EMA长周期
-            mid_period:DIF的EMA周期
-            macd_threshold:MACD预计变化百分之多少取信
+            short_period: MACD的EMA短周期
+            long_period: MACD的EMA长周期
+            mid_period: DIF的EMA周期
+            macd_threshold: MACD预计变化百分之多少取信
         Returns：
             min_trade_B: 一手最多交易的商品币数量
             min_trade_money: 一手最多交易的计价币数量
-        
         '''
-        Kline = self.jys.ohlc_data
+        Kline = self.jys.ohlc_data(86400)
         MACD = make_MACD(Kline, short_period, long_period, mid_period)
-        X = [[x+1,x+1] for x in range(mid_period)]
-        y = MACD
+        X = [[x+1, x+1] for x in range(mid_period)]
+        x = [[MACD[i - 2], MACD[i - 1]] for i in range(2, mid_period)]
+        y = MACD[2:]
         reg = LinearRegression().fit(X, y)
-        next_macd = reg.predict( [[ mid_period + 1,mid_period + 1]] )
-        mean_macd = sum(MACD)/len(MACD)
+        next_macd = reg.predict( [[MACD[-2], MACD[-1]]] )
+        mean_macd = sum(MACD) / len(MACD)
         
-        more_than = (100+macd_threshold)/100
-        less_than = (100-macd_threshold)/100
+        more_than = (100 + macd_threshold) / 100
+        less_than = (100 - macd_threshold) / 100
         
         rt = False
-        if  next_macd> macd_threshold and MACD [0] <0 :
+        if  next_macd > macd_threshold and MACD[0] < 0 :
             rt = 'Buy'
-        elif next_macd< -macd_threshold and MACD [0] >0:
+        elif next_macd < -macd_threshold and MACD[0] > 0:
             rt = 'Sell'
         
         return rt
@@ -222,7 +222,7 @@ def main():
     
     test_mid = midClass(exchange)
     Log(test_mid.refreash_data())
-    test_qushi = qushi(test_mid , Set_amount_N, Set_price_N)
+    test_qushi = Qushi(test_mid , Set_amount_N, Set_price_N)
     
     while True:
         Sleep(1000)
