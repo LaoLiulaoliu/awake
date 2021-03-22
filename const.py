@@ -1,6 +1,5 @@
 RETRY = 10
 TIME_PRECISION = 1000
-VALUTA_IDX = 0
 MIN_60 = 3600000
 MIN_42 = 2520000
 MIN_30 = 1800000
@@ -16,6 +15,7 @@ INSTRUMENT = {
     6: 'luna-usdt',
     7: 'mask-usdt'
 }
+VALUTA_IDX = 3
 
 TREND_NAME = 'trend_{}.txt'
 TREND_NAME_TIME = """f'trend_{datetime.utcnow().strftime("%Y-%m-%d")}.txt'"""

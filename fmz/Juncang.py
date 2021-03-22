@@ -25,7 +25,7 @@ class Juncang(object):
         if now_price == '---':
             return False
 
-        self.total_money = self.B * now_price + self.money
+        self.total_money = self.money + self.B * now_price
         self.half_money = self.total_money / 2
         self.need_buy = (self.half_money - self.B * now_price) / now_price
         self.need_sell = (self.half_money - self.money) / now_price
