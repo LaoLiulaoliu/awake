@@ -105,6 +105,7 @@ class OkexWS(HttpUtil):
                 # data is pushed every 500ms, will duplicated in one minute.
                 print(data['data'])
             elif table == 'spot/trade':
+                # push filled orders on the whole market - public
                 self.state.parse_trade(data['data'])
             elif table.find('spot/account') != -1:
                 self.client.ws_account(data['data'])
