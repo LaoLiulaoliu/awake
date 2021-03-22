@@ -183,6 +183,5 @@ class State(object):
 
     def parse_trade(self, message):
         for i in message:
-            i['side'], i['trade_id']
-            i['size'], i['price']
+            print(i['side'], i['trade_id'], i['size'], i['price'])
 
