@@ -105,7 +105,7 @@ class OkexWS(HttpUtil):
                 # data is pushed every 500ms, will duplicated in one minute.
                 print(data['data'])
             elif table == 'spot/account':
-                # seems only push update data
+                # push update data, sometimes have duplicated data
                 print('account: ', data['data'])
             elif table == 'spot/order':
                 print('order: ', data['data'])
