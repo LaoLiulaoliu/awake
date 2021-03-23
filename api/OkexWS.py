@@ -107,8 +107,8 @@ class OkexWS(HttpUtil):
             elif table == 'spot/trade':
                 # push filled orders on the whole market - public
                 self.state.parse_trade(data['data'])
-            elif table.find('spot/account') != -1:
-                self.client.ws_account(data['data'])
+            elif table == 'spot/account':
+                print(data['data'])
             elif table.find('spot/order') != -1:
                 self.client.ws_order(data['data'])
             else:
