@@ -104,14 +104,16 @@ class OkexWS(HttpUtil):
                 # [{'candle': ['2021-03-20T06:18:00.000Z', '58219.7', '58222.4', '58212.8', '58222.4', '0.14625923'], 'instrument_id': 'BTC-USDT'}]
                 # data is pushed every 500ms, will duplicated in one minute.
                 print(data['data'])
+            elif table == 'spot/account':
+                # seems only push update data
+                print('account: ', data['data'])
+            elif table == 'spot/order':
+                print('order: ', data['data'])
+            elif table == 'spot/order_algo':
+                print('order_algo: ', data['data'])
             elif table == 'spot/trade':
                 # push filled orders on the whole market - public
                 self.state.parse_trade(data['data'])
-            elif table == 'spot/account':
-                # seems only push update data
-                print(data['data'])
-            elif table == 'spot/order':
-                print(data['data'])
             else:
                 print('ws_on_message:table: ', data)
 
