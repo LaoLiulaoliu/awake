@@ -78,5 +78,6 @@ def main():
     #strategy(init_balance, init_coin, state)
 
     greenlet.join()
+    print(ws.get_connection())
 
 main()
