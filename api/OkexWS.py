@@ -108,6 +108,7 @@ class OkexWS(HttpUtil):
                 # push filled orders on the whole market - public
                 self.state.parse_trade(data['data'])
             elif table == 'spot/account':
+                # seems only push update data
                 print(data['data'])
             elif table == 'spot/order':
                 print(data['data'])
