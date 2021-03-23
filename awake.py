@@ -10,6 +10,7 @@ from storage.Numpd import Numpd
 from ruler.State import State
 from ruler.Cron import Cron
 from ruler.Scheduler import Scheduler
+from api.apiwrapper import place_buy_order, place_sell_order
 from const import TREND_NAME_TIME, INSTRUMENT, TIME_PRECISION, TRADE_NAME, VALUTA_IDX
 
 
