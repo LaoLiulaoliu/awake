@@ -94,8 +94,7 @@ class Qushi():
         self.money = self.jys.Balance
         self.Buy_price = self.jys.Buy
         self.Sell_price = self.jys.Sell
-        self.can_buy_B = self.money / self.Sell_price
-        self.can_buy_B = round(self.can_buy_B, self.amount_N)
+        self.can_buy_B = round(self.money / self.Sell_price, self.amount_N)
         self.can_sell_B = round(self.B, self.amount_N)
         
     def make_trade_by_dict(self, trade_dicts):
@@ -129,9 +128,7 @@ class Qushi():
         # 如果吃掉别人卖单，这里可以用self.jys.Sell
         self.min_trade_money = self.min_trade_B * self.jys.Buy
 
-
-    
-    def condition_qushi(self, change_pct ):
+    def condition_qushi(self, change_pct):
         '''
         根据市场价格情况来做交易判定的条件
         Args:
@@ -143,19 +140,21 @@ class Qushi():
         
         '''
         # 5min 一个蜡烛图，12个一小时，列表越往后时间越新，先忽略nan
-        mean_price = sum( [x['Close'] for x in self.jys.ohlc_data[-12*24:]])/(12*24)
+        mean_price = sum([x['Close'] for x in self.jys.ohlc_data[-12*24:]]) / (12*24)
         # 假设追涨杀跌
         do_buy = self.jys.Buy > mean_price * (100.0 + change_pct) / 100.0
         # 两种计算方式略微不同: 1 / (1 + 0.2) = 0.83,  1 * (1 - 0.2) = 0.8
-        do_sell = self.jys.Sell < mean_price / ((100.0 + change_pct )/100.0)
+        do_sell = self.jys.Sell < mean_price / ((100.0 + change_pct) / 100.0)
         
-        if do_buy or do_sell:
-            return 'Buy' if do_buy else 'Sell'
+        if do_buy:
+            return 'Buy'
+        elif do_sell:
+            return 'Sell'
         else:
             return False
 
 
-    def condition_qushi_macd(self, macd_threshold, short_period = 12, long_period = 26, mid_period = 9):
+    def condition_qushi_macd(self, macd_threshold, short_period=12, long_period=26, mid_period=9):
         '''
         根据市场价格情况来做交易判定的条件
         Args:
@@ -167,13 +166,13 @@ class Qushi():
             min_trade_B: 一手最多交易的商品币数量
             min_trade_money: 一手最多交易的计价币数量
         '''
-        Kline = self.jys.ohlc_data
+        Kline = self.jys.ohlc_data # get 300 length Kline
         MACD = make_MACD(Kline, short_period, long_period, mid_period)
-        X = [[x+1, x+1] for x in range(mid_period)]
+        # X = [[x+1, x+1] for x in range(mid_period)]
         x = [[MACD[i - 2], MACD[i - 1]] for i in range(2, mid_period)]
         y = MACD[2:]
-        reg = LinearRegression().fit(X, y)
-        next_macd = reg.predict( [[MACD[-2], MACD[-1]]] )
+        reg = LinearRegression().fit(x, y)
+        next_macd = reg.predict( [[MACD[-2], MACD[-1]]] )[0]
         mean_macd = sum(MACD) / len(MACD)
         
         more_than = (100 + macd_threshold) / 100
@@ -187,9 +186,9 @@ class Qushi():
         
         return rt
 
-    def make_trade_dicts(self, hands_num, change_pct ):
+    def make_trade_dicts(self, hands_num, macd_threshold):
         self.condition_chicang(hands_num)
-        rt = self.condition_qushi_macd( change_pct )
+        rt = self.condition_qushi_macd(macd_threshold)
         this_trade_dicts = []
 
         # 如果一直涨，会一下买很多，设置两次买之间的条件，比如5min

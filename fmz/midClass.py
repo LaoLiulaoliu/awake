@@ -89,12 +89,12 @@ class midClass():
 
 
 
-    def get_ohlc_data(self, period = PERIOD_M5):
+    def get_ohlc_data(self, period=PERIOD_M5):
         '''
         获取K线信息
 
         Args:
-            period: K线周期，PERIOD_M1 指1分钟, PERIOD_M5 指5分钟, PERIOD_M15 指15分钟,
+            period: K线周期，PERIOD_M1 指1分钟, PERIOD_M5(=300) 指5分钟, PERIOD_M15 指15分钟,
             PERIOD_M30 指30分钟, PERIOD_H1 指1小时, PERIOD_D1 指一天。
         '''
         self.ohlc_data = exchange.GetRecords(period)
@@ -159,7 +159,7 @@ class midClass():
         # if not self.get_depth():
         #     return 'false_get_depth'
         try:
-            self.get_ohlc_data()
+            self.get_ohlc_data(60) # 60 = 1min
         except:
             return 'false_get_K_line_info'
 
