@@ -109,8 +109,8 @@ class OkexWS(HttpUtil):
                 self.state.parse_trade(data['data'])
             elif table == 'spot/account':
                 print(data['data'])
-            elif table.find('spot/order') != -1:
-                self.client.ws_order(data['data'])
+            elif table == 'spot/order':
+                print(data['data'])
             else:
                 print('ws_on_message:table: ', data)
 
