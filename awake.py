@@ -54,6 +54,8 @@ def strategy(balance, coin, state, least_coin_amount=0.001):
                 elif need_buy_amount < -least_coin_amount:
                     sell_order_id = place_sell_order(best_ask, -need_buy_amount)
                     last_trade_price = current_price
+                    # when order push changed data, calcuate strategy account info.
+                    # or change global account info based on changed account message
 
 
 def main():
