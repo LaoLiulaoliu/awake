@@ -22,6 +22,7 @@ class State(object):
     def __init__(self, trend):
         self.trend = trend
         self.flush_trend = 0
+        self.balance = {}
 
         # p60: pair of 60 minutes
         # h: high_price, l: low_price, i: last_period_time_index,
@@ -185,3 +186,6 @@ class State(object):
         for i in message:
             print(i['side'], i['trade_id'], i['size'], i['price'])
 
+    def parse_account(self, message):
+        for i in message:
+            self.balance[i['currency'].upper()] = i['balance']

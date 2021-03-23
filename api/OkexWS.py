@@ -85,7 +85,10 @@ class OkexWS(HttpUtil):
 
     def on_close(self):
         print('ws_on_close', self.__connection, self.__ws_subs)
-        self.__connection = None
+        # self.__connection = None
+
+    def get_connection(self):
+        return self.__connection
 
     def on_message(self, message):
         data = json.loads(self.inflate(message))
@@ -106,7 +109,7 @@ class OkexWS(HttpUtil):
                 print(data['data'])
             elif table == 'spot/account':
                 # push update data, sometimes have duplicated data
-                print('account: ', data['data'])
+                self.state.parse_account(data['data'])
             elif table == 'spot/order':
                 print('order: ', data['data'])
             elif table == 'spot/order_algo':
