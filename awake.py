@@ -75,7 +75,7 @@ def main():
     greenlet = gevent.spawn(ws.ws_create)
 
     schedule_rotate_trend_file(trend.reopen)
-    strategy(init_balance, init_coin, state)
+    #strategy(init_balance, init_coin, state)
 
     greenlet.join()
 
