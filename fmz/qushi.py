@@ -14,6 +14,7 @@
 import time
 from sklearn.linear_model import LinearRegression
 
+
 def make_MACD(Kline, short_period, long_period, mid_period):
     DIFF = make_DIF(Kline, short_period, long_period)
     DEA = make_DEA(DIFF, mid_period)
@@ -21,7 +22,7 @@ def make_MACD(Kline, short_period, long_period, mid_period):
     for i in range(len(DEA)):
         MACDs.append(2 * (DEA[i] - DIFF[i]))
     return MACDs
-    
+
 def make_DIF(Kline, short_period, long_period):
     EMA_short = make_EMA(Kline, short_period)
     EMA_long = make_EMA(Kline, long_period)
@@ -33,10 +34,9 @@ def make_DIF(Kline, short_period, long_period):
 
 def make_DEA(DIFF, mid_period):
     return make_EMA(DIFF, mid_period)
-    
+
 def make_EMA(Kline, period):
     this_Kline = Kline[-period:]
-    Log(this_Kline)
     EMAs = []
     try:
         EMAs.append( this_Kline[0]['Close'] )
@@ -94,7 +94,7 @@ class Qushi():
         self.money = self.jys.Balance
         self.Buy_price = self.jys.Buy
         self.Sell_price = self.jys.Sell
-        self.can_buy_B = self.money/ self.Sell_price
+        self.can_buy_B = self.money / self.Sell_price
         self.can_buy_B = round(self.can_buy_B, self.amount_N)
         self.can_sell_B = round(self.B, self.amount_N)
         
@@ -167,7 +167,7 @@ class Qushi():
             min_trade_B: 一手最多交易的商品币数量
             min_trade_money: 一手最多交易的计价币数量
         '''
-        Kline = self.jys.ohlc_data(86400)
+        Kline = self.jys.ohlc_data
         MACD = make_MACD(Kline, short_period, long_period, mid_period)
         X = [[x+1, x+1] for x in range(mid_period)]
         x = [[MACD[i - 2], MACD[i - 1]] for i in range(2, mid_period)]

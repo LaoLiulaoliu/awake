@@ -158,10 +158,10 @@ class midClass():
             return 'false_get_ticker'
         # if not self.get_depth():
         #     return 'false_get_depth'
-        # try:
-        #     self.get_ohlc_data()
-        # except:
-        #     return 'false_get_K_line_info'
+        try:
+            self.get_ohlc_data()
+        except:
+            return 'false_get_K_line_info'
 
         return 'refreash_data_finish!'
 

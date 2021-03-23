@@ -32,12 +32,21 @@ class Numpd(Numpp):
         self.fp.flush()
 
     def reopen(self, f_new_name):
-        self.close()
+        import time
+        t = time.time()
+        if self.fp:
+            self.fp.close()
+        t1 = time.time()
+        print('close: ', t1 - t)
         self.info.fill(0)
+        t2 = time.time()
+        print('fill: ', t2 - t1)
 
-        self.fp = None
         self.fname = f_new_name
-        self.fp = self.open(f_new_name)
+        t3 = time.time()
+        print('assign: ', t3 - t2)
+        self.fp = open(f_new_name, 'a+')
+        print('open: ', time.time() - t3)
 
     def load(self, convert=None):
         self.fp.seek(0, 0)
