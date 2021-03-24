@@ -17,7 +17,7 @@ from api.apiwrapper import place_buy_order, place_sell_order
 from const import INSTRUMENT, VALUTA_IDX
 
 
-def strategy(state, least_coin_amount=0.001):
+def strategy(state, least_coin_proportion=0.05):
     """ Websocket account change message to get balance, need whole account without other strategies.
         Calculating balance based on order state change message, can fuse others in one account.
     """
@@ -35,6 +35,7 @@ def strategy(state, least_coin_amount=0.001):
             if abs(last_trade_price - current_price) / last_trade_price > threshold:
                 half_money = 0.5 * (money + coin * current_price)
                 need_buy_amount = half_money / current_price - coin
+                least_coin_amount = least_coin_proportion * coin
                 if need_buy_amount > least_coin_amount:
                     buy_order_id = place_buy_order(best_bid, need_buy_amount)
                     last_trade_price = current_price
