@@ -83,9 +83,13 @@ class OkexWS(HttpUtil):
     def on_error(self, error):
         print('ws_on_error: ', self.__connection, error)
         self.__connection.run_forever(ping_interval=20, ping_timeout=6)
-        print('ws_on_error reconnected.')
+        print('ws_on_error reconnected.', time.time())
 
     def on_close(self):
+        """ error occure before close
+        ws_on_error <websocket._app.WebSocketApp object at 0x7f69baf2be80> Connection is already closed.
+        ws_on_close <websocket._app.WebSocketApp object at 0x7f69baf2be80> ['spot/ticker:ALPHA-USDT']
+        """
         print('ws_on_close', self.__connection, self.__ws_subs)
         # self.__connection = None
 
