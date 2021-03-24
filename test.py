@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import gevent
-from gevent import monkey; monkey.patch_all()
+from gevent import monkey;
+
+monkey.patch_all()
 
 import sys
 import getopt
-import time
 from datetime import datetime
 from test.numpd_test import numpd_test
 from api.OkexSpot import OkexSpot, INSTRUMENT
-from api.apiwrapper import place_batch_sell_orders, get_open_orders
 from api.OkexWS import OkexWS
 from backtesting.run import r20210219
 from const import TREND_NAME
@@ -73,9 +73,9 @@ def main(argv):
             state = State(trend)
 
             ws = OkexWS(['spot/account:BSV',
-                        'spot/account:USDT',
-                        'spot/order:BSV-USDT',
-                        'spot/order_algo:BSV-USDT'], state, use_trade_key=True)
+                         'spot/account:USDT',
+                         'spot/order:BSV-USDT',
+                         'spot/order_algo:BSV-USDT'], state, use_trade_key=True)
             greenlet = gevent.spawn(ws.ws_create)
             # ws.subscription(['spot/depth:BTC-USDT'])
             print('websocket created, can do sth in the following coroutine')

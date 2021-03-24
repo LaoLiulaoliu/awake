@@ -188,7 +188,7 @@ class State(object):
 
     def parse_account(self, message):
         for i in message:
-            self.balance[i['currency'].upper()] = i['balance']
+            self.balance[i['currency'].upper()] = float(i['balance'])
 
     def get_balance(self):
         return self.balance

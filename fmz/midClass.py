@@ -3,6 +3,7 @@
 
 import time
 
+
 class midClass():
     def __init__(self, this_exchange):
         '''
@@ -33,9 +34,9 @@ class midClass():
         try:
             self.account = self.exchange.GetAccount()
 
-            self.Balance =  self.account['Balance']
+            self.Balance = self.account['Balance']
             self.Amount = self.account['Stocks']
-            self.FrozenBalance =  self.account['FrozenBalance']
+            self.FrozenBalance = self.account['FrozenBalance']
             self.FrozenStocks = self.account['FrozenStocks']
             return True
         except:
@@ -50,9 +51,9 @@ class midClass():
         '''
         self.high = '---'
         self.low = '---'
-        self.Sell =  '---'
-        self.Buy =  '---'
-        self.last =  '---'
+        self.Sell = '---'
+        self.Buy = '---'
+        self.last = '---'
         self.Volume = '---'
 
         try:
@@ -60,14 +61,13 @@ class midClass():
 
             self.high = self.ticker['High']
             self.low = self.ticker['Low']
-            self.Sell =  self.ticker['Sell'] # 卖一价 ask
-            self.Buy =  self.ticker['Buy'] # 买一价 bid
-            self.last =  self.ticker['Last'] # 最后成交价
-            self.Volume = self.ticker['Volume'] # 最近成交量
+            self.Sell = self.ticker['Sell']  # 卖一价 ask
+            self.Buy = self.ticker['Buy']  # 买一价 bid
+            self.last = self.ticker['Last']  # 最后成交价
+            self.Volume = self.ticker['Volume']  # 最近成交量
             return True
         except:
             return False
-
 
     def get_depth(self):
         '''
@@ -82,12 +82,10 @@ class midClass():
         try:
             self.Depth = self.exchange.GetDepth()
             self.Ask = self.Depth['Asks']
-            self.Bids = self.Depth ['Bids']
+            self.Bids = self.Depth['Bids']
             return True
         except:
             return False
-
-
 
     def get_ohlc_data(self, period=PERIOD_M5):
         '''
@@ -98,8 +96,6 @@ class midClass():
             PERIOD_M30 指30分钟, PERIOD_H1 指1小时, PERIOD_D1 指一天。
         '''
         self.ohlc_data = exchange.GetRecords(period)
-
-
 
     def create_order(self, order_type, price, amount):
         '''
@@ -115,13 +111,13 @@ class midClass():
         '''
         if order_type == 'buy':
             try:
-                order_id = self.exchange.Buy( price, amount)
+                order_id = self.exchange.Buy(price, amount)
             except:
                 return False
 
         elif order_type == 'sell':
             try:
-                order_id = self.exchange.Sell( price, amount)
+                order_id = self.exchange.Sell(price, amount)
             except:
                 return False
 
@@ -159,9 +155,8 @@ class midClass():
         # if not self.get_depth():
         #     return 'false_get_depth'
         try:
-            self.get_ohlc_data(60) # 60 = 1min
+            self.get_ohlc_data(60)  # 60 = 1min
         except:
             return 'false_get_K_line_info'
 
         return 'refreash_data_finish!'
-

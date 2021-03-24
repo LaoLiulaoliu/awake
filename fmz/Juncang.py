@@ -9,6 +9,7 @@
 
 import time
 
+
 class Juncang(object):
     def __init__(self, mid_class):
         self.jys = mid_class
@@ -18,7 +19,7 @@ class Juncang(object):
         self.Sell_count = 0
         self.make_need_account_info()
         Log('init coin: ', self.B + self.money / self.jys.last, 'money: ', self.money + self.B * self.jys.last)
-        
+
     def make_need_account_info(self):
         self.jys.refreash_data()
         self.B = self.jys.Amount
@@ -32,32 +33,34 @@ class Juncang(object):
         self.need_buy = (self.half_money - self.B * now_price) / now_price
         self.need_sell = (self.half_money - self.money) / now_price
         return True
-    
+
     def do_juncang(self):
         if self.need_buy > 0.002:
-            self.jys.create_order( 'buy', self.jys.Sell , self.need_buy ) 
+            self.jys.create_order('buy', self.jys.Sell, self.need_buy)
             self.Buy_count += 1
         elif self.need_sell > 0.002:
-            self.jys.create_order( 'sell', self.jys.Buy , self.need_sell ) 
+            self.jys.create_order('sell', self.jys.Buy, self.need_sell)
             self.Sell_count += 1
 
-        Log('Buy_times:', self.Buy_count, 'Sell_times:', self.Sell_count, 'coin: ', self.B + self.money / self.jys.last, 'money: ', self.money + self.B * self.jys.last)
-    
+        Log('Buy_times:', self.Buy_count, 'Sell_times:', self.Sell_count, 'coin: ', self.B + self.money / self.jys.last,
+            'money: ', self.money + self.B * self.jys.last)
+
     def if_need_trade(self, condition, prama):
         if condition == 'time':
             if time.time() - self.last_time > prama:
                 self.do_juncang()
                 self.last_time = time.time()
         if condition == 'price':
-            if abs((self.jys.last -  self.last_trade_price) / self.last_trade_price)  > prama:
+            if abs((self.jys.last - self.last_trade_price) / self.last_trade_price) > prama:
                 self.do_juncang()
                 self.last_trade_price = self.jys.last
+
 
 def main():
     test_mid = midClass(exchange)
     Log(test_mid.refreash_data())
     test_juncang = Juncang(test_mid)
-    
+
     while True:
         Sleep(1000)
         if test_juncang.make_need_account_info():
