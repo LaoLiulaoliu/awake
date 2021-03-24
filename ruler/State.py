@@ -179,12 +179,21 @@ class State(object):
             current_price = np.float64(i['last'])
             self.trend.append((timestamp, current_price, np.float64(i['best_ask']), np.float64(i['best_bid'])))
 
+    def parse_ticker_detail(self, message):
+        for i in message:
+            self.flush_trend_nearly_ten_min()
+
+            timestamp = Tool.convert_time_str(i['timestamp'], TIME_PRECISION)
+            current_price = np.float64(i['last'])
+            self.trend.append((timestamp,
+                               current_price,
+                               np.float64(i['best_ask']),
+                               np.float64(i['best_bid']),
+                               np.float64(i['best_ask_size']),
+                               np.float64(i['best_bid_size'])))
+
     def get_latest_trend(self):
         return self.trend.last()
-
-    def parse_trade(self, message):
-        for i in message:
-            print(i['side'], i['trade_id'], i['size'], i['price'])
 
     def parse_account(self, message):
         for i in message:
@@ -192,3 +201,11 @@ class State(object):
 
     def get_balance(self):
         return self.balance
+
+    def parse_order(self, message):
+        for i in message:
+            i['instrument_id'], i['order_id'], i['side'], i['state']
+
+    def parse_trade(self, message):
+        for i in message:
+            print(i['side'], i['trade_id'], i['size'], i['price'])

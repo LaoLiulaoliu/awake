@@ -20,11 +20,11 @@ def place_buy_order(bid_price, size):
             return int(order_id)
 
 
-def place_sell_order(bid_price, size):
+def place_sell_order(ask_price, size):
     """place RETRY times, return order when success
     """
     for i in range(RETRY - 1):
-        r = OK_SPOT.place_order('sell', INSTRUMENT[VALUTA_IDX], bid_price, size)
+        r = OK_SPOT.place_order('sell', INSTRUMENT[VALUTA_IDX], ask_price, size)
         order_id = print_error_or_get_order_id(r)
         if order_id:
             return int(order_id)

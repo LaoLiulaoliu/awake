@@ -20,18 +20,20 @@ from const import INSTRUMENT, VALUTA_IDX
 def strategy(state, least_coin_proportion=0.05):
     """ Websocket account change message to get balance, need whole account without other strategies.
         Calculating balance based on order state change message, can fuse others in one account.
+
+        Need ticker and account in API.
     """
     threshold = 0.02
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
     last_time, last_trade_price, best_ask, best_bid = state.get_latest_trend()
 
     while True:
-        balance = state.get_balance()
-        coin = balance[coin_unit]
-        money = balance[money_unit]
-
         timestamp, current_price, best_ask, best_bid = state.get_latest_trend()
         if timestamp > last_time:
+            balance = state.get_balance()
+            coin = balance[coin_unit]
+            money = balance[money_unit]
+
             if abs(last_trade_price - current_price) / last_trade_price > threshold:
                 half_money = 0.5 * (money + coin * current_price)
                 need_buy_amount = half_money / current_price - coin
@@ -43,3 +45,5 @@ def strategy(state, least_coin_proportion=0.05):
                 elif -need_buy_amount < least_coin_amount:
                     sell_order_id = place_sell_order(best_ask, -need_buy_amount)
                     last_trade_price = current_price
+
+            last_time = timestamp
