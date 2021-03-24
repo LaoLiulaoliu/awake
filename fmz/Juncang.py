@@ -16,6 +16,8 @@ class Juncang(object):
         self.last_trade_price = self.jys.last
         self.Buy_count = 0
         self.Sell_count = 0
+        self.make_need_account_info()
+        Log('init coin: ', self.B + self.money / self.jys.last, 'money: ', self.money + self.B * self.jys.last)
         
     def make_need_account_info(self):
         self.jys.refreash_data()
@@ -38,9 +40,8 @@ class Juncang(object):
         elif self.need_sell > 0.002:
             self.jys.create_order( 'sell', self.jys.Buy , self.need_sell ) 
             self.Sell_count += 1
-        
-        Log('Buy_times:', self.Buy_count, 'Sell_times:', self.Sell_count)
-        Log('coin: ', self.B + self.money / self.jys.last, 'money: ', self.money + self.B * self.jys.last)
+
+        # Log('coin: ', self.B + self.money / self.jys.last, 'money: ', self.money + self.B * self.jys.last)
         
     
     def if_need_trade(self, condition, prama):
@@ -62,3 +63,5 @@ def main():
         Sleep(1000)
         if test_juncang.make_need_account_info():
             test_juncang.if_need_trade('price', 0.05)
+    Log('Buy_times:', test_juncang.Buy_count, 'Sell_times:', test_juncang.Sell_count)
+    Log('finish coin: ', test_juncang.B + test_juncang.money / test_juncang.jys.last, 'money: ', test_juncang.money + test_juncang.B * test_juncang.jys.last)
