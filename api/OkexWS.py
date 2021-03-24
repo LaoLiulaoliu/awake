@@ -42,7 +42,7 @@ class OkexWS(HttpUtil):
                                               on_error=self.on_error)
             if self.use_trade_key:
                 self.__connection.on_open = self.on_open
-            self.__connection.run_forever(ping_interval=20)
+            self.__connection.run_forever(ping_interval=20, ping_timeout=6)
         except Exception as e:
             print(f'ws_create exception: {e}')
             time.sleep(5)
@@ -81,7 +81,9 @@ class OkexWS(HttpUtil):
         self.__connection.send(json.dumps({'op': 'subscribe', 'args': self.__ws_subs}))
 
     def on_error(self, error):
-        print('ws_on_error', self.__connection, error)
+        print('ws_on_error: ', self.__connection, error)
+        self.__connection.run_forever(ping_interval=20, ping_timeout=6)
+        print('ws_on_error reconnected.')
 
     def on_close(self):
         print('ws_on_close', self.__connection, self.__ws_subs)
