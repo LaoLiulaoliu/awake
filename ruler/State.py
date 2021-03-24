@@ -19,9 +19,10 @@ class State(object):
                     State._instance = object.__new__(cls)
         return State._instance
 
-    def __init__(self, trend):
+    def __init__(self, trend, trade):
         self.trend = trend
         self.flush_trend = 0
+        self.trade = trade
         self.balance = {}
 
         # p60: pair of 60 minutes
@@ -204,7 +205,19 @@ class State(object):
 
     def parse_order(self, message):
         for i in message:
-            i['instrument_id'], i['order_id'], i['side'], i['state']
+            if i['side'] == 'buy':
+                timestamp = Tool.convert_time_str(i['timestamp'], TIME_PRECISION)
+                state = int(i['state'])
+                if state == 0:
+                    trade.append([timestamp, np.float64(i['price']),
+                                  np.float64(i['size']), 0,
+                                  int(i['order_id']), 0, state])
+                elif state == 1:
+                    pass
+                elif state == 2:
+                    pass
+            elif i['side'] == 'sell':
+                i['instrument_id']
 
     def parse_trade(self, message):
         for i in message:

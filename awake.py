@@ -30,10 +30,11 @@ def schedule_rotate_trend_file(method):
 def main():
     trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 4)
     trend.trend_full_load()
-    state = State(trend)
 
     trade = Trade(TRADE_NAME.format(VALUTA_IDX))
     trade.load()
+
+    state = State(trend, trade)
 
     ws = OkexWS([f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}'],
                 state,
