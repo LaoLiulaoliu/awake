@@ -24,6 +24,7 @@ class State(object):
         self.flush_trend = 0
         self.trade = trade
         self.balance = {}
+        self.available = {}
 
         # p60: pair of 60 minutes
         # h: high_price, l: low_price, i: last_period_time_index,
@@ -198,10 +199,15 @@ class State(object):
 
     def parse_account(self, message):
         for i in message:
-            self.balance[i['currency'].upper()] = float(i['balance'])
+            currency = i['currency'].upper()
+            self.balance[currency] = float(i['balance'])
+            self.available[currency] = float(i['available'])
 
     def get_balance(self):
         return self.balance
+
+    def get_available(self):
+        return self.available
 
     def parse_order(self, message):
         for i in message:
@@ -215,6 +221,10 @@ class State(object):
             elif state == 2:
                 self.trade.append([int(i['order_id']), 0, 0, 0, 0, state])
             # print(i['instrument_id'])
+
+    def delete_filled_orders(self, order_ids):
+        for order_id in order_ids:
+           self.trade.delete(order_id)
 
     def get_order(self, order_id):
         return self.trade.select_order_by_id(order_id)
