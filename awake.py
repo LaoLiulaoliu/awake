@@ -15,7 +15,7 @@ from ruler.State import State
 from ruler.Cron import Cron
 from ruler.Scheduler import Scheduler
 from ruler.Trade import Trade
-from strategies.equilibrium import strategy
+from strategies.frequently import strategy
 from const import TREND_NAME_TIME, INSTRUMENT, TRADE_NAME, VALUTA_IDX
 
 
@@ -45,7 +45,7 @@ def main():
     greenlet = gevent.spawn(ws.ws_create)
 
     schedule_rotate_trend_file(trend.reopen)
-    # strategy(state)
+    strategy(state)
 
     greenlet.join()
     print(ws.get_connection())
