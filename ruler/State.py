@@ -223,8 +223,7 @@ class State(object):
             # print(i['instrument_id'])
 
     def delete_filled_orders(self, order_ids):
-        for order_id in order_ids:
-           self.trade.delete(order_id)
+        self.trade.delete_filled_orders(order_ids)
 
     def get_order(self, order_id):
         return self.trade.select_order_by_id(order_id)

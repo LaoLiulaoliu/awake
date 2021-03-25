@@ -125,13 +125,18 @@ class OkexSpot(object):
         pass
 
     def cancel_order(self, orderid, instrument_id=INSTRUMENT[0]):
-        path = '/api/spot/v3/cancel_orders/' + orderid
+        """cancel an unfilled order
+        """
+        path = f'/api/spot/v3/cancel_orders/{orderid}'
         params = {'instrument_id': instrument_id}
         return self.http.httpPost(path, params)
 
-    def cancel_multiple_orders(self, instrument_id=INSTRUMENT[0]):
+    def cancel_batch_orders(self, order_ids, instrument_id=INSTRUMENT[0]):
+        """maximum 10 orders can be canceled at a time
+        """
+        order_ids = list(map(str, order_ids))  # order_id must be str
         path = '/api/spot/v3/cancel_batch_orders'
-        params = [{'instrument_id': instrument_id}]
+        params = [{'instrument_id': instrument_id, 'order_ids': order_ids}]
         return self.http.httpPost(path, params)
 
     def order_details(self, orderid, instrument_id=INSTRUMENT[0]):

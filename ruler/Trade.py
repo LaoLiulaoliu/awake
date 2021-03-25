@@ -45,9 +45,10 @@ class Trade(object):
         self.trade.load(self.index_bit, [int, int, np.float64, np.float64, int, int])
         self.sell_finished.load()
 
-    def delete(self, order_id):
-        idx = np.argwhere(self.trade.info[:, self.index_bit] == order_id)[0][0]
-        self.trade.delete(idx)
+    def delete_filled_orders(self, order_ids):
+        for order_id in order_ids:
+            idx = np.argwhere(self.trade.info[:, self.index_bit] == order_id)[0][0]
+            self.trade.delete(idx)
 
     def select_order_by_id(self, order_id):
         """return one dimension numpy array of the data

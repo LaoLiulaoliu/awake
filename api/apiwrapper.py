@@ -45,6 +45,23 @@ def place_batch_sell_orders(sell_orders):
         return sell_order_ids
 
 
+def cancel_order(order_id):
+    for i in range(RETRY - 1):
+        r = OK_SPOT.cancel_order(order_id, INSTRUMENT[VALUTA_IDX])
+        order_id = print_error_or_get_order_id(r)
+        if order_id:
+            return int(order_id)
+
+
+def cancel_batch_orders(order_ids):
+    order_ids_return = []
+    r = OK_SPOT.cancel_batch_orders(order_ids, INSTRUMENT[VALUTA_IDX])
+    for o in r[INSTRUMENT[VALUTA_IDX]]:
+        order_id = print_error_or_get_order_id(o)
+        order_ids_return.append(order_id if order_id else cancel_order(o['order_id']))
+    return order_ids_return
+
+
 def get_open_orders(side):
     """place RETRY times, return open orders when success
     param side: 'buy' or 'sell'

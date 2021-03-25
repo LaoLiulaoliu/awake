@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import time
-from api.apiwrapper import place_buy_order, place_sell_order
+from api.apiwrapper import place_buy_order, place_sell_order, cancel_batch_orders
 from const import INSTRUMENT, VALUTA_IDX
 
 
@@ -16,8 +16,10 @@ def parse_trading_pair(state, trading_pair):
 
         if {buy_state, sell_state} == {2}:
             remove_pair.append((buy_order_id, sell_order_id))
+            state.delete_filled_orders((buy_order_id, sell_order_id))
         elif {buy_state, sell_state} == {0}:
-            pass
+            cancel_batch_orders((buy_order_id, sell_order_id))
+            remove_pair.append((buy_order_id, sell_order_id))
         elif {buy_state, sell_state} == {0, 2}:
             pass
         elif {buy_state, sell_state} == {0, 1}:
