@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import time
-from api.apiwrapper import place_buy_order, place_sell_order, cancel_batch_orders
+from api.apiwrapper import cancel_order, place_batch_orders, cancel_batch_orders
 from const import INSTRUMENT, VALUTA_IDX
 
 
@@ -15,22 +15,23 @@ def parse_trading_pair(state, trading_pair):
         sell_state = int(sell_trade[-1])
 
         if {buy_state, sell_state} == {2}:
-            remove_pair.append((buy_order_id, sell_order_id))
             state.delete_filled_orders((buy_order_id, sell_order_id))
+            remove_pair.append((buy_order_id, sell_order_id))
+
         elif {buy_state, sell_state} == {0}:
             cancel_batch_orders((buy_order_id, sell_order_id))
             remove_pair.append((buy_order_id, sell_order_id))
+
         elif {buy_state, sell_state} == {0, 2}:
             pass
         elif {buy_state, sell_state} == {0, 1}:
-            time.sleep(10)
+            time.sleep(30)
         elif {buy_state, sell_state} == {1}:
-            time.sleep(10)
+            time.sleep(30)
         elif {buy_state, sell_state} == {1, 2}:
-            time.sleep(10)
+            time.sleep(30)
 
-    for i in remove_pair:
-        trading_pair.remove(i)
+    [trading_pair.remove(i) for i in remove_pair]
 
 
 def strategy(state, enobs=3):
@@ -54,8 +55,16 @@ def strategy(state, enobs=3):
                 buy_price = round(best_bid + 10**-enobs, enobs)  # buy before sell
                 if size < coin and buy_price < money:
                     sell_price = round(best_ask - 10**-enobs, enobs)
-                    buy_order_id = place_buy_order(buy_price, size)
-                    sell_order_id = place_sell_order(sell_price, size)
+                    order_ids = place_batch_orders([
+                        {'price': buy_price, 'size': size, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
+                        {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
+                    ])
+
+                    if 0 in order_ids:
+                        [cancel_order(i) for i in order_ids if i != 0]
+                        print('quit strategy.')
+                        return
+
                     trading_pair.append((buy_order_id, sell_order_id))
 
                     i += 1

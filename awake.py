@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Author: Yuande Liu <miraclecome (at) gmail.com>
+
+# System risk: network broke and reconnect again
 
 import gevent
 from gevent import monkey;
