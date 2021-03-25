@@ -31,7 +31,7 @@ def schedule_rotate_trend_file(method):
 
 
 def main():
-    trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 4)
+    trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 6)  # 4: parse_ticker 6: parse_ticker_detail
     trend.trend_full_load()
 
     trade = Trade(TRADE_NAME.format(VALUTA_IDX))
