@@ -46,7 +46,9 @@ class Trade(object):
         self.sell_finished.load()
 
     def select_order_by_id(self, order_id):
-        return np.compress(self.trade.info[:, self.index_bit] == order_id, self.trade.info, axis=0)
+        """return one dimension numpy array of the data
+        """
+        return np.compress(self.trade.info[:, self.index_bit] == order_id, self.trade.info, axis=0).ravel()
 
     def select_open_orders(self):
         """coded state 0

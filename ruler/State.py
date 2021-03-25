@@ -214,10 +214,10 @@ class State(object):
                 self.trade.append([int(i['order_id']), 0, 0, 0, 0, state])
             elif state == 2:
                 self.trade.append([int(i['order_id']), 0, 0, 0, 0, state])
-            print(i['instrument_id'])
+            # print(i['instrument_id'])
 
     def get_order(self, order_id):
-        r = self.select_order_by_id(order_id)
+        return self.trade.select_order_by_id(order_id)
 
     def parse_trade(self, message):
         for i in message:
