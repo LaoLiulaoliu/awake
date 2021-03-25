@@ -9,8 +9,10 @@ from const import INSTRUMENT, VALUTA_IDX
 
 def parse_buy_sell_pair(state, buy_sell_pair):
     remove_pair = []
-    print(f'enter remove pair: {remove_pair}, buy_sell_pair: {buy_sell_pair}')
-    state.show_several_trade(5)
+    if remove_pair or buy_sell_pair:
+        print(f'enter remove pair: {remove_pair}, buy_sell_pair: {buy_sell_pair}')
+        state.show_several_trade(5)
+
     for buy_order_id, sell_order_id in buy_sell_pair:
         buy_trade = state.get_order_by_id(buy_order_id)
         sell_trade = state.get_order_by_id(sell_order_id)
@@ -39,8 +41,9 @@ def parse_buy_sell_pair(state, buy_sell_pair):
         print(f'both unknown: {buy_trade}, {sell_trade}')
 
     [buy_sell_pair.remove(i) for i in remove_pair]
-    print(f'remove pair: {remove_pair}, buy_sell_pair: {buy_sell_pair}')
-    state.show_several_trade(5)
+    if remove_pair or buy_sell_pair:
+        print(f'remove pair: {remove_pair}, buy_sell_pair: {buy_sell_pair}')
+        state.show_several_trade(5)
 
 
 
@@ -59,10 +62,11 @@ def strategy(state, enobs=3):
         coin = available[coin_unit]
         money = available[money_unit]
 
-        print(f'coin: {coin}, money: {money}')
+
         timestamp, current_price, best_ask, best_bid, best_ask_size, best_bid_size = state.get_latest_trend()
-        print('trend: ', timestamp, current_price, best_ask, best_bid, best_ask_size, best_bid_size)
         if timestamp > last_time:
+            print(f'coin: {coin}, money: {money}')
+            print('trend: ', timestamp, current_price, best_ask, best_bid, best_ask_size, best_bid_size)
             if best_ask - 10**-enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
                 size = max(best_ask_size, best_bid_size)
                 buy_price = round(best_bid + 10**-enobs, enobs)  # buy before sell
