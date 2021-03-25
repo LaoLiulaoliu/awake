@@ -59,6 +59,7 @@ def strategy(state, enobs=3):
         coin = available[coin_unit]
         money = available[money_unit]
 
+        print(f'coin: {coin}, money: {money}')
         timestamp, current_price, best_ask, best_bid, best_ask_size, best_bid_size = state.get_latest_trend()
         print('trend: ', timestamp, current_price, best_ask, best_bid, best_ask_size, best_bid_size)
         if timestamp > last_time:
