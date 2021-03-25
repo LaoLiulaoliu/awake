@@ -125,6 +125,15 @@ class FmzState(object):
 
         return order_id
 
+    def get_order(self, oid):
+        order = self.exchange.GetOrder(oid)
+        timestamp = int(time.time() * 1000)
+        if order['Status'] == 0:
+            state = 0
+        elif order['Status'] == 1:
+            state = 2
+        return [order["Id"], timestamp, order["Price"], order["Amount"], order["Type"], state]
+
     def get_orders(self):
         self.undo_ordes = self.exchange.GetOrders()
         return self.undo_ordes
@@ -173,3 +182,11 @@ class FmzState(object):
 
     def get_available(self):
         return {'USDT': self.Balance - self.FrozenBalance, 'BTC': self.Amount - self.FrozenStocks, 'ALPHA': 1}
+
+    def get_order_by_id(self, order_id):
+        return self.get_order(order_id)
+
+    def delete_filled_orders(self):
+        return
+
+    delete_canceled_orders = delete_filled_orders

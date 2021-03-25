@@ -58,7 +58,7 @@ class OkexSpot(object):
         return self.http.httpGet(path)
 
     def tickers(self, symbol=None):
-        """OKCOIN all currency conversion current bid data
+        """ OKex all currency conversion current bid data
         """
         endpoint = '/api/spot/v3/instruments/ticker'
         params = {'symbol': symbol} if symbol else None
@@ -113,6 +113,8 @@ class OkexSpot(object):
             'order_id': '6516534969978880',
             'result': True
         }
+
+        up to 4 trading pairs, each with 10 orders at maximum
         """
         path = '/api/spot/v3/batch_orders'
         params = [

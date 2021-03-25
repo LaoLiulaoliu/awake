@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import time
+import numpy as np
 from api.apiwrapper import cancel_order, place_batch_orders, cancel_batch_orders
 from const import INSTRUMENT, VALUTA_IDX
 
@@ -20,6 +21,7 @@ def parse_trading_pair(state, trading_pair):
 
         elif {buy_state, sell_state} == {0}:
             cancel_batch_orders((buy_order_id, sell_order_id))
+            state.delete_canceled_orders((buy_order_id, sell_order_id))
             remove_pair.append((buy_order_id, sell_order_id))
 
         elif {buy_state, sell_state} == {0, 2}:
@@ -65,7 +67,7 @@ def strategy(state, enobs=3):
                         print('quit strategy.')
                         return
 
-                    trading_pair.append((buy_order_id, sell_order_id))
+                    trading_pair.append((order_ids[0], order_ids[1]))
 
                     i += 1
                     if i == 3:

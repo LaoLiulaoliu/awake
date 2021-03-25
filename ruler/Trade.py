@@ -18,7 +18,8 @@ class Trade(object):
 
         buy_timestamp: millisecond,
         side: buy-0, sell-1,
-        state: 0-init open(default in np.zeros data), 1-partially filled, 2-filled, 8-delete(not show after filled)
+        state: 0-init open(default in np.zeros data), 1-partially filled, 2-filled,
+               5-canceled(delete), 8-delete(not show after filled)
     """
 
     def __init__(self, fname):
@@ -49,6 +50,8 @@ class Trade(object):
         for order_id in order_ids:
             idx = np.argwhere(self.trade.info[:, self.index_bit] == order_id)[0][0]
             self.trade.delete(idx)
+
+    delete_canceled_orders = delete_filled_orders
 
     def select_order_by_id(self, order_id):
         """return one dimension numpy array of the data
