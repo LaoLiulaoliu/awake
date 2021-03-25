@@ -56,7 +56,7 @@ def main():
     set_amount = 10
     every_time_amount = 0.1
 
-    test_mid = midClass(exchange)
+    test_mid = FmzState(exchange)
     Log(test_mid.refreash_data())
     test_duiqiao = Duiqiao(test_mid, Set_amount_N, Set_price_N)
 

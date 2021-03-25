@@ -219,7 +219,7 @@ def main():
     price_change_percentage = 2
     macd_threshold = 10
     
-    test_mid = midClass(exchange)
+    test_mid = FmzState(exchange)
     Log(test_mid.refreash_data())
     test_qushi = Qushi(test_mid , Set_amount_N, Set_price_N)
     

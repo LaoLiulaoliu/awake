@@ -57,7 +57,7 @@ class Juncang(object):
 
 
 def main():
-    test_mid = midClass(exchange)
+    test_mid = FmzState(exchange)
     Log(test_mid.refreash_data())
     test_juncang = Juncang(test_mid)
 
