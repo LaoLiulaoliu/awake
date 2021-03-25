@@ -235,3 +235,6 @@ class State(object):
     def parse_trade(self, message):
         for i in message:
             print(i['side'], i['trade_id'], i['size'], i['price'])
+
+    def show_several_trade(self, num):
+        self.trade.print_first_trade_info(num)

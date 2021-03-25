@@ -182,7 +182,10 @@ class FmzState(object):
     def get_latest_trend(self):
         self.get_ticker()
         timestamp = int(time.time() * 1000)
-        return timestamp, self.last, self.Sell, self.Buy, 0.1, 0.13
+        while self.Sell == '---' or self.Buy == '---':
+            Sleep(1000)
+            self.get_ticker()
+        return timestamp, self.last, float(self.Sell), float(self.Buy), 0.1, 0.13
 
     def get_balance(self):
         return {'USDT': self.Balance, 'BTC': self.Amount, 'ALPHA': 1}
