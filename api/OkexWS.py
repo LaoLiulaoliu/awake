@@ -102,7 +102,7 @@ class OkexWS(HttpUtil):
             table = data['table']
             if table == 'spot/ticker':
                 # [{'last': '49338.5', 'open_24h': '47991.9', 'best_bid': '49326.7', 'high_24h': '50210.1', 'low_24h': '47907.2', 'open_utc0': '49597.5', 'open_utc8': '49188.4', 'base_volume_24h': '9467.36886712', 'quote_volume_24h': '462894723.35643254', 'best_ask': '49326.8', 'instrument_id': 'BTC-USDT', 'timestamp': '2021-03-02T14:15:12.522Z', 'best_bid_size': '0.56306288', 'best_ask_size': '0.13743411', 'last_qty': '0.0089648'}]
-                self.state.parse_ticker(data['data'])
+                self.state.parse_ticker_detail(data['data'])
             elif table == 'spot/account':
                 # push update data, sometimes have duplicated data
                 self.state.parse_account(data['data'])
