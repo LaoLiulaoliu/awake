@@ -6,7 +6,7 @@ import gevent
 import numpy as np
 from .Tool import Tool
 from const import MIN_60, MIN_42, MIN_30, MIN_12, TIME_PRECISION
-from api.apiwrapper import get_ticker
+from api.apiwrapper import get_ticker, get_account
 
 
 class State(object):
@@ -23,8 +23,10 @@ class State(object):
         self.trend = trend
         self.flush_trend = 0
         self.trade = trade
+
         self.balance = {}
         self.available = {}
+        self.parse_account(get_account())
 
         # p60: pair of 60 minutes
         # h: high_price, l: low_price, i: last_period_time_index,

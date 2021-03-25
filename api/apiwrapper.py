@@ -92,8 +92,12 @@ def get_open_sell_orders():
 def get_ticker():
     return OK_SPOT.ticker(INSTRUMENT[VALUTA_IDX])
 
-def get_account():
-    return OK_SPOT.account(INSTRUMENT[VALUTA_IDX])
+
+def get_account(currency=None):
+    if currency is None:
+        coin_unit, money_unit = INSTRUMENT[VALUTA_IDX].split('-')
+        return (OK_SPOT.account(coin_unit), OK_SPOT.account(money_unit))
+    return OK_SPOT.account(currency)
 
 
 def get_filled_buy_orders(before=None):
