@@ -34,12 +34,12 @@ class FmzState(object):
         self.FrozenStocks = '---'
 
         try:
-            self.account = self.exchange.GetAccount()
+            account = self.exchange.GetAccount()
 
-            self.Balance = self.account['Balance']
-            self.Amount = self.account['Stocks']
-            self.FrozenBalance = self.account['FrozenBalance']
-            self.FrozenStocks = self.account['FrozenStocks']
+            self.Balance = account['Balance']
+            self.Amount = account['Stocks']
+            self.FrozenBalance = account['FrozenBalance']
+            self.FrozenStocks = account['FrozenStocks']
             return True
         except Exception as e:
             return False
@@ -59,14 +59,14 @@ class FmzState(object):
         self.Volume = '---'
 
         try:
-            self.ticker = self.exchange.GetTicker()
+            ticker = self.exchange.GetTicker()
 
-            self.high = self.ticker['High']
-            self.low = self.ticker['Low']
-            self.Sell = self.ticker['Sell']  # 卖一价 ask
-            self.Buy = self.ticker['Buy']  # 买一价 bid
-            self.last = self.ticker['Last']  # 最后成交价
-            self.Volume = self.ticker['Volume']  # 最近成交量
+            self.high = ticker['High']
+            self.low = ticker['Low']
+            self.Sell = ticker['Sell']  # 卖一价 ask
+            self.Buy = ticker['Buy']  # 买一价 bid
+            self.last = ticker['Last']  # 最后成交价
+            self.Volume = ticker['Volume']  # 最近成交量
             return True
         except Exception as e:
             return False
@@ -162,3 +162,14 @@ class FmzState(object):
             return 'false_get_K_line_info'
 
         return 'refreash_data_finish!'
+
+    def get_latest_trend(self):
+        self.get_ticker()
+        timestamp = int(time.time() * 1000)
+        return timestamp, self.last, self.Sell, self.Buy, 0.1, 0.13
+
+    def get_balance(self):
+        return {'USDT': self.Balance, 'BTC': self.Amount, 'ALPHA': 1}
+
+    def get_available(self):
+        return {'USDT': self.Balance - self.FrozenBalance, 'BTC': self.Amount - self.FrozenStocks, 'ALPHA': 1}

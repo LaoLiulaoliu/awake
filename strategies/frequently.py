@@ -35,7 +35,7 @@ def parse_trading_pair(state, trading_pair):
 
 
 def strategy(state, enobs=3):
-    """ Need ticker(parse_ticker_detail) and account in API.
+    """ Need ticker(parse_ticker_detail) and account in websocket API.
     """
     last_time, last_trade_price, best_ask, best_bid = state.get_latest_trend()
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))

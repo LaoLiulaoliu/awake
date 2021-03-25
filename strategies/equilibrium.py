@@ -21,7 +21,7 @@ def strategy(state, least_coin_proportion=0.05):
     """ Websocket account change message to get balance, need whole account without other strategies.
         Calculating balance based on order state change message, can fuse others in one account.
 
-        Need ticker and account in API.
+        Need ticker and account in websocket API.
     """
     threshold = 0.02
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
