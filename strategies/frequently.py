@@ -7,9 +7,9 @@ from api.apiwrapper import cancel_order, place_batch_orders, cancel_batch_orders
 from const import INSTRUMENT, VALUTA_IDX
 
 
-def parse_trading_pair(state, trading_pair):
+def parse_buy_sell_pair(state, buy_sell_pair):
     remove_pair = []
-    for buy_order_id, sell_order_id in trading_pair:
+    for buy_order_id, sell_order_id in buy_sell_pair:
         buy_trade = state.get_order_by_id(buy_order_id)
         sell_trade = state.get_order_by_id(sell_order_id)
         buy_state = int(buy_trade[-1])
@@ -33,7 +33,7 @@ def parse_trading_pair(state, trading_pair):
         elif {buy_state, sell_state} == {1, 2}:
             time.sleep(30)
 
-    [trading_pair.remove(i) for i in remove_pair]
+    [buy_sell_pair.remove(i) for i in remove_pair]
 
 
 def strategy(state, enobs=3):
@@ -41,11 +41,11 @@ def strategy(state, enobs=3):
     """
     last_time, last_trade_price, best_ask, best_bid = state.get_latest_trend()
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
-    trading_pair = []
+    buy_sell_pair = []
     i = 0
 
     while True:
-        parse_trading_pair(state, trading_pair)
+        parse_buy_sell_pair(state, buy_sell_pair)
         available = state.get_available()
         coin = available[coin_unit]
         money = available[money_unit]
@@ -67,7 +67,7 @@ def strategy(state, enobs=3):
                         print('quit strategy.')
                         return
 
-                    trading_pair.append((order_ids[0], order_ids[1]))
+                    buy_sell_pair.append((order_ids[0], order_ids[1]))
 
                     i += 1
                     if i == 3:
