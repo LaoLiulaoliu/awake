@@ -9,8 +9,8 @@ from const import INSTRUMENT, VALUTA_IDX
 def parse_trading_pair(state, trading_pair):
     remove_pair = []
     for buy_order_id, sell_order_id in trading_pair:
-        buy_trade = state.get_order(buy_order_id)
-        sell_trade = state.get_order(sell_order_id)
+        buy_trade = state.get_order_by_id(buy_order_id)
+        sell_trade = state.get_order_by_id(sell_order_id)
         buy_state = int(buy_trade[-1])
         sell_state = int(sell_trade[-1])
 

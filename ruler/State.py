@@ -225,7 +225,7 @@ class State(object):
     def delete_filled_orders(self, order_ids):
         self.trade.delete_filled_orders(order_ids)
 
-    def get_order(self, order_id):
+    def get_order_by_id(self, order_id):
         return self.trade.select_order_by_id(order_id)
 
     def parse_trade(self, message):
