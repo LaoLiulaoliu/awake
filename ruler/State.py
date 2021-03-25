@@ -205,18 +205,26 @@ class State(object):
 
     def parse_order(self, message):
         for i in message:
+            timestamp = Tool.convert_time_str(i['timestamp'], TIME_PRECISION)
+            state = int(i['state'])
             if i['side'] == 'buy':
-                timestamp = Tool.convert_time_str(i['timestamp'], TIME_PRECISION)
-                state = int(i['state'])
                 if state == 0:
-                    trade.append([timestamp, np.float64(i['price']),
-                                  np.float64(i['size']), 0,
-                                  int(i['order_id']), 0, state])
+                    trade.append([timestamp, np.float64(i['price']), np.float64(i['size']),
+                                  0, int(i['order_id']),
+                                  0, state])
                 elif state == 1:
                     pass
                 elif state == 2:
                     pass
             elif i['side'] == 'sell':
+                if state == 0:
+                    trade.append([0, 0, 0,
+                                  np.float64(i['price']), 'buy_id',
+                                  int(i['order_id']), state])
+                elif state == 1:
+                    pass
+                elif state == 2:
+                    pass
                 i['instrument_id']
 
     def parse_trade(self, message):

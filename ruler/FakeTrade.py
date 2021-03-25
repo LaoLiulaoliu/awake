@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from .Trade import Trade
+from .TradeBuyid import TradeBuyid
 
 
-class FakeTrade(Trade):
+class FakeTrade(TradeBuyid):
     def __init__(self, fname):
         super(FakeTrade, self).__init__(fname)
 

@@ -8,7 +8,7 @@ from api.apiwrapper import get_open_buy_orders, get_open_sell_orders
 from const import TRADE_FINISHED
 
 
-class Trade(object):
+class TradeBuyid(object):
     """ 0: buy_timestamp, 1: buy_price, 2: size, 3: sell_price, 4. buy_order_id, 5: sell_order_id,
         6: 1-open buy, 2-fill buy, 9-open sell, 8-delete sell. do not use 0 in np.zeros data
     """

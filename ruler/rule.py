@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import time
 from datetime import datetime
 
 from storage.Numpd import Numpd
-from .Trade import Trade
+from .TradeBuyid import TradeBuyid
 from api.apiwrapper import *
 from .State import State
 from const import INSTRUMENT, VALUTA_IDX, TREND_NAME, TRADE_NAME
@@ -15,7 +16,7 @@ def r20210219(capital=200, do_trade=False):
     trend.trend_load()
     state = State(trend)
 
-    trade = Trade(TRADE_NAME.format(VALUTA_IDX))
+    trade = TradeBuyid(TRADE_NAME.format(VALUTA_IDX))
     trade.load()
 
     high_24h, low_24h, last_price_init, begin_time = get_high_low_lastest()
