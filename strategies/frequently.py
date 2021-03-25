@@ -66,7 +66,7 @@ def strategy(state, enobs=3):
         timestamp_depth, best_ask, best_bid, best_ask_size, best_bid_size = state.get_depth()
         if timestamp_depth > timestamp:  # depth update quicker than ticker
             print(f'coin: {coin}, money: {money}')
-            print('trend: ', timestamp, current_price, best_ask, best_bid, best_ask_size, best_bid_size)
+            print('trend: ', timestamp_depth, timestamp, current_price, best_ask, best_bid, best_ask_size, best_bid_size)
             if best_ask - 10**-enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
                 size = max(best_ask_size, best_bid_size)
                 buy_price = round(best_bid + 10**-enobs, enobs)  # buy before sell
