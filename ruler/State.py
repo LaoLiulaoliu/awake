@@ -28,7 +28,7 @@ class State(object):
         self.available = {}
         self.parse_account(get_account())
 
-        self.depth = [0, 0, 0, 0, 0]
+        self.depth = [0, 0, 0, 0, 0]  # caution about initial value
 
         # p60: pair of 60 minutes
         # h: high_price, l: low_price, i: last_period_time_index,
