@@ -62,7 +62,6 @@ def strategy(state, enobs=3):
         coin = available[coin_unit]
         money = available[money_unit]
 
-
         timestamp, current_price, best_ask, best_bid, best_ask_size, best_bid_size = state.get_latest_trend()
         if timestamp > last_time:
             print(f'coin: {coin}, money: {money}')
@@ -70,7 +69,8 @@ def strategy(state, enobs=3):
             if best_ask - 10**-enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
                 size = max(best_ask_size, best_bid_size)
                 buy_price = round(best_bid + 10**-enobs, enobs)  # buy before sell
-                if size < coin and buy_price < money:
+                size = min(size, coin)  # hold coin < market bid coin
+                if buy_price < money:
                     sell_price = round(best_ask - 10**-enobs, enobs)
                     order_ids = place_batch_orders([
                         {'price': buy_price, 'size': size, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
