@@ -64,8 +64,6 @@ def strategy(state, enobs=3):
 
         timestamp, current_price, best_ask, best_bid = state.get_latest_trend()
         timestamp_depth, best_ask, best_bid, best_ask_size, best_bid_size = state.get_depth()
-        # depth update quicker than ticker.
-        # In ALPHA, ticker update more than 30s, depth update every 100ms
         if timestamp_depth > timestamp:
             print(f'coin: {coin}, money: {money}')
             print('trend: ', timestamp_depth, timestamp, current_price, best_ask, best_bid, best_ask_size, best_bid_size)
