@@ -51,7 +51,7 @@ def main():
     greenlet = gevent.spawn(ws.ws_create)
 
     schedule_rotate_trend_file(trend.reopen)
-    gevent.sleep(1)
+    gevent.sleep(0.01)
 
     strategy(state)
 
