@@ -39,7 +39,11 @@ def main():
 
     state = State(trend, trade)
 
-    ws = OkexWS([f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}'],
+    ws = OkexWS([f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
+                 f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
+                 f'spot/account:{INSTRUMENT[VALUTA_IDX].split('-')[0].upper()}',
+                 'spot/account:USDT'
+                ],
                 state,
                 use_trade_key=True)
     greenlet = gevent.spawn(ws.ws_create)

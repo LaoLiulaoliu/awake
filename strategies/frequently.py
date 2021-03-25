@@ -45,7 +45,8 @@ def parse_buy_sell_pair(state, buy_sell_pair):
 
 
 def strategy(state, enobs=3):
-    """ Need ticker(parse_ticker_detail) and account in websocket API.
+    """ Need ticker(parse_ticker_detail), account and order in websocket API,
+        please set in awake.py
     """
     last_time, last_trade_price, best_ask, best_bid, best_ask_size, best_bid_size = state.get_latest_trend()
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))

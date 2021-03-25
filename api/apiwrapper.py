@@ -89,8 +89,11 @@ def get_open_sell_orders():
     return get_open_orders('sell')
 
 
-def get_ticket():
+def get_ticker():
     return OK_SPOT.ticker(INSTRUMENT[VALUTA_IDX])
+
+def get_account():
+    return OK_SPOT.account(INSTRUMENT[VALUTA_IDX])
 
 
 def get_filled_buy_orders(before=None):

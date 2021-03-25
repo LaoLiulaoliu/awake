@@ -6,7 +6,7 @@ import gevent
 import numpy as np
 from .Tool import Tool
 from const import MIN_60, MIN_42, MIN_30, MIN_12, TIME_PRECISION
-from api.apiwrapper import get_ticket
+from api.apiwrapper import get_ticker
 
 
 class State(object):
@@ -120,7 +120,7 @@ class State(object):
                         pair['l'] = r[:, 1].min()
 
     def trace_trend_update_state(self):
-        r = get_ticket()
+        r = get_ticker()
         if r:
             if 'timestamp' not in r:
                 print('timestamp not in r:', r)
