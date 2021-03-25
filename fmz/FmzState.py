@@ -125,6 +125,9 @@ class FmzState(object):
 
         return order_id
 
+    def place_batch_orders(self, orders):
+        return [self.create_order(order['side'], order['price'], order['size']) for order in orders]
+
     def get_order(self, oid):
         order = self.exchange.GetOrder(oid)
         timestamp = int(time.time() * 1000)
@@ -149,6 +152,10 @@ class FmzState(object):
             取消挂单成功返回True，取消挂单失败返回False
         """
         return self.exchange.CancelOrder(order_id)
+
+    def cancel_batch_orders(self, order_ids):
+        for order_id in order_ids:
+            self.cancel_order(order_id)
 
     def refreash_data(self):
         """
