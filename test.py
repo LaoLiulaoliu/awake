@@ -65,7 +65,7 @@ def main(argv):
             #     {'price': 60000, 'size': 0.00001, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
             #     {'price': 60001, 'size': 0.00001, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
             # ]
-            # print(place_batch_sell_orders(orders))
+            # print(place_batch_orders(orders))
         elif opt in ('-s', '--socket'):
 
             trend = Numpd(TREND_NAME.format(datetime.utcnow().strftime('%Y-%m-%d')), 4)

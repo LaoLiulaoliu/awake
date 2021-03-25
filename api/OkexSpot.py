@@ -269,9 +269,9 @@ class OkexSpot(object):
 def print_error_or_get_order_id(ret):
     if 'error_code' in ret and ret['error_code'] != '0':
         print(ret)
-        return
+        return 0
     else:
-        return ret['order_id']
+        return int(ret['order_id'])
 
 
 if __name__ == '__main__':

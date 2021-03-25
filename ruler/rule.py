@@ -69,7 +69,7 @@ def r20210219(capital=200, do_trade=False):
                                             'instrument_id': INSTRUMENT[VALUTA_IDX]})
                         sell_order_of_buy_orderid.append(filled_buy_order[4])
                 if len(sell_orders) > 0:
-                    sell_order_ids = place_batch_sell_orders(sell_orders)
+                    sell_order_ids = place_batch_orders(sell_orders)
                     for sell_id, buy_id in zip(sell_order_ids, sell_order_of_buy_orderid):
                         if sell_id != 0:
                             trade.append([0, 0, 0, last_price, buy_id, sell_id, 9])

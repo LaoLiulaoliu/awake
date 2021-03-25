@@ -39,6 +39,6 @@ class FakeTrade(TradeBuyid):
         return int(''.join(map(str, np.random.randint(0, 10, size=16))))
 
     @staticmethod
-    def place_batch_sell_orders(sell_orders):
+    def place_batch_orders(orders):
         return [int(''.join(map(str, np.random.randint(0, 10, size=16))))
-                for _ in sell_orders]
+                for _ in orders]

@@ -16,8 +16,8 @@ def place_buy_order(bid_price, size):
     for i in range(RETRY - 5):
         r = OK_SPOT.place_order('buy', INSTRUMENT[VALUTA_IDX], bid_price, size)
         order_id = print_error_or_get_order_id(r)
-        if order_id:
-            return int(order_id)
+        if order_id != 0:
+            return order_id
 
 
 def place_sell_order(ask_price, size):
@@ -26,8 +26,8 @@ def place_sell_order(ask_price, size):
     for i in range(RETRY - 1):
         r = OK_SPOT.place_order('sell', INSTRUMENT[VALUTA_IDX], ask_price, size)
         order_id = print_error_or_get_order_id(r)
-        if order_id:
-            return int(order_id)
+        if order_id != 0:
+            return order_id
 
 
 def place_batch_sell_orders(sell_orders):
@@ -45,12 +45,18 @@ def place_batch_sell_orders(sell_orders):
         return sell_order_ids
 
 
+def place_batch_orders(orders):
+    for i in range(RETRY - 1):
+        r = OK_SPOT.batch_orders(orders)
+        return [print_error_or_get_order_id(r) for order in r[INSTRUMENT[VALUTA_IDX]]]
+
+
 def cancel_order(order_id):
     for i in range(RETRY - 1):
         r = OK_SPOT.cancel_order(order_id, INSTRUMENT[VALUTA_IDX])
         order_id = print_error_or_get_order_id(r)
-        if order_id:
-            return int(order_id)
+        if order_id != 0:
+            return order_id
 
 
 def cancel_batch_orders(order_ids):
@@ -58,7 +64,7 @@ def cancel_batch_orders(order_ids):
     r = OK_SPOT.cancel_batch_orders(order_ids, INSTRUMENT[VALUTA_IDX])
     for o in r[INSTRUMENT[VALUTA_IDX]]:
         order_id = print_error_or_get_order_id(o)
-        order_ids_return.append(order_id if order_id else cancel_order(o['order_id']))
+        order_ids_return.append(order_id if order_id != 0 else cancel_order(o['order_id']))
     return order_ids_return
 
 
