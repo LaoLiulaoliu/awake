@@ -7,6 +7,8 @@ import gevent
 from gevent import monkey;
 
 monkey.patch_all()
+from datetime import datetime
+
 from api.OkexWS import OkexWS
 from storage.Numpd import Numpd
 from ruler.State import State
