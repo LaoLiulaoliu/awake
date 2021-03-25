@@ -39,10 +39,11 @@ def main():
 
     state = State(trend, trade)
 
+    coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
     ws = OkexWS([f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
                  f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
-                 f'spot/account:{INSTRUMENT[VALUTA_IDX].split('-')[0].upper()}',
-                 'spot/account:USDT'
+                 f'spot/account:{coin_unit}',
+                 f'spot/account:{money_unit}'
                 ],
                 state,
                 use_trade_key=True)
