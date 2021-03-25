@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# System risk: network broke and reconnect again
+# Systemic risk: network broke and reconnect again
 
 import gevent
 from gevent import monkey;
