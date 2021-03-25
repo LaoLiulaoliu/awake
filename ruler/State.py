@@ -28,6 +28,8 @@ class State(object):
         self.available = {}
         self.parse_account(get_account())
 
+        self.depth = []
+
         # p60: pair of 60 minutes
         # h: high_price, l: low_price, i: last_period_time_index,
         self.p60 = {'h': 0, 'l': 0, 'i': 0}
@@ -240,3 +242,18 @@ class State(object):
 
     def show_several_trade(self, num):
         self.trade.print_first_trade_info(num)
+
+    def parse_depth5(self, message):
+        """ ticker is slow, need depth5 for high frequency
+        """
+        for i in message:
+            timestamp = Tool.convert_time_str(i['timestamp'], TIME_PRECISION)
+            price, size, number = i['asks'][0]
+            best_ask, best_ask_size = float(price), float(size) * number
+            price, size, number = i['bids'][0]
+            best_bid, best_bid_size = float(price), float(size) * number
+
+            self.depth = [timestamp, best_ask, best_bid, best_ask_size, best_bid_size]
+
+    def get_depth(self):
+        return self.depth

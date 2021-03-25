@@ -48,10 +48,10 @@ def parse_buy_sell_pair(state, buy_sell_pair):
 
 
 def strategy(state, enobs=3):
-    """ Need ticker(parse_ticker_detail), account and order in websocket API,
+    """ Need ticker, account, order, depth in websocket API,
         please set in awake.py
     """
-    last_time, last_trade_price, best_ask, best_bid, best_ask_size, best_bid_size = state.get_latest_trend()
+    last_time, last_trade_price, best_ask, best_bid = state.get_latest_trend()
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
     buy_sell_pair = []
     i = 0
@@ -62,8 +62,9 @@ def strategy(state, enobs=3):
         coin = available[coin_unit]
         money = available[money_unit]
 
-        timestamp, current_price, best_ask, best_bid, best_ask_size, best_bid_size = state.get_latest_trend()
-        if timestamp > last_time:
+        timestamp, current_price, best_ask, best_bid = state.get_latest_trend()
+        timestamp_depth, best_ask, best_bid, best_ask_size, best_bid_size = state.get_depth()
+        if timestamp_depth > timestamp:  # depth update quicker than ticker
             print(f'coin: {coin}, money: {money}')
             print('trend: ', timestamp, current_price, best_ask, best_bid, best_ask_size, best_bid_size)
             if best_ask - 10**-enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
