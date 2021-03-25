@@ -48,14 +48,12 @@ def main():
                 ],
                 state,
                 use_trade_key=True)
-    greenlet = gevent.spawn(ws.ws_create)
-
+    gws = gevent.spawn(ws.ws_create)
     schedule_rotate_trend_file(trend.reopen)
-    gevent.sleep(0.01)
 
-    strategy(state)
+    gst = gevent.spawn(strategy, state)
 
-    greenlet.join()
+    gevent.joinall([gws, gst])
     print(ws.get_connection())
 
 
