@@ -49,7 +49,7 @@ def main(argv):
                 gevent.sleep(10)
 
         elif opt in ('-o', '--spot'):
-            VALUTA_IDX = 0
+            VALUTA_IDX = 3
             spot = OkexSpot(use_trade_key=False)
             # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
             # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
