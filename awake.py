@@ -56,7 +56,5 @@ def main():
 
     g3 = gevent.spawn(strategy, state)
     gevent.joinall([g1, g2, g3])
-    print(ws.get_connection())
-
 
 main()

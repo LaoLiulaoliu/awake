@@ -48,8 +48,8 @@ def parse_buy_sell_pair(state, buy_sell_pair):
 
 
 def strategy(state, enobs=3):
-    """ Need ticker, account, order, depth in websocket API,
-        please set in awake.py
+    """ Need ticker, account, order in websocket API, please set in awake.py
+        depth5 is more frequent than ticker, but it is CPU bound, may block websocket.
     """
     last_time, last_trade_price, best_ask, best_bid = state.get_latest_trend()
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
@@ -65,7 +65,6 @@ def strategy(state, enobs=3):
         timestamp, current_price, best_ask, best_bid = state.get_latest_trend()
         best_ask_size, best_bid_size = state.get_best_size()
         if timestamp > last_time:
-            print(f'coin: {coin}, money: {money}')
             print('trend: ', last_time, timestamp, current_price, best_ask, best_bid, best_ask_size, best_bid_size)
             if best_ask - 10**-enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
                 size = min(best_ask_size, best_bid_size, coin)  # hold coin < market bid coin
@@ -91,6 +90,6 @@ def strategy(state, enobs=3):
                     i += 1
                     if i == 2:
                         break
-                    time.sleep(np.random.randint(25, 100))
+                    time.sleep(np.random.randint(5, 15))
             last_time = timestamp
 

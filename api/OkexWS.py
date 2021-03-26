@@ -98,9 +98,6 @@ class OkexWS(HttpUtil):
         self.ws_create()
         print(f'on close reconnect, connection: {self.__connection}')
 
-    def get_connection(self):
-        return self.__connection
-
     def on_message(self, message):
         data = json.loads(self.inflate(message))
         if 'table' in data:

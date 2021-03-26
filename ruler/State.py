@@ -217,6 +217,7 @@ class State(object):
             currency = i['currency'].upper()
             self.balance[currency] = float(i['balance'])
             self.available[currency] = float(i['available'])
+        print(f'balance: {self.balance}, avaiable: {self.available}')
 
     def get_balance(self):
         return self.balance
