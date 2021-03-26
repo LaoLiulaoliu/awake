@@ -187,11 +187,13 @@ class State(object):
             timestamp = Tool.convert_time_str(i['timestamp'], TIME_PRECISION)
             current_price = np.float64(i['last'])
             self.trend.append((timestamp, current_price, np.float64(i['best_ask']), np.float64(i['best_bid'])))
-            # self.best_size[0] = np.float64(i['best_ask_size'])
-            # self.best_size[1] = np.float64(i['best_bid_size'])
-            # self.event.set()
+            self.best_size[0] = np.float64(i['best_ask_size'])
+            self.best_size[1] = np.float64(i['best_bid_size'])
+            self.event.set()
 
     def get_latest_trend(self):
+        self.event.wait()
+        self.event.clear()
         return self.trend.last()
 
     def get_best_size(self):
@@ -263,9 +265,6 @@ class State(object):
             best_bid, best_bid_size = float(price), float(size) * number
 
             self.depth = [timestamp, best_ask, best_bid, best_ask_size, best_bid_size]
-            self.event.set()
 
     def get_depth(self):
-        self.event.wait()
-        self.event.clear()
         return self.depth

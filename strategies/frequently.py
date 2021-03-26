@@ -63,9 +63,8 @@ def strategy(state, enobs=3):
         money = available[money_unit]
 
         timestamp, current_price, best_ask, best_bid = state.get_latest_trend()
-        timestamp_depth, best_ask_size, best_bid_size = state.get_depth()
-        # best_ask_size, best_bid_size = state.get_best_size()
-        if timestamp_depth > timestamp:
+        best_ask_size, best_bid_size = state.get_best_size()
+        if timestamp > last_time:
             print(f'coin: {coin}, money: {money}')
             print('trend: ', last_time, timestamp, current_price, best_ask, best_bid, best_ask_size, best_bid_size)
             if best_ask - 10**-enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
