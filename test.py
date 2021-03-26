@@ -13,12 +13,11 @@ from test.numpd_test import numpd_test
 from api.OkexSpot import OkexSpot, INSTRUMENT
 from api.OkexWS import OkexWS
 from backtesting.run import r20210219
-from const import TREND_NAME
+from const import TREND_NAME_TIME
 from storage.Numpd import Numpd
 from ruler.State import State
 from ruler.Cron import Cron
 from ruler.Scheduler import Scheduler
-from const import TREND_NAME_TIME
 
 
 def main(argv):
@@ -68,7 +67,7 @@ def main(argv):
             # print(place_batch_orders(orders))
         elif opt in ('-s', '--socket'):
 
-            trend = Numpd(TREND_NAME.format(datetime.utcnow().strftime('%Y-%m-%d')), 4)
+            trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 4)
             trend.trend_full_load()
             state = State(trend, trade=None)
 
