@@ -81,9 +81,13 @@ class OkexWS(HttpUtil):
         self.__connection.send(json.dumps({'op': 'subscribe', 'args': self.__ws_subs}))
 
     def on_error(self, error):
+        """ If reconnect, on_open after create.
+        ws_on_error:  <websocket._app.WebSocketApp object at 0x7f15f860ce50> Connection is already closed.
+        ws_on_open:  ['spot/ticker:ALPHA-USDT']
+        """
         print('ws_on_error: ', self.__connection, error)
         self.ws_create()
-        print('ws_on_error reconnected.', time.time())
+        print('ws_on_error reconnected which will not be print.', time.time())
 
     def on_close(self):
         """ error occure before close
