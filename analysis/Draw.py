@@ -70,7 +70,7 @@ class Draw(object):
         plt.figure(figsize=(20, 15))
         ax = plt.subplot(1, 1, 1)
 
-        xticks = list(range(0, len(x), 20))
+        xticks = list(range(0, len(x), 15))
         xlabels = [x[i] for i in xticks]
         ax.set_xticks(xticks)
         ax.set_xticklabels(xlabels, rotation=40)
