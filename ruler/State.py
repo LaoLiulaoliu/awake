@@ -192,8 +192,6 @@ class State(object):
             # self.event.set()
 
     def get_latest_trend(self):
-        self.event.wait()
-        self.event.clear()
         return self.trend.last()
 
     def get_best_size(self):
@@ -268,4 +266,6 @@ class State(object):
             self.event.set()
 
     def get_depth(self):
+        self.event.wait()
+        self.event.clear()
         return self.depth
