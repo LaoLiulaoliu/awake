@@ -45,8 +45,7 @@ def main():
     ws = OkexWS([f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
                  f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
                  f'spot/account:{coin_unit}',
-                 f'spot/account:{money_unit}',
-#                 f'spot/depth5:{INSTRUMENT[VALUTA_IDX].upper()}'
+                 f'spot/account:{money_unit}'
                 ],
                 state,
                 use_trade_key=True)
