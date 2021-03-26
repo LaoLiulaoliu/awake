@@ -6,6 +6,7 @@ from datetime import datetime
 from ruler.Tool import Tool
 from storage.Numpd import Numpd
 from .Draw import Draw
+from const import TIME_PRECISION
 
 print(__name__, __package__)
 
@@ -59,26 +60,31 @@ def flush_trend_nearly_one_hour(self, trend):
         trend.flush()
 
 
-def draw_trend_txt(fname):
+def draw_trend_txt(fname, col_dim=4):
     timestamps = []
     prices = []
     cnt = 0
     head = 0
-    scale = 1800000  # half an hour
+    scale = 3600 * TIME_PRECISION  # half an hour
 
     draw = Draw()
-    trend = Numpd(fname, 2)
-    trend.trend_load()
+    trend = Numpd(fname, col_dim)
+    if col_dim == 2:
+        trend.trend_load()
+    elif col_dim == 4:
+        trend.trend_full_load()
+
     for i, data in trend.iterator(reverse=True):
-        timestamp, price = data
+        timestamp = data[0]
+        price = data[1]
         timestamps.append(timestamp)
         prices.append(price)
         cnt += 1
 
         if 31 & cnt == 0:
             if timestamps[head] - timestamp > scale:
-                f = datetime.utcfromtimestamp(timestamps[cnt - 1] * 0.001).strftime('%Y-%m-%dT%H%M%S')
-                t = datetime.utcfromtimestamp(timestamps[head] * 0.001).strftime('%Y-%m-%dT%H%M%S')
+                f = datetime.utcfromtimestamp(timestamps[cnt - 1] / TIME_PRECISION).strftime('%Y-%m-%dT%H%M%S')
+                t = datetime.utcfromtimestamp(timestamps[head] / TIME_PRECISION).strftime('%Y-%m-%dT%H%M%S')
                 draw.draw_plot_xy(
                     list(reversed(timestamps[head:cnt])),
                     list(reversed(prices[head:cnt])),
@@ -87,4 +93,4 @@ def draw_trend_txt(fname):
 
 
 if __name__ == '__main__':
-    draw_trend_txt('TREND_0.txt')
+    draw_trend_txt('TREND_0.txt', 2)
