@@ -10,10 +10,11 @@ import sys
 import getopt
 from datetime import datetime
 from test.numpd_test import numpd_test
-from api.OkexSpot import OkexSpot, INSTRUMENT
+from api.OkexSpot import OkexSpot
 from api.OkexWS import OkexWS
+from api.apiwrapper import place_batch_orders
 from backtesting.run import r20210219
-from const import TREND_NAME_TIME
+from const import TREND_NAME_TIME, INSTRUMENT
 from storage.Numpd import Numpd
 from ruler.State import State
 from ruler.Cron import Cron
@@ -52,19 +53,20 @@ def main(argv):
             spot = OkexSpot(use_trade_key=False)
             # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
             # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
-            print(spot.trad_fee(INSTRUMENT[3]))
+            # print(spot.trad_fee(INSTRUMENT[3]))
             # print(spot.account())
             # print(spot.ticker())
             # print(spot.kline(INSTRUMENT[VALUTA_IDX], 3600))
             # print(spot.orderbook(INSTRUMENT[VALUTA_IDX], 0.1, 10))
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494679719429120')) bingo
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
+            # print(spot.order_details(123, INSTRUMENT[VALUTA_IDX]))
 
-            # orders = [
-            #     {'price': 60000, 'size': 0.00001, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
-            #     {'price': 60001, 'size': 0.00001, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
-            # ]
-            # print(place_batch_orders(orders))
+            orders = [
+                {'price': 1.71, 'size': 0.1, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
+                {'price': 1.72, 'size': 0.1, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
+            ]
+            print(place_batch_orders(orders))
         elif opt in ('-s', '--socket'):
 
             trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 4)
