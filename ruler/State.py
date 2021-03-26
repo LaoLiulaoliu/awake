@@ -184,6 +184,7 @@ class State(object):
             timestamp = Tool.convert_time_str(i['timestamp'], TIME_PRECISION)
             current_price = np.float64(i['last'])
             self.trend.append((timestamp, current_price, np.float64(i['best_ask']), np.float64(i['best_bid'])))
+            # self.best_size = (float(i['best_ask_size']), float(i['best_bid_size']))
 
     def parse_ticker_detail(self, message):
         for i in message:
