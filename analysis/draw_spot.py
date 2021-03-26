@@ -75,7 +75,7 @@ def draw_trend_txt(fname, col_dim=4):
         trend.trend_full_load()
 
     for i, data in trend.iterator(reverse=True):
-        timestamp = data[0]
+        timestamp = int(data[0])
         price = data[1]
         timestamps.append(timestamp)
         prices.append(price)
