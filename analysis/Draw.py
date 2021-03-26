@@ -68,8 +68,15 @@ class Draw(object):
 
     def draw_plot_xy(self, x, y, title='plot'):
         plt.figure(figsize=(20, 15))
-        plt.xticks(range(len(x)), x)
-        plt.plot(y, color='blue', label='actual')
+        ax = plt.subplot(1, 1, 1)
+
+        xticks = list(range(0, len(x), 40))
+        xlabels = [x[i] for i in xticks]
+        ax.set_xticks(xticks)
+        ax.set_xticklabels(xlabels, rotation=40)
+
+        ax.plot(y, color='blue', label='actual')
+
         plt.legend()
         plt.title(title)
         plt.xlabel('time')
