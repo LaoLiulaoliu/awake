@@ -80,9 +80,10 @@ def strategy(state, enobs=3):
             if best_ask - 10**-enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
                 size = min(best_ask_size, best_bid_size, coin)  # hold coin < market bid coin
                 buy_price = round(best_bid + 10**-enobs, enobs)  # buy before sell
-                print(f'buy_price: {buy_price}, size: {size}')
+                sell_price = round(best_ask - 10**-enobs, enobs)
+                print(f'buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
                 if size > 0 and buy_price < money:
-                    sell_price = round(best_ask - 10**-enobs, enobs)
+
                     order_ids = place_batch_orders([
                         {'price': buy_price, 'size': size, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
                         {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
