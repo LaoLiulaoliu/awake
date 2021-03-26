@@ -28,9 +28,6 @@ def main(argv):
             arg = arg if arg else None
             from analysis.saveBid import save
             save(0, arg)
-        elif opt in ('-u', '--dump'):
-            from analysis.draw_spot import draw_trend_txt
-            draw_trend_txt(arg)
         elif opt in ('-z', '--trade'):
             r20210219(int(arg), do_trade=True)
         else:
