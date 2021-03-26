@@ -75,7 +75,7 @@ def draw_trend_txt(fname, col_dim=4):
         trend.trend_full_load()
 
     for i, data in trend.iterator(reverse=True):
-        timestamp = int(data[0] / TIME_PRECISION)
+        timestamp = int(data[0])
         price = data[1]
         timestamps.append(timestamp)
         prices.append(price)
@@ -83,8 +83,8 @@ def draw_trend_txt(fname, col_dim=4):
 
         if 31 & cnt == 0:
             if timestamps[head] - timestamp > scale:
-                f = datetime.utcfromtimestamp(timestamps[cnt - 1]).strftime('%Y-%m-%dT%H:%M:%S')
-                t = datetime.utcfromtimestamp(timestamps[head]).strftime('%Y-%m-%dT%H:%M:%S')
+                f = datetime.utcfromtimestamp(timestamps[cnt - 1]  / TIME_PRECISION).strftime('%Y-%m-%dT%H:%M:%S')
+                t = datetime.utcfromtimestamp(timestamps[head]  / TIME_PRECISION).strftime('%Y-%m-%dT%H:%M:%S')
                 draw.draw_plot_xy(
                     list(reversed(timestamps[head:cnt])),
                     list(reversed(prices[head:cnt])),

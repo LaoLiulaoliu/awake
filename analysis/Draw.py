@@ -82,7 +82,7 @@ class Draw(object):
         plt.xlabel('time')
         plt.ylabel('value')
         # plt.show()
-        plt.savefig(title)
+        plt.savefig(title.replace(':', ''))
         plt.close()
 
     def draw_plot(self, real, pred, title='plot'):
