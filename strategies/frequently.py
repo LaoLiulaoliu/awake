@@ -32,7 +32,7 @@ def parse_buy_sell_pair(state, buy_sell_pair):
             print(f'both pending: {buy_trade}, {sell_trade}')
 
         elif {buy_state, sell_state} == {0, 2}:
-            if time.time() - timestamp > 600:
+            if time.time() - timestamp > 1800:
                 if buy_state == 0:
                     cancel_order(buy_order_id)
                     state.delete_canceled_orders([buy_order_id])
@@ -65,6 +65,7 @@ def strategy(state, enobs=3):
     last_time, last_trade_price, best_ask, best_bid = state.get_latest_trend()
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
     buy_sell_pair = []
+    ongoing_num = 3
     i = 0
 
     while True:
@@ -83,6 +84,8 @@ def strategy(state, enobs=3):
                 sell_price = round(best_ask - 10**-enobs, enobs)
                 print(f'buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
                 if size > 0 and buy_price < money:
+                    if len(buy_sell_pair) > ongoing_num:
+                        continue
 
                     order_ids = place_batch_orders([
                         {'price': buy_price, 'size': size, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
