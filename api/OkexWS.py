@@ -42,7 +42,7 @@ class OkexWS(HttpUtil):
                                               on_error=self.on_error)
             if self.use_trade_key:
                 self.__connection.on_open = self.on_open
-            self.__connection.run_forever(ping_interval=20, ping_timeout=6)
+            self.__connection.run_forever(ping_interval=25, ping_timeout=6)
         except Exception as e:
             print(f'ws_create exception: {e}')
             time.sleep(5)
