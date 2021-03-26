@@ -46,15 +46,17 @@ class OkexSpot(object):
 
     def account(self, currency=None):
         """ instrument_id
-        return all the currency you have now, it is a list.
+        currency is None: return list of all the currency you have now.
         BTC: {'frozen': '0', 'hold': '0', 'id': '', 'currency': 'BTC', 'balance': '0.0067287', 'available': '0.0067287', 'holds': '0'}
         USDT: {'frozen': '0', 'hold': '0', 'id': '', 'currency': 'USDT', 'balance': '0.00027828', 'available': '0.00027828', 'holds': '0'}
 
         available: How many you can use now
         frozen(hold,holds): How many you are used on the order which is not been finished
         balance: How many you have. available + frozen
+
+        currency is symbol like 'btc', return one.
         """
-        path = '/api/spot/v3/accounts/' + currency if currency else '/api/spot/v3/accounts/'
+        path = '/api/spot/v3/accounts/' + currency if currency else '/api/spot/v3/accounts'
         return self.http.httpGet(path)
 
     def tickers(self, symbol=None):
