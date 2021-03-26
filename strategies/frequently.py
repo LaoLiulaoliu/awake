@@ -22,21 +22,27 @@ def parse_buy_sell_pair(state, buy_sell_pair):
 
         if {buy_state, sell_state} == {2}:
             state.delete_filled_orders((buy_order_id, sell_order_id))
-            remove_pair.append((buy_order_id, sell_order_id))
+            remove_pair.append((timestamp, buy_order_id, sell_order_id))
             print(f'both filled: {buy_trade}, {sell_trade}')
 
         elif {buy_state, sell_state} == {0}:
             cancel_batch_orders((buy_order_id, sell_order_id))
             state.delete_canceled_orders((buy_order_id, sell_order_id))
-            remove_pair.append((buy_order_id, sell_order_id))
+            remove_pair.append((timestamp, buy_order_id, sell_order_id))
             print(f'both pending: {buy_trade}, {sell_trade}')
 
         elif {buy_state, sell_state} == {0, 2}:
             if time.time() - timestamp > 600:
                 if buy_state == 0:
                     cancel_order(buy_order_id)
+                    state.delete_canceled_orders([buy_order_id])
+                    remove_pair.append((timestamp, buy_order_id, sell_order_id))
+                    print(f'delete buy {buy_order_id}: {buy_trade}')
                 elif sell_state == 0:
                     cancel_order(sell_order_id)
+                    state.delete_canceled_orders([sell_order_id])
+                    remove_pair.append((timestamp, buy_order_id, sell_order_id))
+                    print(f'delete sell {sell_order_id}: {sell_state}')
         elif {buy_state, sell_state} == {0, 1}:
             gevent.sleep(1)
         elif {buy_state, sell_state} == {1}:
@@ -90,7 +96,7 @@ def strategy(state, enobs=3):
                         print('quit strategy.')
                         return
 
-                    buy_sell_pair.append((time.time(), order_ids[0], order_ids[1]))
+                    buy_sell_pair.append((int(time.time()), order_ids[0], order_ids[1]))
 
                     i += 1
                     if i == 2:
