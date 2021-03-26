@@ -45,16 +45,15 @@ def main():
     ws = OkexWS([f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
                  f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
                  f'spot/account:{coin_unit}',
-                 f'spot/account:{money_unit}',
-                 f'spot/depth5:{INSTRUMENT[VALUTA_IDX].upper()}'
+                 f'spot/account:{money_unit}'
                 ],
                 state,
                 use_trade_key=True)
     g1 = gevent.spawn(ws.ws_create)
     g2 = schedule_rotate_trend_file(trend.reopen)
+    gevent.sleep(1)
 
     g3 = gevent.spawn(strategy, state)
-
     gevent.joinall([g1, g2, g3])
     print(ws.get_connection())
 
