@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import gevent
 import time
 import numpy as np
 from api.apiwrapper import cancel_order, place_batch_orders, cancel_batch_orders
@@ -13,7 +14,7 @@ def parse_buy_sell_pair(state, buy_sell_pair):
         print(f'enter remove pair: {remove_pair}, buy_sell_pair: {buy_sell_pair}')
         state.show_several_trade(5)
 
-    for buy_order_id, sell_order_id in buy_sell_pair:
+    for timestamp, buy_order_id, sell_order_id in buy_sell_pair:
         buy_trade = state.get_order_by_id(buy_order_id)
         sell_trade = state.get_order_by_id(sell_order_id)
         buy_state = int(buy_trade[-1])
@@ -31,13 +32,17 @@ def parse_buy_sell_pair(state, buy_sell_pair):
             print(f'both pending: {buy_trade}, {sell_trade}')
 
         elif {buy_state, sell_state} == {0, 2}:
-            pass
+            if time.time() - timestamp > 600:
+                if buy_state == 0:
+                    cancel_order(buy_order_id)
+                elif sell_state == 0:
+                    cancel_order(sell_order_id)
         elif {buy_state, sell_state} == {0, 1}:
-            time.sleep(30)
+            gevent.sleep(1)
         elif {buy_state, sell_state} == {1}:
-            time.sleep(30)
+            gevent.sleep(1)
         elif {buy_state, sell_state} == {1, 2}:
-            time.sleep(30)
+            gevent.sleep(1)
         print(f'both unknown: {buy_trade}, {sell_trade}')
 
     [buy_sell_pair.remove(i) for i in remove_pair]
@@ -85,11 +90,11 @@ def strategy(state, enobs=3):
                         print('quit strategy.')
                         return
 
-                    buy_sell_pair.append((order_ids[0], order_ids[1]))
+                    buy_sell_pair.append((time.time(), order_ids[0], order_ids[1]))
 
                     i += 1
                     if i == 2:
                         break
-                    time.sleep(np.random.randint(5, 15))
+                    gevent.sleep(np.random.randint(5, 15))
             last_time = timestamp
 
