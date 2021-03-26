@@ -4,6 +4,7 @@
 import time
 import gevent
 import numpy as np
+from gevent.event import Event
 from .Tool import Tool
 from const import MIN_60, MIN_42, MIN_30, MIN_12, TIME_PRECISION
 from api.apiwrapper import get_ticker, get_account
@@ -23,11 +24,13 @@ class State(object):
         self.trend = trend
         self.flush_trend = 0
         self.trade = trade
+        self.event = Event()
 
         self.balance = {}
         self.available = {}
         self.parse_account(get_account())
 
+        self.best_size = np.zeros(2)
         self.depth = [0, 0, 0, 0, 0]  # caution about initial value
 
         # p60: pair of 60 minutes
@@ -184,7 +187,16 @@ class State(object):
             timestamp = Tool.convert_time_str(i['timestamp'], TIME_PRECISION)
             current_price = np.float64(i['last'])
             self.trend.append((timestamp, current_price, np.float64(i['best_ask']), np.float64(i['best_bid'])))
-            # self.best_size = (float(i['best_ask_size']), float(i['best_bid_size']))
+            self.best_size[0] = np.float64(i['best_ask_size'])
+            self.best_size[1] = np.float64(i['best_bid_size'])
+            self.event.set()
+
+    def get_latest_trend(self):
+        self.event.wait()
+        return self.trend.last()
+
+    def get_best_size(self):
+        return self.best_size
 
     def parse_ticker_detail(self, message):
         for i in message:
@@ -198,9 +210,6 @@ class State(object):
                                np.float64(i['best_bid']),
                                np.float64(i['best_ask_size']),
                                np.float64(i['best_bid_size'])))
-
-    def get_latest_trend(self):
-        return self.trend.last()
 
     def parse_account(self, message):
         for i in message:

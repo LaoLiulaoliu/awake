@@ -31,6 +31,8 @@ def schedule_rotate_trend_file(method):
 
 
 def main():
+    """ websocket is IO bound, strategy is CPU bound. strategy will block websocket in gevent.
+    """
     trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 4)  # 4: parse_ticker 6: parse_ticker_detail
     trend.trend_full_load()
 
