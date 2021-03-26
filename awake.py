@@ -46,7 +46,7 @@ def main():
                  f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
                  f'spot/account:{coin_unit}',
                  f'spot/account:{money_unit}',
-                 f'spot/depth5:{INSTRUMENT[VALUTA_IDX].upper()}'
+#                 f'spot/depth5:{INSTRUMENT[VALUTA_IDX].upper()}'
                 ],
                 state,
                 use_trade_key=True)
