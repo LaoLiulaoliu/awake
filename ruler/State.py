@@ -189,11 +189,11 @@ class State(object):
             self.trend.append((timestamp, current_price, np.float64(i['best_ask']), np.float64(i['best_bid'])))
             self.best_size[0] = np.float64(i['best_ask_size'])
             self.best_size[1] = np.float64(i['best_bid_size'])
-            self.event.set()
+            self.event.set()  # set flag to true
 
     def get_latest_trend(self):
-        self.event.wait()
-        self.event.clear()
+        self.event.wait()  # wait stop when flag set to true
+        self.event.clear() # set flag to false
         return self.trend.last()
 
     def get_best_size(self):

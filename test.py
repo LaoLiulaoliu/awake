@@ -70,12 +70,12 @@ def main(argv):
 
             trend = Numpd(TREND_NAME.format(datetime.utcnow().strftime('%Y-%m-%d')), 4)
             trend.trend_full_load()
-            state = State(trend)
+            state = State(trend, trade=None)
 
-            ws = OkexWS(['spot/account:BSV',
+            ws = OkexWS(['spot/account:ALPHA',
                          'spot/account:USDT',
                          'spot/order:BSV-USDT',
-                         'spot/order_algo:BSV-USDT'], state, use_trade_key=True)
+                         'spot/depth5:ALPHA-USDT'], state, use_trade_key=True)
             greenlet = gevent.spawn(ws.ws_create)
             # ws.subscription(['spot/depth:BTC-USDT'])
             print('websocket created, can do sth in the following coroutine')
