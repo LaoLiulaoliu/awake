@@ -51,7 +51,7 @@ def main():
                 use_trade_key=True)
     g1 = gevent.spawn(ws.ws_create)
     g2 = schedule_rotate_trend_file(trend.reopen)
-    gevent.sleep(1)
+    gevent.sleep(2)
 
     g3 = gevent.spawn(strategy, state)
     gevent.joinall([g1, g2, g3])

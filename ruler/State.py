@@ -4,7 +4,7 @@
 import time
 import gevent
 import numpy as np
-from gevent.event import Event
+from gevent.event import AsyncResult
 from .Tool import Tool
 from const import MIN_60, MIN_42, MIN_30, MIN_12, TIME_PRECISION
 from api.apiwrapper import get_ticker, get_account
@@ -24,7 +24,7 @@ class State(object):
         self.trend = trend
         self.flush_trend = 0
         self.trade = trade
-        self.event = Event()
+        self.event = AsyncResult()
 
         self.balance = {}
         self.available = {}
@@ -189,10 +189,10 @@ class State(object):
             self.trend.append((timestamp, current_price, np.float64(i['best_ask']), np.float64(i['best_bid'])))
             self.best_size[0] = np.float64(i['best_ask_size'])
             self.best_size[1] = np.float64(i['best_bid_size'])
-            self.event.set()
+            self.event.set(1)
 
     def get_latest_trend(self):
-        self.event.wait()
+        self.event.get()
         return self.trend.last()
 
     def get_best_size(self):
