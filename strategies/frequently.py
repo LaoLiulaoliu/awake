@@ -23,17 +23,17 @@ def parse_buy_sell_pair(state, buy_sell_pair):
         if {buy_state, sell_state} == {2}:
             state.delete_filled_orders((buy_order_id, sell_order_id))
             remove_pair.append((timestamp, buy_order_id, sell_order_id))
-            print(f'both filled: {buy_trade}, {sell_trade}')
+            print(f'both filled: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
 
         elif {buy_state, sell_state} == {0}:
             cancel_batch_orders((buy_order_id, sell_order_id))
             state.delete_canceled_orders((buy_order_id, sell_order_id))
             remove_pair.append((timestamp, buy_order_id, sell_order_id))
-            print(f'both pending: {buy_trade}, {sell_trade}')
+            print(f'both pending: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
 
         elif {buy_state, sell_state} == {0, 2}:
             gevent.sleep(1)
-            print(f'both unknown: {buy_trade}, {sell_trade}')
+            print(f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
             # if time.time() - timestamp > 1800:
             #     if buy_state == 0:
             #         cancel_order(buy_order_id)
@@ -47,13 +47,13 @@ def parse_buy_sell_pair(state, buy_sell_pair):
             #         print(f'delete sell {sell_order_id}: {sell_state}')
         elif {buy_state, sell_state} == {0, 1}:
             gevent.sleep(1)
-            print(f'both unknown: {buy_trade}, {sell_trade}')
+            print(f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
         elif {buy_state, sell_state} == {1}:
             gevent.sleep(1)
-            print(f'both unknown: {buy_trade}, {sell_trade}')
+            print(f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
         elif {buy_state, sell_state} == {1, 2}:
             gevent.sleep(1)
-            print(f'both unknown: {buy_trade}, {sell_trade}')
+            print(f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
 
     [buy_sell_pair.remove(i) for i in remove_pair]
     if remove_pair or buy_sell_pair:
