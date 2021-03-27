@@ -11,7 +11,7 @@ from const import INSTRUMENT, VALUTA_IDX
 def parse_buy_sell_pair(state, buy_sell_pair):
     remove_pair = []
     if remove_pair or buy_sell_pair:
-        print(f'enter remove pair: {remove_pair}, buy_sell_pair: {buy_sell_pair}')
+        print(f'enter: buy_sell_pair: {buy_sell_pair}, remove pair: {remove_pair}')
         state.show_trade_len()
 
     for timestamp, buy_order_id, sell_order_id in buy_sell_pair:
@@ -57,7 +57,7 @@ def parse_buy_sell_pair(state, buy_sell_pair):
 
     [buy_sell_pair.remove(i) for i in remove_pair]
     if remove_pair or buy_sell_pair:
-        print(f'exit remove pair: {remove_pair}, buy_sell_pair: {buy_sell_pair}')
+        print(f'exit: buy_sell_pair: {buy_sell_pair}, remove pair: {remove_pair}')
         state.show_trade_len()
 
 
@@ -94,9 +94,9 @@ def strategy(state, enobs=3):
                         {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
                     ])
 
-                    print({'price': buy_price, 'size': size, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
+                    print({'price': buy_price, 'size': size, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX], 'id': order_ids[0]},
                           '\n',
-                          {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]})
+                        {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX], 'id': order_ids[1]})
 
                     if 0 in order_ids:
                         for i, oid in enumerate(order_ids):
