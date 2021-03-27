@@ -55,7 +55,7 @@ def parse_buy_sell_pair(state, buy_sell_pair):
 
     [buy_sell_pair.remove(i) for i in remove_pair]
     if remove_pair or buy_sell_pair:
-        print(f'remove pair: {remove_pair}, buy_sell_pair: {buy_sell_pair}')
+        print(f'exit remove pair: {remove_pair}, buy_sell_pair: {buy_sell_pair}')
         state.show_several_trade(5)
 
 
@@ -83,6 +83,7 @@ def strategy(state, enobs=3):
                 size = min(best_ask_size, best_bid_size, coin)  # hold coin < market bid coin
                 buy_price = round(best_bid + 10**-enobs, enobs)  # buy before sell
                 sell_price = round(best_ask - 10**-enobs, enobs)
+                print(f'buy_price: {buy_price}, sell_price: {sell_price}, size: {size}, {len(buy_sell_pair)} > {ongoing_num}')
                 if size > 0 and buy_price < money:
                     if len(buy_sell_pair) > ongoing_num:
                         continue
@@ -96,6 +97,7 @@ def strategy(state, enobs=3):
                           '\n',
                           {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]})
                     print(f'place order_ids: {order_ids}')
+
                     if 0 in order_ids:
                         for i, oid in enumerate(order_ids):
                             if oid != 0:
