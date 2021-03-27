@@ -68,7 +68,6 @@ def strategy(state, enobs=3):
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
     buy_sell_pair = []
     ongoing_num = 3
-    i = 0
 
     while True:
         parse_buy_sell_pair(state, buy_sell_pair)
@@ -104,10 +103,6 @@ def strategy(state, enobs=3):
                         return
 
                     buy_sell_pair.append((int(time.time()), order_ids[0], order_ids[1]))
-
-                    i += 1
-                    if i == 2:
-                        break
                     gevent.sleep(np.random.randint(5, 15))
             last_time = timestamp
 
