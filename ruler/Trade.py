@@ -54,7 +54,7 @@ class Trade(object):
     delete_canceled_orders = delete_filled_orders
 
     def print_first_trade_info(self, num=1):
-        print(f'trade len {self.trade.info.shape[0]}: {self.trade.info[:num]}')
+        print(f'trade len {self.trade.current_size}: {self.trade.info[:num]}')
 
     def select_order_by_id(self, order_id):
         """return one dimension numpy array of the data
