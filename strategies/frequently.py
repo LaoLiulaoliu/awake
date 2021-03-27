@@ -45,11 +45,13 @@ def parse_buy_sell_pair(state, buy_sell_pair):
                     print(f'delete sell {sell_order_id}: {sell_state}')
         elif {buy_state, sell_state} == {0, 1}:
             gevent.sleep(1)
+            print(f'both unknown: {buy_trade}, {sell_trade}')
         elif {buy_state, sell_state} == {1}:
             gevent.sleep(1)
+            print(f'both unknown: {buy_trade}, {sell_trade}')
         elif {buy_state, sell_state} == {1, 2}:
             gevent.sleep(1)
-        print(f'both unknown: {buy_trade}, {sell_trade}')
+            print(f'both unknown: {buy_trade}, {sell_trade}')
 
     [buy_sell_pair.remove(i) for i in remove_pair]
     if remove_pair or buy_sell_pair:
@@ -93,7 +95,8 @@ def strategy(state, enobs=3):
                     ])
 
                     print({'price': buy_price, 'size': size, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
-                        {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]})
+                          '\n',
+                          {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]})
                     print(f'place order_ids: {order_ids}')
                     if 0 in order_ids:
                         [cancel_order(i) for i in order_ids if i != 0]
