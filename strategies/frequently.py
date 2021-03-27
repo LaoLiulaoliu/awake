@@ -104,6 +104,7 @@ def strategy(state, enobs=3):
                                 cancel_order(oid)
                                 side = 'buy' if i == 0 else 'sell'
                                 print(f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
+                        continue
 
                     buy_sell_pair.append((int(time.time()), order_ids[0], order_ids[1]))
                     gevent.sleep(np.random.randint(5, 15))
