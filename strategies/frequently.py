@@ -83,7 +83,6 @@ def strategy(state, enobs=3):
                 size = min(best_ask_size, best_bid_size, coin)  # hold coin < market bid coin
                 buy_price = round(best_bid + 10**-enobs, enobs)  # buy before sell
                 sell_price = round(best_ask - 10**-enobs, enobs)
-                # print(f'buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
                 if size > 0 and buy_price < money:
                     if len(buy_sell_pair) > ongoing_num:
                         continue
@@ -98,9 +97,11 @@ def strategy(state, enobs=3):
                           {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]})
                     print(f'place order_ids: {order_ids}')
                     if 0 in order_ids:
-                        [cancel_order(i) for i in order_ids if i != 0]
-                        print('quit strategy.')
-                        return
+                        for i, oid in enumerate(order_ids):
+                            if oid != 0:
+                                cancel_order(oid)
+                                side = 'buy' if i == 0 else 'sell'
+                                print(f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
 
                     buy_sell_pair.append((int(time.time()), order_ids[0], order_ids[1]))
                     gevent.sleep(np.random.randint(5, 15))
