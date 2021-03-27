@@ -125,8 +125,12 @@ class OkexSpot(object):
             for order in orders]
         return self.http.httpPost(path, params)
 
-    def modify_order(self):
-        pass
+    def modify_order(self, orderid, price, size, instrument_id=INSTRUMENT[0]):
+        """not tested yet
+        """
+        path = f'/api/spot/v3/amend_order/{instrument_id}'
+        params = {'order_id': orderid, 'new_price', price, 'new_size': size}
+        return self.http.httpPost(path, params)
 
     def cancel_order(self, orderid, instrument_id=INSTRUMENT[0]):
         """cancel an unfilled order
