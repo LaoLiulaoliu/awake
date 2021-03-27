@@ -129,7 +129,7 @@ class OkexSpot(object):
         """not tested yet
         """
         path = f'/api/spot/v3/amend_order/{instrument_id}'
-        params = {'order_id': orderid, 'new_price', price, 'new_size': size}
+        params = {'order_id': orderid, 'new_price': price, 'new_size': size}
         return self.http.httpPost(path, params)
 
     def cancel_order(self, orderid, instrument_id=INSTRUMENT[0]):
