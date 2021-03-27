@@ -10,6 +10,7 @@ monkey.patch_all()
 from datetime import datetime
 
 from api.OkexWS import OkexWS
+from api.instruments import ENOBs
 from storage.Numpd import Numpd
 from ruler.State import State
 from ruler.Cron import Cron
@@ -53,7 +54,12 @@ def main():
     g2 = schedule_rotate_trend_file(trend.reopen)
     gevent.sleep(3)
 
-    g3 = gevent.spawn(strategy, state)
+    enobs = 3
+    for i in ENOBs:
+        if i['instrument_id'] == INSTRUMENT[VALUTA_IDX].upper():
+            enobs = len(i['tick_size'].split('.')[1])
+
+    g3 = gevent.spawn(strategy, state, enobs)
     gevent.joinall([g1, g2, g3])
 
 main()
