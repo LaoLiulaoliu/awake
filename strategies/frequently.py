@@ -12,7 +12,7 @@ def parse_buy_sell_pair(state, buy_sell_pair):
     remove_pair = []
     if remove_pair or buy_sell_pair:
         print(f'enter remove pair: {remove_pair}, buy_sell_pair: {buy_sell_pair}')
-        state.show_several_trade(1)
+        state.show_trade_len()
 
     for timestamp, buy_order_id, sell_order_id in buy_sell_pair:
         buy_trade = state.get_order_by_id(buy_order_id)
@@ -58,7 +58,7 @@ def parse_buy_sell_pair(state, buy_sell_pair):
     [buy_sell_pair.remove(i) for i in remove_pair]
     if remove_pair or buy_sell_pair:
         print(f'exit remove pair: {remove_pair}, buy_sell_pair: {buy_sell_pair}')
-        state.show_several_trade(1)
+        state.show_trade_len()
 
 
 
@@ -80,7 +80,6 @@ def strategy(state, enobs=3):
         timestamp, current_price, best_ask, best_bid = state.get_latest_trend()
         best_ask_size, best_bid_size = state.get_best_size()
         if timestamp > last_time:
-            print('trend: ', timestamp, last_time, current_price, best_ask, best_bid, best_ask_size, best_bid_size)
             if best_ask - 10**-enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
                 size = min(best_ask_size, best_bid_size, coin)  # hold coin < market bid coin
                 buy_price = round(best_bid + 10**-enobs, enobs)  # buy before sell

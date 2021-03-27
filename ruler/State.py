@@ -251,8 +251,8 @@ class State(object):
         for i in message:
             print(i['side'], i['trade_id'], i['size'], i['price'])
 
-    def show_several_trade(self, num):
-        self.trade.print_first_trade_info(num)
+    def show_trade_len(self):
+        self.trade.print_trade_length_info()
 
     def parse_depth5(self, message):
         """ ticker is slow, need depth5 for high frequency
