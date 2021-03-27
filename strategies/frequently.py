@@ -82,7 +82,7 @@ def strategy(state, enobs=3):
                 size = min(best_ask_size, best_bid_size, coin)  # hold coin < market bid coin
                 buy_price = round(best_bid + 10**-enobs, enobs)  # buy before sell
                 sell_price = round(best_ask - 10**-enobs, enobs)
-                print(f'buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
+                # print(f'buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
                 if size > 0 and buy_price < money:
                     if len(buy_sell_pair) > ongoing_num:
                         continue

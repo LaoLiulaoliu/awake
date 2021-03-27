@@ -64,7 +64,7 @@ def main(argv):
 
             orders = [
                 {'price': 1.71, 'size': 0.1, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
-                {'price': 1.72, 'size': 0.1, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
+                {'price': 10.72, 'size': 0.1, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
             ]
             print(place_batch_orders(orders))
         elif opt in ('-s', '--socket'):
