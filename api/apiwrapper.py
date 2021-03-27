@@ -48,7 +48,10 @@ def place_batch_sell_orders(sell_orders):
 def place_batch_orders(orders):
     for i in range(RETRY - 1):
         r = OK_SPOT.batch_orders(orders)
-        return [print_error_or_get_order_id(r) for order in r[INSTRUMENT[VALUTA_IDX]]]
+        if 'error_code' in r:
+            print(r['error_message'])
+            return []
+        return [print_error_or_get_order_id(order) for order in r[INSTRUMENT[VALUTA_IDX]]]
 
 
 def cancel_order(order_id):
