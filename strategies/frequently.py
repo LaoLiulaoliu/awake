@@ -67,7 +67,7 @@ def strategy(state, enobs=3):
     last_time, last_trade_price, best_ask, best_bid = state.get_latest_trend()
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
     buy_sell_pair = []
-    ongoing_num = 3
+    ongoing_num = 4
 
     while True:
         parse_buy_sell_pair(state, buy_sell_pair)
