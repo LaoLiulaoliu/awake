@@ -97,7 +97,6 @@ def strategy(state, enobs=3):
                     print({'price': buy_price, 'size': size, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
                           '\n',
                           {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]})
-                    print(f'place order_ids: {order_ids}')
 
                     if 0 in order_ids:
                         for i, oid in enumerate(order_ids):
@@ -108,6 +107,6 @@ def strategy(state, enobs=3):
                         continue
 
                     buy_sell_pair.append((int(time.time()), order_ids[0], order_ids[1]))
-                    gevent.sleep(np.random.randint(5, 15))
+                    gevent.sleep(np.random.randint(9, 15))
             last_time = timestamp
 
