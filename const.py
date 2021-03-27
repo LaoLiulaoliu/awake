@@ -15,7 +15,7 @@ INSTRUMENT = {
     6: 'luna-usdt',
     7: 'mask-usdt'
 }
-VALUTA_IDX = 3
+VALUTA_IDX = 7
 
 TREND_NAME = 'trend_{}.txt'
 TREND_NAME_TIME = """f'trend_{datetime.utcnow().strftime("%Y-%m-%d")}.txt'"""
