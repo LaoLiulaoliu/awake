@@ -51,7 +51,7 @@ def main(argv):
         elif opt in ('-o', '--spot'):
             VALUTA_IDX = 3
             spot = OkexSpot(use_trade_key=False)
-            # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
+            print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
             # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
             # print(spot.trad_fee(INSTRUMENT[3]))
             # print(spot.account())
@@ -62,11 +62,11 @@ def main(argv):
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
             # print(spot.order_details(123, INSTRUMENT[VALUTA_IDX]))
 
-            orders = [
-                {'price': 1.71, 'size': 0.1, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
-                {'price': 10.72, 'size': 0.1, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
-            ]
-            print(place_batch_orders(orders))
+            # orders = [
+            #     {'price': 0.71, 'size': 0.1, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
+            #     {'price': 10.72, 'size': 0.1, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
+            # ]
+            # print(place_batch_orders(orders))
         elif opt in ('-s', '--socket'):
 
             trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 4)
