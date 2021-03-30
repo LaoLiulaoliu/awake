@@ -51,11 +51,12 @@ def main(argv):
         elif opt in ('-o', '--spot'):
             VALUTA_IDX = 3
             spot = OkexSpot(use_trade_key=False)
-            print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
+            # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
             # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
-            # print(spot.trad_fee(INSTRUMENT[3]))
+            print(spot.trad_fee(INSTRUMENT[VALUTA_IDX]))
+            # print(spot.instruments())
             # print(spot.account())
-            # print(spot.ticker())
+            # print(spot.ticker(INSTRUMENT[VALUTA_IDX]))
             # print(spot.kline(INSTRUMENT[VALUTA_IDX], 3600))
             # print(spot.orderbook(INSTRUMENT[VALUTA_IDX], 0.1, 10))
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494679719429120')) bingo
