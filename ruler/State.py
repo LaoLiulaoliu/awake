@@ -193,7 +193,7 @@ class State(object):
 
     def get_latest_trend(self):
         self.event.wait()  # wait stop when flag set to true
-        self.event.clear() # set flag to false
+        self.event.clear()  # set flag to false
         return self.trend.last()
 
     def get_best_size(self):

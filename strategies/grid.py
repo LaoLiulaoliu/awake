@@ -49,7 +49,7 @@ def grid_init_orders(state, last_trade_price, enobs):
                 gevent.sleep(60)
                 continue
 
-            return int(time.time()), order_ids[0], order_ids[1]
+            return [int(time.time()), order_ids[0], order_ids[1]]
         gevent.sleep(60)
 
 
@@ -92,12 +92,16 @@ def strategy(state, enobs=3):
                     if order_id == 0:
                         cancel_order(sell_order_id)
                 modify_order(sell_order_id, sell_price, BOARD_LOT)
+                buy_sell_pair[0] = int(time.time())
+                buy_sell_pair[1] = order_id
             elif sell_state == 2:
                 if coin > BOARD_LOT:
                     order_id = place_sell_order(sell_price, BOARD_LOT)
                     if order_id == 0:
                         cancel_order(buy_order_id)
                 modify_order(buy_order_id, buy_price, BOARD_LOT)
+                buy_sell_pair[0] = int(time.time())
+                buy_sell_pair[2] = order_id
 
 
 
