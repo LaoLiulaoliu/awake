@@ -5,6 +5,7 @@
 
 import gevent
 import time
+from api.apiwrapper import cancel_order, place_batch_orders
 from const import INSTRUMENT, VALUTA_IDX
 
 
@@ -15,7 +16,7 @@ STOP_LOSS_RATIO = 0.4
 low_price = 1
 high_price = 2.5
 SPACING_PRICE = 0.05
-AVERAGE_ASK_BID_SIZE = 10  # refer to min_size
+AVERAGE_ASK_BID_SIZE = 10  # also refer to min_size
 effective_number_of_bits = 3
 
 GRID_NUM = int((high_price - low_price) / SPACING_PRICE)
@@ -26,6 +27,8 @@ def stop_loss(money_remain, ratio=STOP_LOSS_RATIO):
     if money_remain < INIT_MONEY * ratio:
         print(f'money remain: {money_remain}. Send Alarm!!!  Sleep and operate by hand')
         gevent.sleep(1800)
+        return True
+    return False
 
 def place_orders(coin, money, last_trade_price, enobs):
     buy_price = round(last_trade_price - SPACING_PRICE, enobs)
@@ -64,7 +67,8 @@ def strategy(state, enobs=3):
         coin = available[coin_unit]
         money = available[money_unit]
 
-        stop_loss(money)
+        if stop_loss(money):
+            continue
 
         if len(buy_sell_pair) == 0:
             pass

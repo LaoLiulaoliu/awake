@@ -102,6 +102,7 @@ def strategy(state, enobs=3):
                         for i, oid in enumerate(order_ids):
                             if oid != 0:
                                 cancel_order(oid)
+                                state.delete_canceled_orders([oid])
                                 side = 'buy' if i == 0 else 'sell'
                                 print(f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
                         continue
