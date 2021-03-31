@@ -49,8 +49,8 @@ class Trade(object):
     def delete_filled_orders(self, order_ids):
         for order_id in order_ids:
             idx = np.argwhere(self.trade.info[:, self.index_bit] == order_id)[0][0]
-            self.trade.delete(idx)
             self.sell_finished.append(self.trade.info[idx, :])
+            self.trade.delete(idx)
 
     delete_canceled_orders = delete_filled_orders
 
