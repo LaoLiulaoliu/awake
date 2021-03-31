@@ -196,6 +196,9 @@ class State(object):
         self.event.clear()  # set flag to false
         return self.trend.last()
 
+    def get_latest_trend_nowait(self):
+        return self.trend.last()
+
     def get_best_size(self):
         return self.best_size
 
