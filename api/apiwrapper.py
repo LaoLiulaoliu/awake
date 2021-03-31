@@ -29,27 +29,13 @@ def place_sell_order(ask_price, size):
         order_id = print_error_or_get_order_id(r)
         if order_id != 0:
             return order_id
-
-
-def place_batch_sell_orders(sell_orders):
-    """place RETRY times, return order when success
-    """
-    for i in range(RETRY - 1):
-        r = OK_SPOT.batch_orders(sell_orders)
-        sell_order_ids = []
-        for order in r[INSTRUMENT[VALUTA_IDX]]:
-            if 'error_code' in order and order['error_code'] != '0':
-                print(order)  # not enough coin
-                sell_order_ids.append(0)
-            else:
-                sell_order_ids.append(int(order['order_id']))
-        return sell_order_ids
+    return 0
 
 
 def place_batch_orders(orders):
     for i in range(RETRY - 1):
         r = OK_SPOT.batch_orders(orders)
-        if 'error_code' in r:
+        if 'error_code' in r:  # buy: not enough money; sell: not enough coin
             print(r['error_message'])
             return []
         return [print_error_or_get_order_id(order) for order in r[INSTRUMENT[VALUTA_IDX]]]
@@ -70,6 +56,10 @@ def cancel_batch_orders(order_ids):
         order_id = print_error_or_get_order_id(o)
         order_ids_return.append(order_id if order_id != 0 else cancel_order(o['order_id']))
     return order_ids_return
+
+
+def modify_order(order_id, new_price, size):
+    r = OK_SPOT.modify_order(order_id, new_price, size)
 
 
 def get_open_orders(side):

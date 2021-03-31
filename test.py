@@ -54,6 +54,11 @@ def main(argv):
             # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
             # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
             print(spot.trad_fee(INSTRUMENT[VALUTA_IDX]))
+
+            r = spot.place_order('buy', INSTRUMENT[VALUTA_IDX], 1, 1)
+            print(r['side'], r['price'], r['state'], r['size'], int(r['order_id']))
+            r = spot.modify_order(int(r['order_id']), 1.2, 1)
+            print(r)
             # print(spot.instruments())
             # print(spot.account())
             # print(spot.ticker(INSTRUMENT[VALUTA_IDX]))
