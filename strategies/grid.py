@@ -133,6 +133,7 @@ def strategy(state, enobs=3):
                                 break
                 else:
                     cancel_order(sell_order_id)
+                    print(f'deal buy: cancel sell: {sell_order_id}')
                     gevent.sleep(SLEEP)
                     success = False
                     continue
@@ -167,6 +168,7 @@ def strategy(state, enobs=3):
                                 break
                 else:
                     cancel_order(buy_order_id)
+                    print(f'deal sell: cancel buy: {buy_order_id}')
                     gevent.sleep(SLEEP)
                     success = False
                     continue
