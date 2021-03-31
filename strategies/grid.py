@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# demand: 1. stop loss and alarm; 2. web server for stop; 3.backtesting for more profit
+# demand: 1. web server for stop; 3.backtesting for more profit
 
 import gevent
 import time
 from api.apiwrapper import cancel_order, place_batch_orders, \
     place_buy_order, place_sell_order, modify_order
 from const import INSTRUMENT, VALUTA_IDX, TIME_PRECISION
+from alarm.ding import alarm
 
 
 INIT_MONEY = 1800
@@ -23,7 +24,7 @@ effective_number_of_bits = 3
 GRID_NUM = int((high_price - low_price) / SPACING_PRICE)
 BOARD_LOT = min(round(INIT_COIN / GRID_NUM, effective_number_of_bits), AVERAGE_ASK_BID_SIZE)
 COIN_UNIT, MONEY_UNIT = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
-
+SLEEP = 60
 
 def place_pair_orders(state, last_trade_price, enobs):
     available = state.get_available()
@@ -55,7 +56,7 @@ def grid_init_orders(state, last_trade_price, enobs):
     while True:
         r = place_pair_orders(state, last_trade_price, enobs)
         if r is None:
-            gevent.sleep(60)
+            gevent.sleep(SLEEP)
         else:
             return r
 
@@ -63,8 +64,8 @@ def grid_init_orders(state, last_trade_price, enobs):
 def stop_loss(money_remain, ratio=STOP_LOSS_RATIO):
     while True:
         if money_remain < INIT_MONEY * ratio:
-            print(f'money remain: {money_remain}. Send Alarm!!!  Sleep and operate by hand')
-            gevent.sleep(1800)
+            alarm(f'money remain: {money_remain}, init money: {INIT_MONEY}. Sleep 900s and operate by hand')
+            gevent.sleep(900)
         else:
             break
 
@@ -106,7 +107,7 @@ def strategy(state, enobs=3):
                     order_id = place_buy_order(buy_price, BOARD_LOT)
                     if order_id == 0:
                         cancel_order(sell_order_id)  # if no cancel, this order may closed later
-                        gevent.sleep(60)
+                        gevent.sleep(SLEEP)
                         success = False
                         continue
                     else:
@@ -126,7 +127,7 @@ def strategy(state, enobs=3):
                                 break
                 else:
                     cancel_order(sell_order_id)
-                    gevent.sleep(60)
+                    gevent.sleep(SLEEP)
                     success = False
                     continue
 
