@@ -88,9 +88,8 @@ def strategy(state, enobs=3):
 
         stop_loss(money)
 
-        print(f't: {timestamp}, b_id: {buy_order_id}, s_id: {sell_order_id}')
         timestamp, buy_order_id, sell_order_id = buy_sell_pair
-        print('before change order')
+        print(f't: {timestamp}, b_id: {buy_order_id}, s_id: {sell_order_id}')
         # canceled -1 is get, but filled buy not come
         state_order_id, order_state = state.get_changed_order()
         print('receive change order: ', state_order_id, order_state)
