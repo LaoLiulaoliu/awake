@@ -53,7 +53,7 @@ def main(argv):
             spot = OkexSpot(use_trade_key=False)
             # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
             # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
-            print(spot.trad_fee(INSTRUMENT[VALUTA_IDX]))
+            # print(spot.trad_fee(INSTRUMENT[VALUTA_IDX]))
 
             r = spot.place_order('buy', INSTRUMENT[VALUTA_IDX], 1, 1)
             print(int(r['order_id']))
