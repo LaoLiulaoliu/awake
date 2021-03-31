@@ -5,7 +5,7 @@
 
 import gevent
 import time
-from api.apiwrapper import cancel_order, place_batch_orders
+from api.apiwrapper import cancel_order, place_batch_orders, place_buy_order, place_sell_order
 from const import INSTRUMENT, VALUTA_IDX
 
 
@@ -43,11 +43,15 @@ def place_orders(coin, money, last_trade_price, enobs):
             for i, oid in enumerate(order_ids):
                 if oid != 0:
                     cancel_order(oid)
+                    state.delete_canceled_orders([oid])
                     side = 'buy' if i == 0 else 'sell'
                     print(f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {BOARD_LOT}')
             return False
         return int(time.time()), order_ids[0], order_ids[1]
     return False
+
+def place_modify_order():
+    pass
 
 def strategy(state, enobs=3):
     last_time, last_trade_price, best_ask, best_bid = state.get_latest_trend()
@@ -69,10 +73,29 @@ def strategy(state, enobs=3):
 
         if stop_loss(money):
             continue
-
         if len(buy_sell_pair) == 0:
-            pass
+            return False
 
+        timestamp, current_price, best_ask, best_bid = state.get_latest_trend()
+
+
+        for timestamp, buy_order_id, sell_order_id in buy_sell_pair:
+            buy_trade = state.get_order_by_id(buy_order_id)
+            sell_trade = state.get_order_by_id(sell_order_id)
+            buy_state = int(buy_trade[-1])
+            sell_state = int(sell_trade[-1])
+
+            if buy_state == 2:
+                buy_price = round(current_price - SPACING_PRICE, enobs)
+                if buy_price < money:
+                    order_id = place_buy_order(buy_price, BOARD_LOT)
+
+                "modif_sell"
+            elif sell_state == 2:
+                sell_price = round(current_price + SPACING_PRICE, enobs)
+                if coin > BOARD_LOT:
+                    order_id = place_sell_order(sell_price, BOARD_LOT)
+                "modify_buy"
 
 
 

@@ -29,7 +29,7 @@ def r20210219(trend_fname, capital=10):
                 if trade.have_around_filled_buy_orders(last_price - bias, last_price + bias) is False:
                     size = round(capital / last_price, 8)
                     buy_order_id = trade.place_buy_order(last_price, size)
-                    if buy_order_id is not None:  # if no enough balance(usdt)
+                    if buy_order_id != 0:  # if no enough balance(usdt)
                         trade.append([timestamp, last_price, size, 0, buy_order_id, 0, 1])
 
         # sell strategy

@@ -18,6 +18,7 @@ def place_buy_order(bid_price, size):
         order_id = print_error_or_get_order_id(r)
         if order_id != 0:
             return order_id
+    return 0
 
 
 def place_sell_order(ask_price, size):
@@ -119,7 +120,7 @@ def place_buy_order_saveinfo(trade, capital, last_price):
     """
     size = round(capital / last_price, 8)
     buy_order_id = place_buy_order(last_price, size)
-    if buy_order_id is not None:  # if no enough balance(usdt)
+    if buy_order_id != 0:  # if no enough balance(usdt)
         trade.append([int(time.time() * TIME_PRECISION), last_price, size, 0, buy_order_id, 0, 0])
         return True
     return False
