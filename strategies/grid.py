@@ -76,6 +76,8 @@ def stop_loss(money_remain, ratio=STOP_LOSS_RATIO):
 
 
 def strategy(state, enobs=3):
+    """ Need ticker, account, order in websocket API, please set in awake.py
+    """
     last_time, last_trade_price, best_ask, best_bid = state.get_latest_trend()
     buy_sell_pair = grid_init_orders(state, last_trade_price, enobs)
 
