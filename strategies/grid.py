@@ -111,6 +111,7 @@ def strategy(state, enobs=3):
 
                 if buy_price < money:
                     order_id = place_buy_order(buy_price, BOARD_LOT)
+                    print(f'deal buy, new order: {order_id}')
                     if order_id == 0:
                         cancel_order(sell_order_id)  # if not cancel, this order may auto-deal later
                         gevent.sleep(SLEEP)
@@ -119,6 +120,7 @@ def strategy(state, enobs=3):
                     else:
                         if success is True:
                             modify_order(sell_order_id, sell_price, BOARD_LOT)
+                            print(f'deal buy, modify sell order_id {sell_order_id}')
                             buy_sell_pair[0] = timestamp
                             buy_sell_pair[1] = order_id
                             break
@@ -126,14 +128,16 @@ def strategy(state, enobs=3):
                             r = place_pair_orders(state, current_price, enobs)
                             if r is None:
                                 success = False
+                                print('deal buy, place pair order fail')
                                 continue
                             else:
                                 buy_sell_pair = r
                                 success = True
+                                print('deal buy, place pair order success')
                                 break
                 else:
                     cancel_order(sell_order_id)
-                    print(f'deal buy: cancel sell: {sell_order_id}')
+                    print(f'deal buy, cancel sell: {sell_order_id}')
                     gevent.sleep(SLEEP)
                     success = False
                     continue
@@ -146,6 +150,7 @@ def strategy(state, enobs=3):
 
                 if coin > BOARD_LOT:
                     order_id = place_sell_order(sell_price, BOARD_LOT)
+                    print(f'deal sell, new order: {order_id}')
                     if order_id == 0:
                         cancel_order(buy_order_id)
                         gevent.sleep(SLEEP)
@@ -154,6 +159,7 @@ def strategy(state, enobs=3):
                     else:
                         if success is True:
                             modify_order(buy_order_id, buy_price, BOARD_LOT)
+                            print(f'deal sell, modify buy order_id {buy_order_id}')
                             buy_sell_pair[0] = timestamp
                             buy_sell_pair[2] = order_id
                             break
@@ -161,14 +167,16 @@ def strategy(state, enobs=3):
                             r = place_pair_orders(state, current_price, enobs)
                             if r is None:
                                 success = False
+                                print('deal sell, place pair order fail')
                                 continue
                             else:
                                 buy_sell_pair = r
                                 success = True
+                                print('deal sell, place pair order success')
                                 break
                 else:
                     cancel_order(buy_order_id)
-                    print(f'deal sell: cancel buy: {buy_order_id}')
+                    print(f'deal sell, cancel buy: {buy_order_id}')
                     gevent.sleep(SLEEP)
                     success = False
                     continue
