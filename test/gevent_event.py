@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import gevent
+import gevent._util
 from gevent.event import Event
 from gevent.event import AsyncResult
     
@@ -13,7 +14,10 @@ def setter():
     gevent.sleep(2)
     print("Setter done")
     evt.set()
-    ay.set(22)
+    ay.set([0, 2])
+
+    gevent.sleep(5)
+    ay.set([1, 3])
 
 def waiter():
     print("waiter enter")
@@ -22,8 +26,15 @@ def waiter():
 
 def getter():
     print('getter enter')
-    r = ay.get()
-    print(f'getter {r} exit')
+    r1, r2 = ay.get()
+    print(f'getter {r2} exit')
+    gevent.sleep(0.2)
+
+    ay.set(gevent._util._NONE)
+    print('getter enter again')
+    r1, r2 = ay.get()
+    print(f'getter {r2} exit again')
+
 
 def main():
     gevent.joinall([

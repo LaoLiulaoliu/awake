@@ -4,7 +4,8 @@
 import time
 import gevent
 import numpy as np
-from gevent.event import Event
+import gevent._util
+from gevent.event import Event, AsyncResult
 from .Tool import Tool
 from const import MIN_60, MIN_42, MIN_30, MIN_12, TIME_PRECISION
 from api.apiwrapper import get_ticker, get_account
@@ -25,6 +26,7 @@ class State(object):
         self.flush_trend = 0
         self.trade = trade
         self.event = Event()
+        self.order_ay = AsyncResult()
 
         self.balance = {}
         self.available = {}
@@ -239,7 +241,8 @@ class State(object):
                 self.trade.append([int(i['order_id']), 0, 0, 0, 0, state])
             elif state == 2:
                 self.trade.append([int(i['order_id']), 0, 0, 0, 0, state])
-            # print(i['instrument_id'])
+            # print(i['instrument_id'])  # trading pair
+            self.order_ay.set([int(i['order_id']), state])
 
     def delete_filled_orders(self, order_ids):
         self.trade.delete_filled_orders(order_ids)
@@ -249,6 +252,11 @@ class State(object):
 
     def get_order_by_id(self, order_id):
         return self.trade.select_order_by_id(order_id)
+
+    def get_changed_order(self):
+        order_id, order_state = self.order_ay.get()
+        self.order_ay.set(gevent._util._NONE)
+        return order_id, order_state
 
     def parse_trade(self, message):
         for i in message:
