@@ -11,13 +11,13 @@ from const import INSTRUMENT, VALUTA_IDX, TIME_PRECISION
 from alarm.ding import alarm
 
 
-INIT_MONEY = 1800
-INIT_COIN = 1000
+INIT_MONEY = 911
+INIT_COIN = 506
 STOP_LOSS_RATIO = 0.4
 
 low_price = 1.0
 high_price = 2.5
-SPACING_PRICE = 0.04
+SPACING_PRICE = 0.03
 AVERAGE_ASK_BID_SIZE = 2  # 12 also refer to min_size
 effective_number_of_bits = 3
 
