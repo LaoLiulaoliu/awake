@@ -192,6 +192,7 @@ class State(object):
             self.best_size[0] = np.float64(i['best_ask_size'])
             self.best_size[1] = np.float64(i['best_bid_size'])
             self.event.set()  # set flag to true
+            print('parse ticker: ', timestamp, current_price)
 
     def get_latest_trend(self):
         self.event.wait()  # wait stop when flag set to true
@@ -246,6 +247,7 @@ class State(object):
             # init_price = float(i['price'])
             # price = float(i['price_avg'])
             self.order_ay.set([int(i['order_id']), state])
+            print('parse order: ', state, int(i['order_id']))
 
     def delete_filled_orders(self, order_ids):
         self.trade.delete_filled_orders(order_ids)
