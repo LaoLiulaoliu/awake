@@ -235,13 +235,16 @@ class State(object):
             if state == 0:
                 timestamp = Tool.convert_time_str(i['timestamp'], TIME_PRECISION)
                 side = 0 if i['side'] == 'buy' else 1
-                self.trade.append([int(i['order_id']), timestamp, np.float64(i['price']),
+                self.trade.append([int(i['order_id']), timestamp, np.float64(i['price_avg']),
                                    np.float64(i['size']), side, state])
             elif state == 1:
                 self.trade.append([int(i['order_id']), 0, 0, 0, 0, state])
             elif state == 2:
                 self.trade.append([int(i['order_id']), 0, 0, 0, 0, state])
             # print(i['instrument_id'])  # trading pair
+            # float(i['fee']), int(i['size']), int(i['filled_size'])
+            # init_price = float(i['price'])
+            # price = float(i['price_avg'])
             self.order_ay.set([int(i['order_id']), state])
 
     def delete_filled_orders(self, order_ids):

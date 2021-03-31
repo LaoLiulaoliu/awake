@@ -99,6 +99,9 @@ class OkexSpot(object):
             return
 
     def place_order(self, side, instrument_id, price, size):
+        """
+        {'client_oid': '', 'code': '0', 'error_code': '0', 'error_message': '', 'message': '', 'order_id': '6715158324596736', 'result': True}
+        """
         path = '/api/spot/v3/orders'
         params = {'type': 'limit', 'side': side, 'instrument_id': instrument_id, 'size': size, 'price': price,
                   'margin_trading': 1}
