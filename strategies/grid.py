@@ -25,32 +25,39 @@ BOARD_LOT = min(round(INIT_COIN / GRID_NUM, effective_number_of_bits), AVERAGE_A
 COIN_UNIT, MONEY_UNIT = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
 
 
+def place_pair_orders(state, last_trade_price, enobs):
+    available = state.get_available()
+    coin = available[COIN_UNIT]
+    money = available[MONEY_UNIT]
+
+    buy_price = round(last_trade_price - SPACING_PRICE, enobs)
+    sell_price = round(last_trade_price + SPACING_PRICE, enobs)
+    if coin > BOARD_LOT and buy_price < money:
+        order_ids = place_batch_orders([
+            {'price': buy_price, 'size': BOARD_LOT, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
+            {'price': sell_price, 'size': BOARD_LOT, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
+        ])
+
+        if 0 in order_ids:
+            for i, oid in enumerate(order_ids):
+                if oid != 0:
+                    cancel_order(oid)
+                    state.delete_canceled_orders([oid])
+                    side = 'buy' if i == 0 else 'sell'
+                    print(f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {BOARD_LOT}')
+            return
+
+        return [int(time.time() * TIME_PRECISION), order_ids[0], order_ids[1]]
+    return
+
+
 def grid_init_orders(state, last_trade_price, enobs):
     while True:
-        available = state.get_available()
-        coin = available[COIN_UNIT]
-        money = available[MONEY_UNIT]
-
-        buy_price = round(last_trade_price - SPACING_PRICE, enobs)
-        sell_price = round(last_trade_price + SPACING_PRICE, enobs)
-        if coin > BOARD_LOT and buy_price < money:
-            order_ids = place_batch_orders([
-                {'price': buy_price, 'size': BOARD_LOT, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
-                {'price': sell_price, 'size': BOARD_LOT, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
-            ])
-
-            if 0 in order_ids:
-                for i, oid in enumerate(order_ids):
-                    if oid != 0:
-                        cancel_order(oid)
-                        state.delete_canceled_orders([oid])
-                        side = 'buy' if i == 0 else 'sell'
-                        print(f'grid init {side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {BOARD_LOT}')
-                gevent.sleep(60)
-                continue
-
-            return [int(time.time() * TIME_PRECISION), order_ids[0], order_ids[1]]
-        gevent.sleep(60)
+        r = place_pair_orders(state, last_trade_price, enobs)
+        if r is None:
+            gevent.sleep(60)
+        else:
+            return r
 
 
 def stop_loss(money_remain, ratio=STOP_LOSS_RATIO):
@@ -78,6 +85,7 @@ def strategy(state, enobs=3):
             sell_trade = state.get_order_by_id(sell_order_id)
             buy_state = int(buy_trade[-1])
             sell_state = int(sell_trade[-1])
+            success = True
 
             # modify failed, hold still, then buy lower sell higher.
             # buy or sell failed, logic chain breaking,
@@ -91,16 +99,30 @@ def strategy(state, enobs=3):
                     if buy_price < money:
                         order_id = place_buy_order(buy_price, BOARD_LOT)
                         if order_id == 0:
-                            cancel_order(sell_order_id)
+                            cancel_order(sell_order_id)  # if no cancel, this order may closed later
                             gevent.sleep(60)
+                            success = False
+                            continue
                         else:
-                            pass
+                            if success is True:
+                                modify_order(sell_order_id, sell_price, BOARD_LOT)
+                                buy_sell_pair[0] = timestamp
+                                buy_sell_pair[1] = order_id
+                                break
+                            else:
+                                r = place_pair_orders(state, current_price, enobs)
+                                if r is None:
+                                    success = False
+                                    continue
+                                else:
+                                    buy_sell_pair = r
+                                    success = True
+                                    break
                     else:
+                        cancel_order(sell_order_id)
                         gevent.sleep(60)
-                    modify_order(sell_order_id, sell_price, BOARD_LOT)
-
-                    buy_sell_pair[0] = timestamp
-                    buy_sell_pair[1] = order_id
+                        success = False
+                        continue
 
             elif sell_state == 2:
                 timestamp, current_price, best_ask, best_bid = state.get_latest_trend_nowait()
