@@ -254,9 +254,9 @@ class State(object):
         return self.trade.select_order_by_id(order_id)
 
     def get_changed_order(self):
-        order_id, order_state = self.order_ay.get()
+        state_order_id, order_state = self.order_ay.get()
         self.order_ay.set(gevent._util._NONE)
-        return order_id, order_state
+        return state_order_id, order_state
 
     def parse_trade(self, message):
         for i in message:

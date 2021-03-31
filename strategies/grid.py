@@ -81,16 +81,22 @@ def strategy(state, enobs=3):
         stop_loss(money)
 
         timestamp, buy_order_id, sell_order_id = buy_sell_pair
-        buy_trade = state.get_order_by_id(buy_order_id)
-        sell_trade = state.get_order_by_id(sell_order_id)
-        buy_state = int(buy_trade[-1])
-        sell_state = int(sell_trade[-1])
+
+        state_order_id, order_state = state.get_changed_order()
+        if state_order_id == buy_order_id:
+            buy_state = order_state
+            sell_state = 0
+        elif state_order_id == sell_order_id:
+            buy_state = 0
+            sell_state = order_state
+        else:
+            continue  # other irrelevant order
         success = True
 
         # modify failed, hold still, then buy lower sell higher.
         # buy or sell failed, logic chain breaking,
         # cancel another trade pair, wait and boot on again.
-        if buy_state == 2:  # TODO wait till update to 2
+        if buy_state == 2:
             while True:
                 timestamp, current_price, best_ask, best_bid = state.get_latest_trend_nowait()
                 buy_price = round(current_price - SPACING_PRICE, enobs)
