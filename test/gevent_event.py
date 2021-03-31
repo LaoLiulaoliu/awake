@@ -15,9 +15,11 @@ def setter():
     print("Setter done")
     evt.set()
     ay.set([0, 2])
-
-    gevent.sleep(5)
+    # gevent.sleep(1)
     ay.set([1, 3])
+
+    gevent.sleep(1)
+    ay.set([4, 5])
 
 def waiter():
     print("waiter enter")
@@ -27,12 +29,14 @@ def waiter():
 def getter():
     print('getter enter')
     r1, r2 = ay.get()
+    ay.set(gevent._util._NONE)
     print(f'getter {r2} exit')
+
     gevent.sleep(0.2)
 
-    ay.set(gevent._util._NONE)
     print('getter enter again')
     r1, r2 = ay.get()
+    ay.set(gevent._util._NONE)
     print(f'getter {r2} exit again')
 
 

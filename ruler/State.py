@@ -254,6 +254,8 @@ class State(object):
         return self.trade.select_order_by_id(order_id)
 
     def get_changed_order(self):
+        """ Caution!!! If more than 2 orders come at the same time, only receive last order.
+        """
         state_order_id, order_state = self.order_ay.get()
         self.order_ay.set(gevent._util._NONE)
         return state_order_id, order_state
