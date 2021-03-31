@@ -98,7 +98,7 @@ class OkexSpot(object):
             self.http.break_and_connect()
             return
 
-    def place_order(self, side, instrument_id, price, size):
+    def place_order(self, side, price, size, instrument_id):
         """
         {'client_oid': '', 'code': '0', 'error_code': '0', 'error_message': '', 'message': '', 'order_id': '6715158324596736', 'result': True}
         """
@@ -129,7 +129,8 @@ class OkexSpot(object):
         return self.http.httpPost(path, params)
 
     def modify_order(self, orderid, price, size, instrument_id=INSTRUMENT[0]):
-        """not tested yet
+        """ parameters can be int/float
+        {'client_oid': '', 'code': '0', 'error_code': '0', 'error_message': '', 'message': '', 'order_id': '6715213478324224', 'request_id': '', 'result': True}
         """
         path = f'/api/spot/v3/amend_order/{instrument_id}'
         params = {'order_id': orderid, 'new_price': price, 'new_size': size}
@@ -290,6 +291,6 @@ if __name__ == '__main__':
     spot = OkexSpot()
     print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
 
-    # r = spot.place_order('buy', INSTRUMENT[VALUTA_IDX], 1000, 1)
+    # r = spot.place_order('buy', 1000, 1, INSTRUMENT[VALUTA_IDX])
     # order_id = print_error_or_get_order_id(r)
     # spot.cancel_order('6486089829214208')

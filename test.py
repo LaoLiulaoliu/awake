@@ -55,9 +55,9 @@ def main(argv):
             # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
             # print(spot.trad_fee(INSTRUMENT[VALUTA_IDX]))
 
-            r = spot.place_order('buy', INSTRUMENT[VALUTA_IDX], 1, 1)
+            r = spot.place_order('buy', 1, 1, INSTRUMENT[VALUTA_IDX])
             print(int(r['order_id']))
-            r = spot.modify_order(int(r['order_id']), 1.2, 1)
+            r = spot.modify_order(int(r['order_id']), 1.01, 1, INSTRUMENT[VALUTA_IDX])
             print(r)
             # print(spot.instruments())
             # print(spot.account())

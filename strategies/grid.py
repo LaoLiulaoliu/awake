@@ -119,8 +119,8 @@ def strategy(state, enobs=3):
                         continue
                     else:
                         if success is True:
-                            modify_order(sell_order_id, sell_price, BOARD_LOT)
-                            print(f'deal buy, modify sell order_id {sell_order_id}')
+                            r = modify_order(sell_order_id, sell_price, BOARD_LOT)
+                            print(f'deal buy, modify sell order_id {r}')
                             buy_sell_pair[0] = timestamp
                             buy_sell_pair[1] = order_id
                             break
@@ -158,8 +158,8 @@ def strategy(state, enobs=3):
                         continue
                     else:
                         if success is True:
-                            modify_order(buy_order_id, buy_price, BOARD_LOT)
-                            print(f'deal sell, modify buy order_id {buy_order_id}')
+                            r = modify_order(buy_order_id, buy_price, BOARD_LOT)
+                            print(f'deal sell, modify buy order_id {r}')
                             buy_sell_pair[0] = timestamp
                             buy_sell_pair[2] = order_id
                             break
