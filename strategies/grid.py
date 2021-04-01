@@ -9,7 +9,7 @@ import numpy as np
 from api.apiwrapper import cancel_order, place_batch_orders, \
     place_buy_order, place_sell_order, modify_order
 from const import INSTRUMENT, VALUTA_IDX, TIME_PRECISION
-from alarm.ding import alarm
+from monitor.ding import alarm
 
 
 INIT_MONEY = 1240
