@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import logging
 import time
 import gevent
 import numpy as np
@@ -10,6 +11,8 @@ from gevent.event import Event, AsyncResult
 from .Tool import Tool
 from const import MIN_60, MIN_42, MIN_30, MIN_12, TIME_PRECISION
 from api.apiwrapper import get_ticker, get_account
+
+logger = logging.getLogger()
 
 
 class State(object):
@@ -249,7 +252,7 @@ class State(object):
             # float(i['fee']), int(i['size']), int(i['filled_size'])
             # init_price = float(i['price'])
             # price = float(i['price_avg'])
-            print('parse order: ', i['side'], i['price'], state)
+            logger.info(f"parse order: , {i['side']}, {i['price']}, {state}")
             self.queue.put([int(i['order_id']), float(i['price']), state])
 
     def delete_filled_orders(self, order_ids):

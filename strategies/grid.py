@@ -3,6 +3,7 @@
 
 # demand: 1. web server for stop; 2. backtesting for more profit
 
+import logging
 import gevent
 import time
 import numpy as np
@@ -27,6 +28,8 @@ BOARD_LOT = max(round(INIT_COIN / GRID_NUM, effective_number_of_bits), AVERAGE_A
 COIN_UNIT, MONEY_UNIT = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
 SLEEP = 30
 
+logger = logging.getLogger()
+
 
 def place_pair_orders(state, last_trade_price, enobs):
     available = state.get_available()
@@ -42,9 +45,7 @@ def place_pair_orders(state, last_trade_price, enobs):
             {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
         ])
 
-        print({'price': buy_price, 'size': size, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX], 'id': order_ids[0]},
-                '\n',
-            {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX], 'id': order_ids[1]})
+        logger.info(f'buy_price: {buy_price}, size: {size}, id: {order_ids[0]}\n sell_price: {sell_price}, size: {size}, id: {order_ids[1]}')
 
         if 0 in order_ids:
             for i, oid in enumerate(order_ids):
@@ -52,7 +53,7 @@ def place_pair_orders(state, last_trade_price, enobs):
                     cancel_order(oid)
                     state.delete_canceled_orders([oid])
                     side = 'buy' if i == 0 else 'sell'
-                    print(f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
+                    logger.info(f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
             return
 
         return [int(time.time() * TIME_PRECISION), order_ids[0], order_ids[1]]
@@ -101,7 +102,7 @@ def strategy(state, enobs=3):
             buy_state = 0
             sell_state = order_state
         else:
-            print(f'irrelevant order: {state_order_id}, state: {order_state}')
+            logger.info(f'irrelevant order: {state_order_id}, state: {order_state}')
             continue  # other irrelevant order
         success = True
         print(f'{timestamp} changed {0 if buy_order_id == state_order_id else 1} order, state: {buy_state} : {sell_state}, id: {buy_order_id} : {sell_order_id}')
@@ -116,17 +117,17 @@ def strategy(state, enobs=3):
 
                 if buy_price < money:
                     order_id = place_buy_order(buy_price, BOARD_LOT)
-                    print(f'deal buy, new order: {buy_price}')
+                    logger.info(f'deal buy, new order: {buy_price}')
                     if order_id == 0:
                         cancel_order(sell_order_id)  # if not cancel, this order may auto-deal later
-                        print('deal buy, place new buy error')
+                        logger.info('deal buy, place new buy error')
                         gevent.sleep(SLEEP)
                         success = False
                         continue
                     else:
                         if success is True:
                             r = modify_order(sell_order_id, sell_price, BOARD_LOT)
-                            print(f'deal buy, modify sell {sell_price}, order_id: {r}')
+                            logger.info(f'deal buy, modify sell {sell_price}, order_id: {r}')
                             buy_sell_pair[0] = int(time.time() * TIME_PRECISION)
                             buy_sell_pair[1] = order_id
                             break
@@ -134,16 +135,16 @@ def strategy(state, enobs=3):
                             r = place_pair_orders(state, last_trade_price, enobs)
                             if r is None:
                                 success = False
-                                print('deal buy, place pair order fail')
+                                logger.info('deal buy, place pair order fail')
                                 continue
                             else:
                                 buy_sell_pair = r
                                 success = True
-                                print('deal buy, place pair order success')
+                                logger.info('deal buy, place pair order success')
                                 break
                 else:
                     cancel_order(sell_order_id)
-                    print(f'deal buy, cancel sell: {sell_order_id}')
+                    logger.info(f'deal buy, cancel sell: {sell_order_id}')
                     gevent.sleep(SLEEP)
                     success = False
                     continue
@@ -155,17 +156,17 @@ def strategy(state, enobs=3):
 
                 if coin > BOARD_LOT:
                     order_id = place_sell_order(sell_price, BOARD_LOT)
-                    print(f'deal sell, new order: {sell_price}')
+                    logger.info(f'deal sell, new order: {sell_price}')
                     if order_id == 0:
                         cancel_order(buy_order_id)
-                        print('deal sell, place new sell error')
+                        logger.info('deal sell, place new sell error')
                         gevent.sleep(SLEEP)
                         success = False
                         continue
                     else:
                         if success is True:
                             r = modify_order(buy_order_id, buy_price, BOARD_LOT)
-                            print(f'deal sell, modify buy {buy_price}, order_id {r}')
+                            logger.info(f'deal sell, modify buy {buy_price}, order_id {r}')
                             buy_sell_pair[0] = int(time.time() * TIME_PRECISION)
                             buy_sell_pair[2] = order_id
                             break
@@ -173,16 +174,16 @@ def strategy(state, enobs=3):
                             r = place_pair_orders(state, last_trade_price, enobs)
                             if r is None:
                                 success = False
-                                print('deal sell, place pair order fail')
+                                logger.info('deal sell, place pair order fail')
                                 continue
                             else:
                                 buy_sell_pair = r
                                 success = True
-                                print('deal sell, place pair order success')
+                                logger.info('deal sell, place pair order success')
                                 break
                 else:
                     cancel_order(buy_order_id)
-                    print(f'deal sell, cancel buy: {buy_order_id}')
+                    logger.info(f'deal sell, cancel buy: {buy_order_id}')
                     gevent.sleep(SLEEP)
                     success = False
                     continue

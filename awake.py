@@ -19,6 +19,8 @@ from ruler.Trade import Trade
 from strategies.grid import strategy
 from const import TREND_NAME_TIME, INSTRUMENT, TRADE_NAME, VALUTA_IDX
 
+import monitor.log
+
 
 def schedule_rotate_trend_file(method):
     """ 00:00 utc everyday
