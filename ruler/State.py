@@ -249,7 +249,7 @@ class State(object):
             # float(i['fee']), int(i['size']), int(i['filled_size'])
             # init_price = float(i['price'])
             # price = float(i['price_avg'])
-            print('parse order: ', i['side'], i['price'], ', deal price: ', i['price_avg'], state)
+            print('parse order: ', i['side'], i['price'], state)
             self.queue.put([int(i['order_id']), float(i['price']), state])
 
     def delete_filled_orders(self, order_ids):
