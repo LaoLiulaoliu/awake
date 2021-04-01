@@ -118,6 +118,7 @@ def strategy(state, enobs=3):
                     print(f'deal buy, new order: {order_id}')
                     if order_id == 0:
                         cancel_order(sell_order_id)  # if not cancel, this order may auto-deal later
+                        print('deal buy, place new buy error')
                         gevent.sleep(SLEEP)
                         success = False
                         continue
@@ -157,6 +158,7 @@ def strategy(state, enobs=3):
                     print(f'deal sell, new order: {order_id}')
                     if order_id == 0:
                         cancel_order(buy_order_id)
+                        print('deal sell, place new sell error')
                         gevent.sleep(SLEEP)
                         success = False
                         continue
