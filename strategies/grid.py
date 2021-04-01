@@ -5,6 +5,7 @@
 
 import gevent
 import time
+import numpy as np
 from api.apiwrapper import cancel_order, place_batch_orders, \
     place_buy_order, place_sell_order, modify_order
 from const import INSTRUMENT, VALUTA_IDX, TIME_PRECISION
@@ -24,7 +25,7 @@ effective_number_of_bits = 3
 GRID_NUM = int((high_price - low_price) / SPACING_PRICE)
 BOARD_LOT = max(round(INIT_COIN / GRID_NUM, effective_number_of_bits), AVERAGE_ASK_BID_SIZE)
 COIN_UNIT, MONEY_UNIT = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
-SLEEP = 60
+SLEEP = 30
 
 
 def place_pair_orders(state, last_trade_price, enobs):
@@ -34,15 +35,16 @@ def place_pair_orders(state, last_trade_price, enobs):
 
     buy_price = round(last_trade_price - SPACING_PRICE, enobs)
     sell_price = round(last_trade_price + SPACING_PRICE, enobs)
-    if coin > BOARD_LOT and buy_price < money:
+    size = round(np.random.normal(BOARD_LOT, 0.5), enobs)
+    if coin > size and buy_price < money:
         order_ids = place_batch_orders([
-            {'price': buy_price, 'size': BOARD_LOT, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
-            {'price': sell_price, 'size': BOARD_LOT, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
+            {'price': buy_price, 'size': size, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
+            {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
         ])
 
-        print({'price': buy_price, 'size': BOARD_LOT, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX], 'id': order_ids[0]},
+        print({'price': buy_price, 'size': size, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX], 'id': order_ids[0]},
                 '\n',
-            {'price': sell_price, 'size': BOARD_LOT, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX], 'id': order_ids[1]})
+            {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX], 'id': order_ids[1]})
 
         if 0 in order_ids:
             for i, oid in enumerate(order_ids):
@@ -50,7 +52,7 @@ def place_pair_orders(state, last_trade_price, enobs):
                     cancel_order(oid)
                     state.delete_canceled_orders([oid])
                     side = 'buy' if i == 0 else 'sell'
-                    print(f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {BOARD_LOT}')
+                    print(f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
             return
 
         return [int(time.time() * TIME_PRECISION), order_ids[0], order_ids[1]]
