@@ -27,6 +27,10 @@ def setter():
     gevent.sleep(1)
     ay.set([4, 5])
 
+    while True:
+        queue.put([7, 9])
+        gevent.sleep(1)
+
 def waiter():
     print("waiter enter")
     evt.wait()  # blocking
@@ -47,15 +51,20 @@ def getter():
 
 def queuer():
     for item in queue:
-        print(item[0])
+        yield item[0]
     print('exit queuer')
+
+def cycle():
+    for i in queuer():
+        print(i)
+        gevent.sleep(0.01)
 
 def main():
     gevent.joinall([
         gevent.spawn(waiter),
         gevent.spawn(getter),
         gevent.spawn(setter),
-        gevent.spawn(queuer)
+        gevent.spawn(cycle)
     ])
 
 if __name__ == '__main__': 

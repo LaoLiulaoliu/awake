@@ -5,6 +5,7 @@ import time
 import gevent
 import numpy as np
 import gevent._util
+import gevent.queue
 from gevent.event import Event, AsyncResult
 from .Tool import Tool
 from const import MIN_60, MIN_42, MIN_30, MIN_12, TIME_PRECISION
@@ -26,7 +27,8 @@ class State(object):
         self.flush_trend = 0
         self.trade = trade
         self.event = Event()
-        self.order_ay = AsyncResult()
+        self.async_result = AsyncResult()
+        self.queue = gevent.queue.Queue()
 
         self.balance = {}
         self.available = {}
@@ -250,7 +252,7 @@ class State(object):
             # init_price = float(i['price'])
             # price = float(i['price_avg'])
             print('parse order: ', i['side'], state, i['price'], int(i['order_id']))
-            self.order_ay.set([int(i['order_id']), state])
+            self.queue.put([int(i['order_id']), state])
 
     def delete_filled_orders(self, order_ids):
         self.trade.delete_filled_orders(order_ids)
@@ -261,13 +263,20 @@ class State(object):
     def get_order_by_id(self, order_id):
         return self.trade.select_order_by_id(order_id)
 
+    def get_order_change(self):
+        for item in self.queue:
+            yield item[0], item[1]
+
     def get_changed_order(self):
-        """ Caution!!!
+        """ Caution!!! not tested well yet
+
         If more than 2 orders come at the same time, only receive last order.
         Please make sure only comes one order at a time.
+
+        need set in parse_order: self.async_result.set([int(i['order_id']), state])
         """
-        state_order_id, order_state = self.order_ay.get()
-        self.order_ay.set(gevent._util._NONE)
+        state_order_id, order_state = self.async_result.get()
+        self.async_result.set(gevent._util._NONE)
         return state_order_id, order_state
 
     def parse_trade(self, message):
