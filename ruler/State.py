@@ -249,7 +249,7 @@ class State(object):
             # float(i['fee']), int(i['size']), int(i['filled_size'])
             # init_price = float(i['price'])
             # price = float(i['price_avg'])
-            print('parse order: ', state, int(i['order_id']))
+            print('parse order: ', i['side'], state, i['price'], int(i['order_id']))
             self.order_ay.set([int(i['order_id']), state])
 
     def delete_filled_orders(self, order_ids):
