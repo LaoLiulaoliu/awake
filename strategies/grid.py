@@ -105,19 +105,20 @@ def strategy(state, enobs=3):
             logger.info(f'irrelevant order: {state_order_id}, state: {order_state}')
             continue  # other irrelevant order
         success = True
-        logger.info(f'{timestamp} changed {0 if buy_order_id == state_order_id else 1} order, state: {buy_state} : {sell_state}, id: {buy_order_id} : {sell_order_id}')
+        # logger.info(f'{timestamp} changed {0 if buy_order_id == state_order_id else 1} order, state: {buy_state} : {sell_state}, id: {buy_order_id} : {sell_order_id}')
 
         # modify failed, hold still, then buy lower sell higher.
         # buy or sell failed, logic chain breaking,
         # cancel another trade pair, wait and boot on again.
         if buy_state == 2:
+            logger.info(f'dealed buy  {last_trade_price}')
             while True:
                 buy_price = round(last_trade_price - SPACING_PRICE, enobs)
                 sell_price = round(last_trade_price + SPACING_PRICE, enobs)
 
                 if buy_price < money:
                     order_id = place_buy_order(buy_price, BOARD_LOT)
-                    logger.info(f'deal buy, new order: {buy_price}')
+                    logger.info(f'deal buy, new buy:   {buy_price}')
                     if order_id == 0:
                         cancel_order(sell_order_id)  # if not cancel, this order may auto-deal later
                         logger.info('deal buy, place new buy error')
@@ -150,13 +151,14 @@ def strategy(state, enobs=3):
                     continue
 
         elif sell_state == 2:
+            logger.info(f'dealed sell {last_trade_price}')
             while True:
                 buy_price = round(last_trade_price - SPACING_PRICE, enobs)
                 sell_price = round(last_trade_price + SPACING_PRICE, enobs)
 
                 if coin > BOARD_LOT:
                     order_id = place_sell_order(sell_price, BOARD_LOT)
-                    logger.info(f'deal sell, new order: {sell_price}')
+                    logger.info(f'deal sell, new sell   {sell_price}')
                     if order_id == 0:
                         cancel_order(buy_order_id)
                         logger.info('deal sell, place new sell error')
