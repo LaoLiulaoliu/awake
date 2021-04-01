@@ -16,8 +16,8 @@ def setter():
     print('Setter enter')
     gevent.sleep(2)
     print("Setter done")
-    queue.put(6)
-    queue.put(7)
+    queue.put([6, 8])
+    queue.put([7, 9])
 
     evt.set()
     ay.set([0, 2])
@@ -47,7 +47,7 @@ def getter():
 
 def queuer():
     for item in queue:
-        print(item)
+        print(item[0])
     print('exit queuer')
 
 def main():
