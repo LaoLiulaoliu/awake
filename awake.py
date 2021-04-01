@@ -54,7 +54,7 @@ def main():
                 use_trade_key=True)
     g1 = gevent.spawn(ws.ws_create)
     g2 = schedule_rotate_trend_file(trend.reopen)
-    gevent.sleep(3)
+    gevent.sleep(5)
 
     enobs = 3
     for i in ENOBs:
