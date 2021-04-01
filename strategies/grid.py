@@ -11,18 +11,18 @@ from const import INSTRUMENT, VALUTA_IDX, TIME_PRECISION
 from alarm.ding import alarm
 
 
-INIT_MONEY = 911
-INIT_COIN = 506
+INIT_MONEY = 1240
+INIT_COIN = 730
 STOP_LOSS_RATIO = 0.4
 
 low_price = 1.0
 high_price = 2.5
 SPACING_PRICE = 0.004
-AVERAGE_ASK_BID_SIZE = 2  # 12 also refer to min_size
+AVERAGE_ASK_BID_SIZE = 7.5  # also refer to min_size
 effective_number_of_bits = 3
 
 GRID_NUM = int((high_price - low_price) / SPACING_PRICE)
-BOARD_LOT = 2 # min(round(INIT_COIN / GRID_NUM, effective_number_of_bits), AVERAGE_ASK_BID_SIZE)
+BOARD_LOT = max(round(INIT_COIN / GRID_NUM, effective_number_of_bits), AVERAGE_ASK_BID_SIZE)
 COIN_UNIT, MONEY_UNIT = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
 SLEEP = 60
 
