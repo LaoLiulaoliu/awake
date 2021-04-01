@@ -26,6 +26,7 @@ def parse_buy_sell_pair(state, buy_sell_pair):
             print(f'both filled: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
 
         elif {buy_state, sell_state} == {0}:
+            # cancel in [9, 15]s, aviod a lot orders, but may miss opportunity.
             cancel_batch_orders((buy_order_id, sell_order_id))
             state.delete_canceled_orders((buy_order_id, sell_order_id))
             remove_pair.append((timestamp, buy_order_id, sell_order_id))
