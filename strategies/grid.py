@@ -89,9 +89,7 @@ def strategy(state, enobs=3):
         money = available[MONEY_UNIT]
 
         stop_loss(money)
-
         timestamp, buy_order_id, sell_order_id = buy_sell_pair
-        print(f't: {timestamp}, b_id: {buy_order_id}, s_id: {sell_order_id}')
 
         if state_order_id == buy_order_id:
             buy_state = order_state
