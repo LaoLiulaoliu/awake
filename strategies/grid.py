@@ -101,7 +101,7 @@ def strategy(state, enobs=3):
             print(f'irrelevant order: {state_order_id}, state: {order_state}')
             continue  # other irrelevant order
         success = True
-        print(f'{timestamp} changed {0 if buy_order_id == state_order_id else 1} order: {state_order_id}, state: {buy_state} : {sell_state}')
+        print(f'{timestamp} changed {0 if buy_order_id == state_order_id else 1} order, state: {buy_state} : {sell_state}')
 
         # modify failed, hold still, then buy lower sell higher.
         # buy or sell failed, logic chain breaking,
@@ -114,7 +114,7 @@ def strategy(state, enobs=3):
 
                 if buy_price < money:
                     order_id = place_buy_order(buy_price, BOARD_LOT)
-                    print(f'deal buy, new order: {order_id}')
+                    print(f'deal buy, new order: {buy_price}')
                     if order_id == 0:
                         cancel_order(sell_order_id)  # if not cancel, this order may auto-deal later
                         print('deal buy, place new buy error')
@@ -124,7 +124,7 @@ def strategy(state, enobs=3):
                     else:
                         if success is True:
                             r = modify_order(sell_order_id, sell_price, BOARD_LOT)
-                            print(f'deal buy, modify sell order_id {r}')
+                            print(f'deal buy, modify sell {sell_price}, order_id: {r}')
                             buy_sell_pair[0] = timestamp
                             buy_sell_pair[1] = order_id
                             break
@@ -154,7 +154,7 @@ def strategy(state, enobs=3):
 
                 if coin > BOARD_LOT:
                     order_id = place_sell_order(sell_price, BOARD_LOT)
-                    print(f'deal sell, new order: {order_id}')
+                    print(f'deal sell, new order: {sell_price}')
                     if order_id == 0:
                         cancel_order(buy_order_id)
                         print('deal sell, place new sell error')
@@ -164,7 +164,7 @@ def strategy(state, enobs=3):
                     else:
                         if success is True:
                             r = modify_order(buy_order_id, buy_price, BOARD_LOT)
-                            print(f'deal sell, modify buy order_id {r}')
+                            print(f'deal sell, modify buy {buy_price}, order_id {r}')
                             buy_sell_pair[0] = timestamp
                             buy_sell_pair[2] = order_id
                             break
