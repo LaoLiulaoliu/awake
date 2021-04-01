@@ -3,16 +3,22 @@
 
 import gevent
 import gevent._util
+import gevent.queue
 from gevent.event import Event
 from gevent.event import AsyncResult
+
     
 evt = Event()
 ay = AsyncResult()
+queue = gevent.queue.Queue()
 
 def setter():
     print('Setter enter')
     gevent.sleep(2)
     print("Setter done")
+    queue.put(6)
+    queue.put(7)
+
     evt.set()
     ay.set([0, 2])
     # gevent.sleep(1)
@@ -39,12 +45,17 @@ def getter():
     ay.set(gevent._util._NONE)
     print(f'getter {r2} exit again')
 
+def queuer():
+    for item in queue:
+        print(item)
+    print('exit queuer')
 
 def main():
     gevent.joinall([
         gevent.spawn(waiter),
         gevent.spawn(getter),
         gevent.spawn(setter),
+        gevent.spawn(queuer)
     ])
 
 if __name__ == '__main__': 
