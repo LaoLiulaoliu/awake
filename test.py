@@ -52,13 +52,8 @@ def main(argv):
             VALUTA_IDX = 3
             spot = OkexSpot(use_trade_key=False)
             # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
-            # print(spot.order_details('6493087372753920', INSTRUMENT[VALUTA_IDX]))
+            print(spot.order_details(6719145154854913, INSTRUMENT[VALUTA_IDX]))
             # print(spot.trad_fee(INSTRUMENT[VALUTA_IDX]))
-
-            r = spot.place_order('buy', 1, 1, INSTRUMENT[VALUTA_IDX])
-            print(int(r['order_id']))
-            r = spot.modify_order(int(r['order_id']), 1.01, 1, INSTRUMENT[VALUTA_IDX])
-            print(r)
             # print(spot.instruments())
             # print(spot.account())
             # print(spot.ticker(INSTRUMENT[VALUTA_IDX]))
@@ -66,7 +61,6 @@ def main(argv):
             # print(spot.orderbook(INSTRUMENT[VALUTA_IDX], 0.1, 10))
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494679719429120')) bingo
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
-            # print(spot.order_details(123, INSTRUMENT[VALUTA_IDX]))
 
             # orders = [
             #     {'price': 0.71, 'size': 0.1, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
