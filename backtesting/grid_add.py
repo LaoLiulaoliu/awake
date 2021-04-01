@@ -14,7 +14,7 @@ with open('log') as fd:
                 money -= float(line.split()[-1]) * size
                 coin += size
             elif 'sell' in line:
-                money += float(line) * size
+                money += float(line.split()[-1]) * size
                 coin -= size
 
 print(f'money: {money}, coin: {coin}')
