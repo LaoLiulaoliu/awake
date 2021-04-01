@@ -7,14 +7,14 @@ coin = 0.
 size = 1
 print(f'init money: {money}, coin: {coin}')
 
-with open('buy') as fd:
+with open('log') as fd:
     for line in fd:
-        money -= float(line) * size
-        coin += size
-
-with open('sell') as fd:
-    for line in fd:
-        money += float(line) * size
-        coin -= size
+        if 'dealed' in line:
+            if 'buy' in line:
+                money -= float(line.split()[-1]) * size
+                coin += size
+            elif 'sell' in line:
+                money += float(line) * size
+                coin -= size
 
 print(f'money: {money}, coin: {coin}')
