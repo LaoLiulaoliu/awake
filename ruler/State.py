@@ -249,8 +249,8 @@ class State(object):
             # float(i['fee']), int(i['size']), int(i['filled_size'])
             # init_price = float(i['price'])
             # price = float(i['price_avg'])
-            print('parse order: ', i['side'], i['price'], state)
-            self.queue.put([int(i['order_id']), state])
+            print('parse order: ', i['side'], i['price'], ', deal price: ', i['price_avg'], state)
+            self.queue.put([int(i['order_id']), float(i['price']), state])
 
     def delete_filled_orders(self, order_ids):
         self.trade.delete_filled_orders(order_ids)
@@ -263,7 +263,7 @@ class State(object):
 
     def get_order_change(self):
         for item in self.queue:
-            yield item[0], item[1]
+            yield item[0], item[1], item[2]
 
     def get_changed_order(self):
         """ Caution!!! not tested well yet, if use test again
