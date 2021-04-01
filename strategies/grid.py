@@ -88,6 +88,9 @@ def strategy(state, enobs=3):
 
         stop_loss(money)
 
+        # timestamp, current_price, best_ask, best_bid = state.get_latest_trend()
+        # if timestamp > last_time:
+
         timestamp, buy_order_id, sell_order_id = buy_sell_pair
         print(f't: {timestamp}, b_id: {buy_order_id}, s_id: {sell_order_id}')
         state_order_id, order_state = state.get_changed_order()

@@ -232,14 +232,14 @@ class State(object):
 
     def parse_order(self, message):
         """ Caution!!!
-        canceled -1 is get, but open 0, filled 2, modify not comes in websocket, 20210401
+        canceled -1 is get, but open 0, filled 2, modify not comes in websocket use grid, 20210401
         """
         for i in message:
             state = int(i['state'])
             if state == 0:
                 timestamp = Tool.convert_time_str(i['timestamp'], TIME_PRECISION)
                 side = 0 if i['side'] == 'buy' else 1
-                self.trade.append([int(i['order_id']), timestamp, np.float64(i['price_avg']),
+                self.trade.append([int(i['order_id']), timestamp, np.float64(i['price']),
                                    np.float64(i['size']), side, state])
             elif state == 1:
                 self.trade.append([int(i['order_id']), 0, 0, 0, 0, state])
