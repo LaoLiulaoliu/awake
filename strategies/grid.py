@@ -81,20 +81,17 @@ def strategy(state, enobs=3):
     last_time, last_trade_price, best_ask, best_bid = state.get_latest_trend()
     buy_sell_pair = grid_init_orders(state, last_trade_price, enobs)
 
-    while True:
+    for state_order_id, order_state in state.get_order_change():
+        print('receive change order: ', state_order_id, order_state)
         available = state.get_available()
         coin = available[COIN_UNIT]
         money = available[MONEY_UNIT]
 
         stop_loss(money)
 
-        # timestamp, current_price, best_ask, best_bid = state.get_latest_trend()
-        # if timestamp > last_time:
-
         timestamp, buy_order_id, sell_order_id = buy_sell_pair
         print(f't: {timestamp}, b_id: {buy_order_id}, s_id: {sell_order_id}')
-        state_order_id, order_state = state.get_changed_order()
-        print('receive change order: ', state_order_id, order_state)
+
         if state_order_id == buy_order_id:
             buy_state = order_state
             sell_state = 0
