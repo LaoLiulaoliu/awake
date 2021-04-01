@@ -128,18 +128,18 @@ class OkexSpot(object):
             for order in orders]
         return self.http.httpPost(path, params)
 
-    def modify_order(self, orderid, price, size, instrument_id=INSTRUMENT[0]):
+    def modify_order(self, order_id, price, size, instrument_id=INSTRUMENT[0]):
         """ parameters can be int/float
         {'client_oid': '', 'code': '0', 'error_code': '0', 'error_message': '', 'message': '', 'order_id': '6715213478324224', 'request_id': '', 'result': True}
         """
         path = f'/api/spot/v3/amend_order/{instrument_id}'
-        params = {'order_id': orderid, 'new_price': price, 'new_size': size}
+        params = {'order_id': order_id, 'new_price': price, 'new_size': size}
         return self.http.httpPost(path, params)
 
-    def cancel_order(self, orderid, instrument_id=INSTRUMENT[0]):
+    def cancel_order(self, order_id, instrument_id=INSTRUMENT[0]):
         """cancel an unfilled order
         """
-        path = f'/api/spot/v3/cancel_orders/{orderid}'
+        path = f'/api/spot/v3/cancel_orders/{order_id}'
         params = {'instrument_id': instrument_id}
         return self.http.httpPost(path, params)
 
@@ -151,7 +151,7 @@ class OkexSpot(object):
         params = [{'instrument_id': instrument_id, 'order_ids': order_ids}]
         return self.http.httpPost(path, params)
 
-    def order_details(self, orderid, instrument_id=INSTRUMENT[0]):
+    def order_details(self, order_id, instrument_id=INSTRUMENT[0]):
         """
         {
             'client_oid': '',
@@ -178,7 +178,7 @@ class OkexSpot(object):
             'type': 'limit'
         }
         """
-        path = '/api/spot/v3/orders/' + orderid
+        path = f'/api/spot/v3/orders/{order_id}'
         params = {'instrument_id': instrument_id}
         return self.http.httpGet(path, params)
 

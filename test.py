@@ -50,7 +50,7 @@ def main(argv):
 
         elif opt in ('-o', '--spot'):
             VALUTA_IDX = 3
-            spot = OkexSpot(use_trade_key=False)
+            spot = OkexSpot(use_trade_key=True)
             # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
             print(spot.order_details(6719145154854913, INSTRUMENT[VALUTA_IDX]))
             # print(spot.trad_fee(INSTRUMENT[VALUTA_IDX]))
