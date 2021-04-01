@@ -118,7 +118,7 @@ def strategy(state, enobs=3):
 
                 if buy_price < money:
                     order_id = place_buy_order(buy_price, BOARD_LOT)
-                    logger.info(f'deal buy, new buy:   {buy_price}')
+                    logger.info(f'deal buy, new buy:    {buy_price}')
                     if order_id == 0:
                         cancel_order(sell_order_id)  # if not cancel, this order may auto-deal later
                         logger.info('deal buy, place new buy error')
