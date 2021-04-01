@@ -105,7 +105,7 @@ def strategy(state, enobs=3):
             logger.info(f'irrelevant order: {state_order_id}, state: {order_state}')
             continue  # other irrelevant order
         success = True
-        print(f'{timestamp} changed {0 if buy_order_id == state_order_id else 1} order, state: {buy_state} : {sell_state}, id: {buy_order_id} : {sell_order_id}')
+        logger.info(f'{timestamp} changed {0 if buy_order_id == state_order_id else 1} order, state: {buy_state} : {sell_state}, id: {buy_order_id} : {sell_order_id}')
 
         # modify failed, hold still, then buy lower sell higher.
         # buy or sell failed, logic chain breaking,
