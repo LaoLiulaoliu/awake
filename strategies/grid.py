@@ -45,7 +45,7 @@ def place_pair_orders(state, last_trade_price, enobs):
             {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
         ])
 
-        logger.info(f'buy_price: {buy_price}, size: {size}, id: {order_ids[0]}\n sell_price: {sell_price}, size: {size}, id: {order_ids[1]}')
+        # logger.info(f'buy_price: {buy_price}, size: {size}, id: {order_ids[0]}\n sell_price: {sell_price}, size: {size}, id: {order_ids[1]}')
 
         if 0 in order_ids:
             for i, oid in enumerate(order_ids):
