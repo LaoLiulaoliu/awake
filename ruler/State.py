@@ -232,8 +232,7 @@ class State(object):
         return self.available
 
     def parse_order(self, message):
-        """ Caution!!!
-        canceled -1 is get, but open 0, filled 2, modify not comes in websocket use grid, 20210401
+        """ canceled -1, open 0, filled 2, modify 0
         """
         for i in message:
             state = int(i['state'])
