@@ -82,7 +82,6 @@ def strategy(state, enobs=3):
     buy_sell_pair = grid_init_orders(state, last_trade_price, enobs)
 
     for state_order_id, order_state in state.get_order_change():
-        print('receive change order: ', state_order_id, order_state)
         available = state.get_available()
         coin = available[COIN_UNIT]
         money = available[MONEY_UNIT]

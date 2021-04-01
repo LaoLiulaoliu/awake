@@ -194,7 +194,6 @@ class State(object):
             self.best_size[0] = np.float64(i['best_ask_size'])
             self.best_size[1] = np.float64(i['best_bid_size'])
             self.event.set()  # set flag to true
-            print('parse ticker: ', timestamp, current_price)
 
     def get_latest_trend(self):
         self.event.wait()  # wait stop when flag set to true
@@ -268,7 +267,7 @@ class State(object):
             yield item[0], item[1]
 
     def get_changed_order(self):
-        """ Caution!!! not tested well yet
+        """ Caution!!! not tested well yet, if use test again
 
         If more than 2 orders come at the same time, only receive last order.
         Please make sure only comes one order at a time.
