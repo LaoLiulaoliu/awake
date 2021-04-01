@@ -23,7 +23,7 @@ AVERAGE_ASK_BID_SIZE = 7.5  # also refer to min_size
 effective_number_of_bits = 3
 
 GRID_NUM = int((high_price - low_price) / SPACING_PRICE)
-BOARD_LOT = 2  # max(round(INIT_COIN / GRID_NUM, effective_number_of_bits), AVERAGE_ASK_BID_SIZE)
+BOARD_LOT = max(round(INIT_COIN / GRID_NUM, effective_number_of_bits), AVERAGE_ASK_BID_SIZE)
 COIN_UNIT, MONEY_UNIT = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
 SLEEP = 30
 
@@ -35,7 +35,7 @@ def place_pair_orders(state, last_trade_price, enobs):
 
     buy_price = round(last_trade_price - SPACING_PRICE, enobs)
     sell_price = round(last_trade_price + SPACING_PRICE, enobs)
-    size = 2  # round(np.random.normal(BOARD_LOT, 0.5), enobs)
+    size = round(np.random.normal(BOARD_LOT, 0.5), enobs)
     if coin > size and buy_price < money:
         order_ids = place_batch_orders([
             {'price': buy_price, 'size': size, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
