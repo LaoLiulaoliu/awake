@@ -38,7 +38,7 @@ class OkexWSV5(HttpUtil):
                                              on_error=self.on_error)
 
             self.__connection.on_open = self.on_open
-            self.__connection.run_forever(ping_interval=28, ping_timeout=28)
+            self.__connection.run_forever(ping_interval=28, ping_timeout=27)
         except Exception as e:
             print(f'ws_create exception: {e}')
             time.sleep(5)
