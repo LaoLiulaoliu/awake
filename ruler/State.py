@@ -236,6 +236,8 @@ class State(object):
 
     def parse_order(self, message):
         """ canceled -1, open 0, filled 2, modify 0
+
+        Add self.queue.put in grid strategy.
         """
         for i in message:
             state = int(i['state'])
@@ -253,7 +255,8 @@ class State(object):
             # init_price = float(i['price'])
             # price = float(i['price_avg'])
             # logger.info(f"parse order: {i['side']}, {i['price']}, {state}")
-            self.queue.put([int(i['order_id']), float(i['price']), state])
+
+            # self.queue.put([int(i['order_id']), float(i['price']), state])
 
     def delete_filled_orders(self, order_ids):
         self.trade.delete_filled_orders(order_ids)

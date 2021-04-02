@@ -3,15 +3,18 @@
 
 import gevent
 import time
+import logging
 import numpy as np
 from api.apiwrapper import cancel_order, place_batch_orders, cancel_batch_orders
 from const import INSTRUMENT, VALUTA_IDX
+
+logger = logging.getLogger()
 
 
 def parse_buy_sell_pair(state, buy_sell_pair):
     remove_pair = []
     if remove_pair or buy_sell_pair:
-        print(f'enter: buy_sell_pair: {buy_sell_pair}, remove pair: {remove_pair}')
+        logger.info((f'enter: buy_sell_pair: {buy_sell_pair}, remove pair: {remove_pair}')
         state.show_trade_len()
 
     for timestamp, buy_order_id, sell_order_id in buy_sell_pair:
@@ -23,42 +26,42 @@ def parse_buy_sell_pair(state, buy_sell_pair):
         if {buy_state, sell_state} == {2}:
             state.delete_filled_orders((buy_order_id, sell_order_id))
             remove_pair.append((timestamp, buy_order_id, sell_order_id))
-            print(f'both filled: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
+            logger.info(f'both filled: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
 
         elif {buy_state, sell_state} == {0}:
             # cancel in [9, 15]s, aviod a lot orders, but may miss opportunity.
             cancel_batch_orders((buy_order_id, sell_order_id))
             state.delete_canceled_orders((buy_order_id, sell_order_id))
             remove_pair.append((timestamp, buy_order_id, sell_order_id))
-            print(f'both pending: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
+            logger.info((f'both pending: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
 
         elif {buy_state, sell_state} == {0, 2}:
             gevent.sleep(1)
-            print(f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
+            logger.info((f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
             # if time.time() - timestamp > 1800:
             #     if buy_state == 0:
             #         cancel_order(buy_order_id)
             #         state.delete_canceled_orders([buy_order_id])
             #         remove_pair.append((timestamp, buy_order_id, sell_order_id))
-            #         print(f'delete buy {buy_order_id}: {buy_trade}')
+            #         logger.info((f'delete buy {buy_order_id}: {buy_trade}')
             #     elif sell_state == 0:
             #         cancel_order(sell_order_id)
             #         state.delete_canceled_orders([sell_order_id])
             #         remove_pair.append((timestamp, buy_order_id, sell_order_id))
-            #         print(f'delete sell {sell_order_id}: {sell_state}')
+            #         logger.info((f'delete sell {sell_order_id}: {sell_state}')
         elif {buy_state, sell_state} == {0, 1}:
             gevent.sleep(1)
-            print(f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
+            logger.info((f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
         elif {buy_state, sell_state} == {1}:
             gevent.sleep(1)
-            print(f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
+            logger.info((f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
         elif {buy_state, sell_state} == {1, 2}:
             gevent.sleep(1)
-            print(f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
+            logger.info((f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
 
     [buy_sell_pair.remove(i) for i in remove_pair]
     if remove_pair or buy_sell_pair:
-        print(f'exit: buy_sell_pair: {buy_sell_pair}, remove pair: {remove_pair}')
+        logger.info((f'exit: buy_sell_pair: {buy_sell_pair}, remove pair: {remove_pair}')
         state.show_trade_len()
 
 
@@ -85,7 +88,7 @@ def strategy(state, enobs=3):
                 size = int(min(best_ask_size, best_bid_size, coin, 1))  # hold coin < market bid coin  !!! 2 for MASK
                 buy_price = round(best_bid + 10**-enobs, enobs)  # buy before sell
                 sell_price = round(best_ask - 10**-enobs, enobs)
-                print(f'buy_price: {buy_price}, sell_price: {sell_price}, size: {size}, coin: {coin}, {len(buy_sell_pair)} > {ongoing_num}')
+                logger.info((f'buy_price: {buy_price}, sell_price: {sell_price}, size: {size}, coin: {coin}, {len(buy_sell_pair)} > {ongoing_num}')
                 if size > 0 and buy_price < money:
                     if len(buy_sell_pair) > ongoing_num:
                         continue
@@ -95,9 +98,7 @@ def strategy(state, enobs=3):
                         {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
                     ])
 
-                    print({'price': buy_price, 'size': size, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX], 'id': order_ids[0]},
-                          '\n',
-                        {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX], 'id': order_ids[1]})
+                    logger.info(f'buy_price: {buy_price}, size: {size}, id: {order_ids[0]}; sell_price: {sell_price}, size: {size}, id: {order_ids[1]}')
 
                     if 0 in order_ids:
                         for i, oid in enumerate(order_ids):
@@ -105,10 +106,10 @@ def strategy(state, enobs=3):
                                 cancel_order(oid)
                                 state.delete_canceled_orders([oid])
                                 side = 'buy' if i == 0 else 'sell'
-                                print(f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
+                                logger.info((f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
                         continue
 
                     buy_sell_pair.append((int(time.time()), order_ids[0], order_ids[1]))
-                    gevent.sleep(np.random.randint(9, 15))
+                    gevent.sleep(np.random.randint(15, 25))
             last_time = timestamp
 
