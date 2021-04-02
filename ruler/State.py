@@ -35,7 +35,7 @@ class State(object):
 
         self.balance = {}
         self.available = {}
-        self.parse_account(get_account())
+        self.parse_account_v3(get_account())
 
         self.best_size = np.zeros(2)
         self.depth = [0, 0, 0, 0, 0]  # caution about initial value
@@ -187,7 +187,7 @@ class State(object):
     def schedule(self):
         pass
 
-    def parse_ticker(self, message):
+    def parse_ticker_v3(self, message):
         for i in message:
             self.flush_trend_nearly_ten_min()
 
@@ -209,7 +209,7 @@ class State(object):
     def get_best_size(self):
         return self.best_size
 
-    def parse_ticker_detail(self, message):
+    def parse_ticker_detail_v3(self, message):
         for i in message:
             self.flush_trend_nearly_ten_min()
 
@@ -222,7 +222,7 @@ class State(object):
                                np.float64(i['best_ask_size']),
                                np.float64(i['best_bid_size'])))
 
-    def parse_account(self, message):
+    def parse_account_v3(self, message):
         for i in message:
             currency = i['currency'].upper()
             self.balance[currency] = float(i['balance'])
@@ -234,7 +234,7 @@ class State(object):
     def get_available(self):
         return self.available
 
-    def parse_order(self, message):
+    def parse_order_v3(self, message):
         """ canceled -1, open 0, filled 2, modify 0
 
         Add self.queue.put in grid strategy.
@@ -283,14 +283,14 @@ class State(object):
         self.async_result.set(gevent._util._NONE)
         return state_order_id, order_state
 
-    def parse_trade(self, message):
+    def parse_trade_v3(self, message):
         for i in message:
             print(i['side'], i['trade_id'], i['size'], i['price'])
 
     def show_trade_len(self):
         self.trade.print_trade_length_info()
 
-    def parse_depth5(self, message):
+    def parse_depth5_v3(self, message):
         """ ticker is slow, need depth5 for high frequency
         """
         for i in message:
@@ -304,3 +304,34 @@ class State(object):
 
     def get_depth(self):
         return self.depth
+
+    def parse_ticker_v5(self, message):
+        for i in message:
+            self.flush_trend_nearly_ten_min()
+
+            timestamp = int(i['ts'])
+            current_price = np.float64(i['last'])
+            self.trend.append((timestamp, current_price, np.float64(i['askPx']), np.float64(i['bidPx'])))
+            self.best_size[0] = np.float64(i['askSz'])
+            self.best_size[1] = np.float64(i['bidSz'])
+            self.event.set()  # set flag to true
+
+    def parse_account_v5(self, message):
+        for i in message:
+            currency = i['details'][0]['ccy'].upper()
+            self.balance[currency] = float(i['details'][0]['eq'])
+            self.available[currency] = float(i['details'][0]['availBal'])
+
+    def parse_order_v5(self, message):
+        """
+        state(str): canceled, live, partially_filled, filled
+        """
+        for i in message:
+            if i['state'] == 'live':
+                state = 0
+            elif i['state'] == 'partially_filled':
+                state = 1
+            elif i['state'] == 'filled':
+                state = 2
+            elif i['state'] == 'canceled':
+                state = -1

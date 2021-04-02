@@ -49,7 +49,7 @@ def main():
                    f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
                    f'spot/account:{coin_unit}',
                    f'spot/account:{money_unit}'
-                  ],
+                   ],
                   state,
                   use_trade_key=True)
     g1 = gevent.spawn(ws.ws_create)
@@ -63,5 +63,6 @@ def main():
 
     g3 = gevent.spawn(strategy, state, enobs)
     gevent.joinall([g1, g2, g3])
+
 
 main()

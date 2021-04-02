@@ -9,18 +9,18 @@ from websocket import WebSocketApp
 from .HttpUtil import HttpUtil
 from .tradesecret import *
 
-WS_PUBLIC = 'wss://wsaws.okex.com:8443/ws/v5/public'
-WS_PRIVATE = 'wss://wsaws.okex.com:8443/ws/v5/private'
+WS_PUBLIC = 'wss://ws.okex.com:8443/ws/v5/public'
+WS_PRIVATE = 'wss://ws.okex.com:8443/ws/v5/private'
 
 
 class OkexWSV5(HttpUtil):
-    def __init__(self, sub_list, state, use_trade_key=True, channel='private'):
+    def __init__(self, sub_dict_list, state, use_trade_key=True, channel='private'):
         super(OkexWSV5, self).__init__(use_trade_key, 5)
 
         self.__connection = None
-        self.__ws_subs = []  # 'spot/ticker:BTC-USDT'
-        if isinstance(sub_list, list):
-            self.__ws_subs = [sub for sub in sub_list if sub not in self.__ws_subs]
+        self.__ws_subs = []
+        if isinstance(sub_dict_list, list):
+            self.__ws_subs = sub_dict_list
 
         self.state = state
 
@@ -44,26 +44,15 @@ class OkexWSV5(HttpUtil):
             time.sleep(5)
             self.ws_create()
 
-    def subscription(self, sub_list):
-        subs = [sub for sub in sub_list if sub not in self.__ws_subs]
-        self.__ws_subs.extend(subs)
-
+    def subscription(self, sub_dict_list):
         if self.__connection:
-            args = []
-            for i in subs:
-                channel, instId = i.split('/')
-                args.append({'channel': channel, 'instId': instId})
-            self.__connection.send(json.dumps({'op': 'subscribe', 'args': args}))
+            self.__ws_subs.extend(sub_dict_list)
+            self.__connection.send(json.dumps({'op': 'subscribe', 'args': sub_dict_list}))
 
-    def unsubscription(self, unsub_list):
-        subs = [sub for sub in unsub_list if sub in self.__ws_subs]
-
-        args = []
-        for i in subs:
-            channel, instId = i.split('/')
-            args.append({'channel': channel, 'instId': instId})
+    def unsubscription(self, unsub_dict_list):
+        for i in unsub_dict_list:
             self.__ws_subs.remove(i)
-        self.__connection.send(json.dumps({'op': 'unsubscribe', 'args': args}))
+        self.__connection.send(json.dumps({'op': 'unsubscribe', 'args': unsub_dict_list}))
 
     def login(self):
         endpoint = '/users/self/verify'
@@ -80,11 +69,7 @@ class OkexWSV5(HttpUtil):
         self.login()
         time.sleep(0.1)
 
-        args = []
-        for i in self.__ws_subs:
-            channel, instId = i.split('/')
-            args.append({'channel': channel, 'instId': instId})
-        self.__connection.send(json.dumps({'op': 'subscribe', 'args': args}))
+        self.__connection.send(json.dumps({'op': 'subscribe', 'args': self.__ws_subs}))
 
     def on_error(self, error):
         """ If reconnect, on_open after create.
@@ -106,41 +91,39 @@ class OkexWSV5(HttpUtil):
 
     def on_message(self, message):
         data = json.loads(self.inflate(message))
-        if 'table' in data:
-            table = data['table']
-            if table == 'spot/ticker':
-                # [{'last': '49338.5', 'open_24h': '47991.9', 'best_bid': '49326.7', 'high_24h': '50210.1', 'low_24h': '47907.2', 'open_utc0': '49597.5', 'open_utc8': '49188.4', 'base_volume_24h': '9467.36886712', 'quote_volume_24h': '462894723.35643254', 'best_ask': '49326.8', 'instrument_id': 'BTC-USDT', 'timestamp': '2021-03-02T14:15:12.522Z', 'best_bid_size': '0.56306288', 'best_ask_size': '0.13743411', 'last_qty': '0.0089648'}]
-                self.state.parse_ticker(data['data'])
-            elif table == 'spot/account':
-                # push update data, sometimes have duplicated data
-                self.state.parse_account(data['data'])
-            elif table == 'spot/order':
-                self.state.parse_order(data['data'])
-            elif table == 'spot/depth5':
-                self.state.parse_depth5(data['data'])
-            elif table == 'spot/depth':  # Public-Depth400
+        if 'arg' in data:
+            channel = data['arg']['channel']
+            if channel == 'tickers':
+                self.state.parse_ticker_v5(data['data'])
+            elif channel == 'account':
+                self.state.parse_account_v5(data['data'])
+            elif channel == 'orders':
+                self.state.parse_order_v5(data['data'])
+            elif channel == 'spot/depth5':
+                self.state.parse_depth5_v5(data['data'])
+            elif channel == 'spot/depth':  # Public-Depth400
                 print(data['action'], data['data'])
-            elif table == 'spot/depth_l2_tbt':
+            elif channel == 'spot/depth_l2_tbt':
                 print(data['action'], data['data'])
-            elif table == 'spot/candle60s':
+            elif channel == 'spot/candle60s':
                 # [{'candle': ['2021-03-20T06:18:00.000Z', '58219.7', '58222.4', '58212.8', '58222.4', '0.14625923'], 'instrument_id': 'BTC-USDT'}]
                 # data is pushed every 500ms, will duplicated in one minute.
                 print(data['data'])
-            elif table == 'spot/order_algo':
-                print('order_algo: ', data['data'])
-            elif table == 'spot/trade':
+            elif channel == 'spot/trade':
                 # push filled orders on the whole market - public
-                self.state.parse_trade(data['data'])
+                self.state.parse_trade_v5(data['data'])
             else:
                 print('ws_on_message:table: ', data)
 
         elif 'event' in data:
             if data['event'] == 'login':
-                print('event login success: ', data['success'])
+                print('event login success: ', data['code'])
             elif data['event'] == 'subscribe':
-                print('event subscribe channel: ', data['channel'])
+                print('event subscribe channel: ', data['arg'])
+            elif data['event'] == 'unsubscribe':
+                print('event unsubscribe channel: ', data['arg'])
             elif data['event'] == 'error':
-                print('event error: ', data['errorCode'], data['message'])
+                print('event error: ', data['code'], data['msg'])
 
     def inflate(self, data):
         decompress = zlib.decompressobj(-zlib.MAX_WBITS)
