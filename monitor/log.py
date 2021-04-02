@@ -27,4 +27,4 @@ def logging_file(path, name, maxBytes=1024 * 1024 * 5, backupCount=10, level='IN
     # logger.addHandler(shlr)
     logger.addHandler(fhlr)
 
-logging_file(os.path.join(os.environ['HOME'], LOG_DIR), 'awake.log')
+logging_file(os.path.join(os.getcwd(), LOG_DIR), 'awake.log')
