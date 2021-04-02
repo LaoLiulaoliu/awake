@@ -48,14 +48,16 @@ def main():
     greenlets = []
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
     if API_VERSION == 5:
+        ws1 = OkexWSV5({'channel': 'tickers', 'instId': INSTRUMENT[VALUTA_IDX].upper()}, state, use_trade_key=True, channel='public')
+
         ws_channels = [
-            {'channel': 'tickers', 'instId': INSTRUMENT[VALUTA_IDX].upper()},
             {'channel': 'account', 'ccy': money_unit},
             {'channel': 'account', 'ccy': coin_unit},
             {'channel': 'orders', 'instType': 'SPOT', 'instId': INSTRUMENT[VALUTA_IDX].upper()}
         ]
-        ws1 = OkexWSV5(ws_channels, state, use_trade_key=True, channel='private')
+        ws2 = OkexWSV5(ws_channels, state, use_trade_key=True, channel='private')
         greenlets.append(gevent.spawn(ws1.ws_create))
+        greenlets.append(gevent.spawn(ws2.ws_create))
     else:
         ws_channels = [f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
                        f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
