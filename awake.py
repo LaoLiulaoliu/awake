@@ -45,8 +45,8 @@ def main():
 
     state = State(trend, trade)
 
+    greenlets = []
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
-
     if API_VERSION == 5:
         ws_channels = [
             {'channel': 'tickers', 'instId': INSTRUMENT[VALUTA_IDX].upper()},
@@ -55,6 +55,7 @@ def main():
             {'channel': 'orders', 'instType': 'SPOT', 'instId': INSTRUMENT[VALUTA_IDX].upper()}
         ]
         ws = OkexWSV5(ws_channels, state, use_trade_key=True, channel='private')
+        greenlets.append(gevent.spawn(ws.ws_create))
     else:
         ws_channels = [f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
                        f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
@@ -62,9 +63,10 @@ def main():
                        f'spot/account:{money_unit}'
                        ]
         ws = OkexWSV3(ws_channels, state, use_trade_key=True)
+        greenlets.append(gevent.spawn(ws.ws_create))
 
-    g1 = gevent.spawn(ws.ws_create)
-    g2 = schedule_rotate_trend_file(trend.reopen)
+
+    greenlets.append(schedule_rotate_trend_file(trend.reopen))
     gevent.sleep(5)
 
     enobs = 3
@@ -72,8 +74,8 @@ def main():
         if i['instrument_id'] == INSTRUMENT[VALUTA_IDX].upper():
             enobs = len(i['tick_size'].split('.')[1])
 
-    g3 = gevent.spawn(strategy, state, enobs)
-    gevent.joinall([g1, g2, g3])
+    greenlets.append(gevent.spawn(strategy, state, enobs))
+    gevent.joinall(greenlets)
 
 
 main()
