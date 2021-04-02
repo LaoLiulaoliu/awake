@@ -49,6 +49,7 @@ def main():
 
     if API_VERSION == 5:
         ws_channels = [
+            {'channel': 'tickers', 'instId': INSTRUMENT[VALUTA_IDX].upper()},
             {'channel': 'account', 'ccy': money_unit},
             {'channel': 'account', 'ccy': coin_unit},
             {'channel': 'orders', 'instType': 'SPOT', 'instId': INSTRUMENT[VALUTA_IDX].upper()}
