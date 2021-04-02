@@ -87,15 +87,20 @@ def strategy(state, enobs=3):
         timestamp, current_price, best_ask, best_bid = state.get_latest_trend()
         best_ask_size, best_bid_size = state.get_best_size()
         if timestamp > last_time:
+            if coin < 1:
+                last_time = timestamp
+                continue
+
             if best_ask - 10 ** -enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
                 limit = max(round(np.random.normal(2, 1), enobs), 1)
-                size = int(min(best_ask_size, best_bid_size, coin, limit))  # hold coin < market bid coin
+                size = int(min(best_ask_size, best_bid_size, limit))  # hold coin < market bid coin
                 buy_price = round(best_bid + 10 ** -enobs, enobs)  # buy before sell
                 sell_price = round(best_ask - 10 ** -enobs, enobs)
                 logger.info(
                     f'buy_price: {buy_price}, sell_price: {sell_price}, size: {size}, coin: {coin}, {len(buy_sell_pair)} > {ongoing_num}')
                 if size > 0 and buy_price < money:
                     if len(buy_sell_pair) > ongoing_num:
+                        last_time = timestamp
                         continue
 
                     order_ids = place_batch_orders([
@@ -114,6 +119,7 @@ def strategy(state, enobs=3):
                                 side = 'buy' if i == 0 else 'sell'
                                 logger.info(
                                     f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
+                        last_time = timestamp
                         continue
 
                     buy_sell_pair.append((int(time.time()), order_ids[0], order_ids[1]))
