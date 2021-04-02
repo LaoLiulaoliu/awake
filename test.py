@@ -23,7 +23,7 @@ from ruler.Scheduler import Scheduler
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, 'anors', ['numpd=', 'spot=', 'run=', 'socket='])
+        opts, args = getopt.getopt(argv, 'afnors', ['numpd=', 'spot=', 'run=', 'socket='])
     except getopt.GetoptError:
         print('test.py -n')
         sys.exit(2)
@@ -52,7 +52,7 @@ def main(argv):
             VALUTA_IDX = 3
             spot = OkexSpot(use_trade_key=True)
             # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
-            print(spot.order_details(6717741436522499, INSTRUMENT[VALUTA_IDX]))
+            # print(spot.order_details(6717741436522499, INSTRUMENT[VALUTA_IDX]))
             # print(spot.trad_fee(INSTRUMENT[VALUTA_IDX]))
             # print(spot.instruments())
             # print(spot.account())
@@ -61,6 +61,7 @@ def main(argv):
             # print(spot.orderbook(INSTRUMENT[VALUTA_IDX], 0.1, 10))
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494679719429120')) bingo
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
+            print(spot.orders(2, INSTRUMENT[VALUTA_IDX], after=6691638396674048))
 
             # orders = [
             #     {'price': 0.71, 'size': 0.1, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
@@ -81,6 +82,9 @@ def main(argv):
             # ws.subscription(['spot/depth:BTC-USDT'])
             print('websocket created, can do sth in the following coroutine')
             greenlet.join()
+        elif opt in ('-f', '--frequently'):
+            from backtesting import frequently_add
+            frequently_add.main()
         elif opt in ('-r', '--run'):
             r20210219('TREND_2021-02-24.txt')
         else:
