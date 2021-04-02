@@ -7,15 +7,15 @@ import zlib
 from datetime import datetime
 from websocket import WebSocketApp
 from .HttpUtil import HttpUtil
-from .secret import *
-from .tradesecretv3 import *
+from .tradesecret import *
 
-WS_URL = 'wss://real.okex.com:8443/ws/v3'
+WS_PUBLIC = 'wss://wsaws.okex.com:8443/ws/v5/public'
+WS_PRIVATE = 'wss://wsaws.okex.com:8443/ws/v5/private'
 
 
-class OkexWSV3(HttpUtil):
-    def __init__(self, sub_list, state, use_trade_key=False):
-        super(OkexWSV3, self).__init__(use_trade_key, 3)
+class OkexWSV5(HttpUtil):
+    def __init__(self, sub_list, state, use_trade_key=True, channel='private'):
+        super(OkexWSV5, self).__init__(use_trade_key, 5)
 
         self.__connection = None
         self.__ws_subs = []  # 'spot/ticker:BTC-USDT'
@@ -23,26 +23,22 @@ class OkexWSV3(HttpUtil):
             self.__ws_subs = [sub for sub in sub_list if sub not in self.__ws_subs]
 
         self.state = state
-        self.use_trade_key = use_trade_key
 
-        if use_trade_key:
-            self.__apikey = apikeyv3
-            self.__secretkey = secretkeyv3
-            self.__passphrase = passphrasev3
-        else:
-            self.__apikey = API_KEY
-            self.__secretkey = SECRET_KEY
-            self.__passphrase = PASS_PHRASE
+        self.__apikey = apikey
+        self.__secretkey = secretkey
+        self.__passphrase = passphrase
+
+        self.ws_url = WS_PRIVATE if channel == 'private' else WS_PUBLIC
 
     def ws_create(self):
         try:
-            self.__connection = WebSocketApp(WS_URL,
+            self.__connection = WebSocketApp(self.ws_url,
                                              on_message=self.on_message,
                                              on_close=self.on_close,
                                              on_error=self.on_error)
-            if self.use_trade_key:
-                self.__connection.on_open = self.on_open
-            self.__connection.run_forever(ping_interval=25, ping_timeout=6)
+
+            self.__connection.on_open = self.on_open
+            self.__connection.run_forever(ping_interval=28, ping_timeout=28)
         except Exception as e:
             print(f'ws_create exception: {e}')
             time.sleep(5)
@@ -53,21 +49,30 @@ class OkexWSV3(HttpUtil):
         self.__ws_subs.extend(subs)
 
         if self.__connection:
-            self.__connection.send(json.dumps({'op': 'subscribe', 'args': subs}))
+            args = []
+            for i in subs:
+                channel, instId = i.split('/')
+                args.append({'channel': channel, 'instId': instId})
+            self.__connection.send(json.dumps({'op': 'subscribe', 'args': args}))
 
     def unsubscription(self, unsub_list):
-        subs = []
-        for sub in unsub_list:
-            subs.append(sub)
-            self.__ws_subs.remove(sub)
-        self.__connection.send(json.dumps({'op': 'unsubscribe', 'args': subs}))
+        subs = [sub for sub in unsub_list if sub in self.__ws_subs]
+
+        args = []
+        for i in subs:
+            channel, instId = i.split('/')
+            args.append({'channel': channel, 'instId': instId})
+            self.__ws_subs.remove(i)
+        self.__connection.send(json.dumps({'op': 'unsubscribe', 'args': args}))
 
     def login(self):
         endpoint = '/users/self/verify'
         timestamp = str(round(datetime.now().timestamp(), 3))
         sign = self.signature(timestamp, 'GET', endpoint, '')
 
-        sub = {'op': 'login', 'args': [self.__apikey, self.__passphrase, timestamp, sign.decode('utf-8')]}
+        sub = {'op': 'login',
+               'args': {'apiKey': self.__apikey, 'passphrase': self.__passphrase,
+                        'timestamp': timestamp, 'sign': sign.decode('utf-8')}}
         return self.__connection.send(json.dumps(sub))
 
     def on_open(self):
@@ -75,7 +80,11 @@ class OkexWSV3(HttpUtil):
         self.login()
         time.sleep(0.1)
 
-        self.__connection.send(json.dumps({'op': 'subscribe', 'args': self.__ws_subs}))
+        args = []
+        for i in self.__ws_subs:
+            channel, instId = i.split('/')
+            args.append({'channel': channel, 'instId': instId})
+        self.__connection.send(json.dumps({'op': 'subscribe', 'args': args}))
 
     def on_error(self, error):
         """ If reconnect, on_open after create.
