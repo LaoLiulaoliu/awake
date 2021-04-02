@@ -17,6 +17,7 @@ INSTRUMENT = {
 }
 VALUTA_IDX = 3
 API_VERSION = 3
+LOG_DIR = '~/log/'
 
 TREND_NAME = 'trend_{}.txt'
 TREND_NAME_TIME = """f'trend_{datetime.utcnow().strftime("%Y-%m-%d")}.txt'"""

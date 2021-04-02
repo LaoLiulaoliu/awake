@@ -4,7 +4,7 @@
 import logging
 import os
 from logging.handlers import RotatingFileHandler
-
+from const import LOG_DIR
 
 def logging_file(path, name, maxBytes=1024 * 1024 * 5, backupCount=10, level='INFO'):
     if not os.path.exists(path):
@@ -27,4 +27,4 @@ def logging_file(path, name, maxBytes=1024 * 1024 * 5, backupCount=10, level='IN
     # logger.addHandler(shlr)
     logger.addHandler(fhlr)
 
-logging_file(os.environ['HOME'], 'log')
+logging_file(LOG_DIR, 'log')
