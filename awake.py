@@ -48,7 +48,8 @@ def main():
     greenlets = []
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
     if API_VERSION == 5:
-        ws1 = OkexWSV5({'channel': 'tickers', 'instId': INSTRUMENT[VALUTA_IDX].upper()}, state, use_trade_key=True, channel='public')
+        ws1 = OkexWSV5({'channel': 'tickers', 'instId': INSTRUMENT[VALUTA_IDX].upper()},
+                       state, use_trade_key=True, channel='public')
 
         ws_channels = [
             {'channel': 'account', 'ccy': money_unit},
