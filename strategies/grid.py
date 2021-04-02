@@ -121,7 +121,7 @@ def strategy(state, enobs=3):
                     logger.info(f'deal buy, new buy:    {buy_price}')
                     if order_id == 0:
                         cancel_order(sell_order_id)  # if not cancel, this order may auto-deal later
-                        logger.info('deal buy, place new buy error')
+                        logger.info('deal buy, place new buy error')  # low probability occurrence
                         gevent.sleep(SLEEP)
                         success = False
                         continue
@@ -136,16 +136,16 @@ def strategy(state, enobs=3):
                             r = place_pair_orders(state, last_trade_price, enobs)
                             if r is None:
                                 success = False
-                                logger.info('deal buy, place pair order fail')
+                                logger.info('deal buy, place pair order fail')  # low probability occurrence
                                 continue
                             else:
                                 buy_sell_pair = r
                                 success = True
-                                logger.info('deal buy, place pair order success')
+                                logger.info('deal buy, place pair order success')  # low probability occurrence
                                 break
                 else:
                     cancel_order(sell_order_id)
-                    logger.info(f'deal buy, cancel sell: {sell_order_id}')
+                    logger.info(f'deal buy, cancel sell: {sell_order_id}')  # low probability occurrence
                     gevent.sleep(SLEEP)
                     success = False
                     continue
