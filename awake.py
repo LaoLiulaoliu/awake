@@ -54,8 +54,8 @@ def main():
             {'channel': 'account', 'ccy': coin_unit},
             {'channel': 'orders', 'instType': 'SPOT', 'instId': INSTRUMENT[VALUTA_IDX].upper()}
         ]
-        ws = OkexWSV5(ws_channels, state, use_trade_key=True, channel='private')
-        greenlets.append(gevent.spawn(ws.ws_create))
+        ws1 = OkexWSV5(ws_channels, state, use_trade_key=True, channel='private')
+        greenlets.append(gevent.spawn(ws1.ws_create))
     else:
         ws_channels = [f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
                        f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
