@@ -6,20 +6,20 @@ from .HttpUtil import HttpUtil
 from const import INSTRUMENT
 
 
-class OkexSpot(object):
+class OkexSpotV3(object):
     """ 币币api
     """
     __sem = gevent.lock.BoundedSemaphore(1)
 
     def __new__(cls, *args, **kwargs):
-        if not hasattr(OkexSpot, '_instance'):
-            with OkexSpot.__sem:
-                if not hasattr(OkexSpot, '_instance'):
-                    OkexSpot._instance = object.__new__(cls)
-        return OkexSpot._instance
+        if not hasattr(OkexSpotV3, '_instance'):
+            with OkexSpotV3.__sem:
+                if not hasattr(OkexSpotV3, '_instance'):
+                    OkexSpotV3._instance = object.__new__(cls)
+        return OkexSpotV3._instance
 
     def __init__(self, use_trade_key=False):
-        self.http = HttpUtil(use_trade_key)
+        self.http = HttpUtil(use_trade_key, version=3)
 
     def get_server_time(self):
         """
@@ -296,7 +296,7 @@ def print_error_or_get_order_id(ret):
 
 if __name__ == '__main__':
     VALUTA_IDX = 0
-    spot = OkexSpot()
+    spot = OkexSpotV3()
     print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
 
     # r = spot.place_order('buy', 1000, 1, INSTRUMENT[VALUTA_IDX])

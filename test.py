@@ -10,8 +10,8 @@ import sys
 import getopt
 from datetime import datetime
 from test.numpd_test import numpd_test
-from api.OkexSpot import OkexSpot
-from api.OkexWS import OkexWS
+from api.OkexSpotV3 import OkexSpotV3
+from api.OkexWSV3 import OkexWSV3
 from api.apiwrapper import place_batch_orders
 from backtesting.run import r20210219
 from const import TREND_NAME_TIME, INSTRUMENT
@@ -50,7 +50,7 @@ def main(argv):
 
         elif opt in ('-o', '--spot'):
             VALUTA_IDX = 3
-            spot = OkexSpot(use_trade_key=True)
+            spot = OkexSpotV3(use_trade_key=True)
             # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
             # print(spot.order_details(6717741436522499, INSTRUMENT[VALUTA_IDX]))
             # print(spot.trad_fee(INSTRUMENT[VALUTA_IDX]))
@@ -74,7 +74,7 @@ def main(argv):
             trend.trend_full_load()
             state = State(trend, trade=None)
 
-            ws = OkexWS(['spot/account:ALPHA',
+            ws = OkexWSV3(['spot/account:ALPHA',
                          'spot/account:USDT',
                          'spot/order:BSV-USDT',
                          'spot/depth5:ALPHA-USDT'], state, use_trade_key=True)

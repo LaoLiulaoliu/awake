@@ -9,7 +9,7 @@ from gevent import monkey;
 monkey.patch_all()
 from datetime import datetime
 
-from api.OkexWS import OkexWS
+from api.OkexWSV3 import OkexWSV3
 from api.instruments import ENOBs
 from storage.Numpd import Numpd
 from ruler.State import State
@@ -45,13 +45,13 @@ def main():
     state = State(trend, trade)
 
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
-    ws = OkexWS([f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
-                 f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
-                 f'spot/account:{coin_unit}',
-                 f'spot/account:{money_unit}'
-                ],
-                state,
-                use_trade_key=True)
+    ws = OkexWSV3([f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
+                   f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
+                   f'spot/account:{coin_unit}',
+                   f'spot/account:{money_unit}'
+                  ],
+                  state,
+                  use_trade_key=True)
     g1 = gevent.spawn(ws.ws_create)
     g2 = schedule_rotate_trend_file(trend.reopen)
     gevent.sleep(5)

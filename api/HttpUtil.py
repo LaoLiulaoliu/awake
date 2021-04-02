@@ -9,6 +9,7 @@ import json
 from datetime import datetime
 from retrying import retry
 from .secret import *
+from .tradesecretv3 import *
 from .tradesecret import *
 
 CONTENT_TYPE = 'Content-Type'
@@ -22,16 +23,22 @@ BASE_URL = 'https://www.okex.com'
 
 
 class HttpUtil(object):
-    def __init__(self, use_trade_key=False):
+    def __init__(self, use_trade_key=False, version=3):
         self.__url = BASE_URL
         if use_trade_key:
-            self.__apikey = apikey
-            self.__secretkey = secretkey
-            self.__passphrase = passphrase
+            if version == 5:
+                self.__apikey = apikey
+                self.__secretkey = secretkey
+                self.__passphrase = passphrase
+            elif version == 3:
+                self.__apikey = apikeyv3
+                self.__secretkey = secretkeyv3
+                self.__passphrase = passphrasev3
         else:
-            self.__apikey = API_KEY
-            self.__secretkey = SECRET_KEY
-            self.__passphrase = PASS_PHRASE
+            if version == 3:
+                self.__apikey = API_KEY
+                self.__secretkey = SECRET_KEY
+                self.__passphrase = PASS_PHRASE
 
         self.session = requests.sessions.Session()
 

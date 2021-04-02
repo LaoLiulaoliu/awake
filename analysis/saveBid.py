@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 
 from analysis.KVDB import KVDB
-from api.OkexSpot import OkexSpot
+from api.OkexSpotV3 import OkexSpotV3
 from const import INSTRUMENT
 
 
@@ -13,7 +13,7 @@ def init(name='test'):
     if not hasattr(init, '_db'):
         setattr(init, '_db', KVDB(name))
     if not hasattr(init, '_spot'):
-        setattr(init, '_spot', OkexSpot(use_trade_key=False))
+        setattr(init, '_spot', OkexSpotV3(use_trade_key=False))
     return init._db, init._spot
 
 

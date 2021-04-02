@@ -8,14 +8,14 @@ from datetime import datetime
 from websocket import WebSocketApp
 from .HttpUtil import HttpUtil
 from .secret import *
-from .tradesecret import *
+from .tradesecretv3 import *
 
 WS_URL = 'wss://real.okex.com:8443/ws/v3'
 
 
-class OkexWS(HttpUtil):
+class OkexWSV3(HttpUtil):
     def __init__(self, sub_list, state, use_trade_key=False):
-        super(OkexWS, self).__init__(use_trade_key)
+        super(OkexWSV3, self).__init__(use_trade_key, 3)
 
         self.__connection = None
         self.__ws_subs = []  # 'spot/ticker:BTC-USDT'
@@ -26,9 +26,9 @@ class OkexWS(HttpUtil):
         self.use_trade_key = use_trade_key
 
         if use_trade_key:
-            self.__apikey = apikey
-            self.__secretkey = secretkey
-            self.__passphrase = passphrase
+            self.__apikey = apikeyv3
+            self.__secretkey = secretkeyv3
+            self.__passphrase = passphrasev3
         else:
             self.__apikey = API_KEY
             self.__secretkey = SECRET_KEY

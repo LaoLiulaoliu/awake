@@ -37,7 +37,8 @@ def parse_buy_sell_pair(state, buy_sell_pair):
 
         elif {buy_state, sell_state} == {0, 2}:
             gevent.sleep(1)
-            logger.info(f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
+            logger.info(
+                f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
             # if time.time() - timestamp > 1800:
             #     if buy_state == 0:
             #         cancel_order(buy_order_id)
@@ -51,19 +52,21 @@ def parse_buy_sell_pair(state, buy_sell_pair):
             #         logger.info(f'delete sell {sell_order_id}: {sell_state}')
         elif {buy_state, sell_state} == {0, 1}:
             gevent.sleep(1)
-            logger.info(f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
+            logger.info(
+                f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
         elif {buy_state, sell_state} == {1}:
             gevent.sleep(1)
-            logger.info(f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
+            logger.info(
+                f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
         elif {buy_state, sell_state} == {1, 2}:
             gevent.sleep(1)
-            logger.info(f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
+            logger.info(
+                f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
 
     [buy_sell_pair.remove(i) for i in remove_pair]
     if remove_pair or buy_sell_pair:
         logger.info(f'exit: buy_sell_pair: {buy_sell_pair}, remove pair: {remove_pair}')
         state.show_trade_len()
-
 
 
 def strategy(state, enobs=3):
@@ -84,11 +87,12 @@ def strategy(state, enobs=3):
         timestamp, current_price, best_ask, best_bid = state.get_latest_trend()
         best_ask_size, best_bid_size = state.get_best_size()
         if timestamp > last_time:
-            if best_ask - 10**-enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
+            if best_ask - 10 ** -enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
                 size = int(min(best_ask_size, best_bid_size, coin, 1))  # hold coin < market bid coin  !!! 2 for MASK
-                buy_price = round(best_bid + 10**-enobs, enobs)  # buy before sell
-                sell_price = round(best_ask - 10**-enobs, enobs)
-                logger.info(f'buy_price: {buy_price}, sell_price: {sell_price}, size: {size}, coin: {coin}, {len(buy_sell_pair)} > {ongoing_num}')
+                buy_price = round(best_bid + 10 ** -enobs, enobs)  # buy before sell
+                sell_price = round(best_ask - 10 ** -enobs, enobs)
+                logger.info(
+                    f'buy_price: {buy_price}, sell_price: {sell_price}, size: {size}, coin: {coin}, {len(buy_sell_pair)} > {ongoing_num}')
                 if size > 0 and buy_price < money:
                     if len(buy_sell_pair) > ongoing_num:
                         continue
@@ -98,7 +102,8 @@ def strategy(state, enobs=3):
                         {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
                     ])
 
-                    logger.info(f'buy_price: {buy_price}, size: {size}, id: {order_ids[0]}; sell_price: {sell_price}, size: {size}, id: {order_ids[1]}')
+                    logger.info(
+                        f'buy_price: {buy_price}, size: {size}, id: {order_ids[0]}; sell_price: {sell_price}, size: {size}, id: {order_ids[1]}')
 
                     if 0 in order_ids:
                         for i, oid in enumerate(order_ids):
@@ -106,10 +111,10 @@ def strategy(state, enobs=3):
                                 cancel_order(oid)
                                 state.delete_canceled_orders([oid])
                                 side = 'buy' if i == 0 else 'sell'
-                                logger.info(f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
+                                logger.info(
+                                    f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
                         continue
 
                     buy_sell_pair.append((int(time.time()), order_ids[0], order_ids[1]))
                     gevent.sleep(np.random.randint(15, 25))
             last_time = timestamp
-

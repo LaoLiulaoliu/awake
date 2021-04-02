@@ -3,11 +3,11 @@
 
 import time
 import numpy as np
-from .OkexSpot import print_error_or_get_order_id, OkexSpot
+from .OkexSpotV3 import print_error_or_get_order_id, OkexSpotV3
 from ruler.Tool import Tool
 from const import VALUTA_IDX, TIME_PRECISION, RETRY, INSTRUMENT
 
-OK_SPOT = OkexSpot(use_trade_key=True)
+OK_SPOT = OkexSpotV3(use_trade_key=True)
 
 
 def place_buy_order(bid_price, size):

@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import time
-from api.OkexSpot import OkexSpot
+from api.OkexSpotV3 import OkexSpotV3
 from const import VALUTA_IDX, INSTRUMENT
 
 VALUTA_IDX = 7
-spot = OkexSpot(use_trade_key=True)
+spot = OkexSpotV3(use_trade_key=True)
 
 
 

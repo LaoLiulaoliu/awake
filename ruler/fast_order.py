@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from api.OkexSpot import OkexSpot
+from api.OkexSpotV3 import OkexSpotV3
 from api.apiwrapper import place_buy_order
 
 TOP = 58000
@@ -11,7 +11,7 @@ capital = 50
 
 
 def do_order():
-    spot = OkexSpot(use_trade_key=True)
+    spot = OkexSpotV3(use_trade_key=True)
     for i in range(1, 11):
         price = int(TOP * 0.8) - PART * i
         size = round(capital / price, 8)
