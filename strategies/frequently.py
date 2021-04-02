@@ -29,7 +29,7 @@ def parse_buy_sell_pair(state, buy_sell_pair):
             logger.info(f'both filled: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
 
         elif {buy_state, sell_state} == {0}:
-            # cancel in [9, 15]s, aviod a lot orders, but may miss opportunity.
+            # cancel in [15, 25]s, aviod a lot orders, but may miss opportunity.
             cancel_batch_orders((buy_order_id, sell_order_id))
             state.delete_canceled_orders((buy_order_id, sell_order_id))
             remove_pair.append((timestamp, buy_order_id, sell_order_id))
@@ -76,7 +76,7 @@ def strategy(state, enobs=3):
     last_time, last_trade_price, best_ask, best_bid = state.get_latest_trend()
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
     buy_sell_pair = []
-    ongoing_num = 3
+    ongoing_num = 5
 
     while True:
         parse_buy_sell_pair(state, buy_sell_pair)
@@ -88,7 +88,7 @@ def strategy(state, enobs=3):
         best_ask_size, best_bid_size = state.get_best_size()
         if timestamp > last_time:
             if best_ask - 10 ** -enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
-                size = int(min(best_ask_size, best_bid_size, coin, 1))  # hold coin < market bid coin  !!! 2 for MASK
+                size = int(min(best_ask_size, best_bid_size, coin, 2))  # hold coin < market bid coin  !!! 2 for MASK
                 buy_price = round(best_bid + 10 ** -enobs, enobs)  # buy before sell
                 sell_price = round(best_ask - 10 ** -enobs, enobs)
                 logger.info(

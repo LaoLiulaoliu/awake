@@ -16,7 +16,7 @@ INSTRUMENT = {
     7: 'mask-usdt'
 }
 VALUTA_IDX = 3
-API_VERSION = 5
+API_VERSION = 3
 
 TREND_NAME = 'trend_{}.txt'
 TREND_NAME_TIME = """f'trend_{datetime.utcnow().strftime("%Y-%m-%d")}.txt'"""
