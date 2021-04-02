@@ -90,7 +90,7 @@ class OkexWSV5(HttpUtil):
         print(f'on close reconnect, connection: {self.__connection}')
 
     def on_message(self, message):
-        data = json.loads(self.inflate(message))
+        data = json.loads(message)
         if 'arg' in data:
             channel = data['arg']['channel']
             if channel == 'tickers':
@@ -124,9 +124,3 @@ class OkexWSV5(HttpUtil):
                 print('event unsubscribe channel: ', data['arg'])
             elif data['event'] == 'error':
                 print('event error: ', data['code'], data['msg'])
-
-    def inflate(self, data):
-        decompress = zlib.decompressobj(-zlib.MAX_WBITS)
-        inflated = decompress.decompress(data)
-        inflated += decompress.flush()
-        return inflated
