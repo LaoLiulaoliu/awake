@@ -56,7 +56,7 @@ class OkexWSV5(HttpUtil):
 
     def login(self):
         endpoint = '/users/self/verify'
-        timestamp = str(round(datetime.now().timestamp(), 3))
+        timestamp = str(round(time.time(), 3))
         sign = self.signature(timestamp, 'GET', endpoint, '')
 
         sub = {'op': 'login',

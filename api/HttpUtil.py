@@ -59,7 +59,8 @@ class HttpUtil(object):
         if body is None or body == {}:
             body = ''
         message = str(timestamp) + str.upper(method) + request_path + str(body)
-        mac = hmac.new(bytes(self.__secretkey, encoding='utf8'), bytes(message, encoding='utf-8'),
+        mac = hmac.new(bytes(self.__secretkey, encoding='utf8'),
+                       bytes(message, encoding='utf-8'),
                        digestmod='sha256').digest()
         return base64.b64encode(mac)
 
