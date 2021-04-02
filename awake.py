@@ -77,7 +77,7 @@ def main():
         if i['instrument_id'] == INSTRUMENT[VALUTA_IDX].upper():
             enobs = len(i['tick_size'].split('.')[1])
 
-#    greenlets.append(gevent.spawn(strategy, state, enobs))
+    greenlets.append(gevent.spawn(strategy, state, enobs))
     gevent.joinall(greenlets)
 
 
