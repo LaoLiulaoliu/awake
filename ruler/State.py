@@ -320,7 +320,7 @@ class State(object):
         for i in message:
             currency = i['details'][0]['ccy'].upper()
             self.balance[currency] = float(i['details'][0]['eq'])
-            self.available[currency] = float(i['details'][0]['availBal'])
+            self.available[currency] = float(i['details'][0]['availEq'])
 
     def parse_order_v5(self, message):
         """
