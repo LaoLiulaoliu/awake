@@ -48,7 +48,7 @@ def main():
     greenlets = []
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
     if API_VERSION == 5:
-        ws1 = OkexWSV5({'channel': 'tickers', 'instId': INSTRUMENT[VALUTA_IDX].upper()},
+        ws1 = OkexWSV5([{'channel': 'tickers', 'instId': INSTRUMENT[VALUTA_IDX].upper()}],
                        state, use_trade_key=True, channel='public')
 
         ws_channels = [
@@ -77,7 +77,7 @@ def main():
         if i['instrument_id'] == INSTRUMENT[VALUTA_IDX].upper():
             enobs = len(i['tick_size'].split('.')[1])
 
-    greenlets.append(gevent.spawn(strategy, state, enobs))
+#    greenlets.append(gevent.spawn(strategy, state, enobs))
     gevent.joinall(greenlets)
 
 

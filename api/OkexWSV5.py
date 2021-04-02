@@ -28,6 +28,7 @@ class OkexWSV5(HttpUtil):
         self.__secretkey = secretkey
         self.__passphrase = passphrase
 
+        self.channel = channel
         self.ws_url = WS_PRIVATE if channel == 'private' else WS_PUBLIC
 
     def ws_create(self):
@@ -66,7 +67,8 @@ class OkexWSV5(HttpUtil):
 
     def on_open(self):
         print('ws_on_open: ', self.__ws_subs)
-        self.login()
+        if self.channel == 'private':
+            self.login()
         time.sleep(0.1)
 
         self.__connection.send(json.dumps({'op': 'subscribe', 'args': self.__ws_subs}))
