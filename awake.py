@@ -10,6 +10,7 @@ monkey.patch_all()
 from datetime import datetime
 
 from api.OkexWSV3 import OkexWSV3
+from api.OkexWSV5 import OkexWSV5
 from api.instruments import ENOBs
 from storage.Numpd import Numpd
 from ruler.State import State
@@ -17,7 +18,7 @@ from ruler.Cron import Cron
 from ruler.Scheduler import Scheduler
 from ruler.Trade import Trade
 from strategies.frequently import strategy
-from const import TREND_NAME_TIME, INSTRUMENT, TRADE_NAME, VALUTA_IDX
+from const import TREND_NAME_TIME, INSTRUMENT, TRADE_NAME, VALUTA_IDX, API_VERSION
 
 import monitor.log
 
@@ -45,13 +46,22 @@ def main():
     state = State(trend, trade)
 
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
-    ws = OkexWSV3([f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
-                   f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
-                   f'spot/account:{coin_unit}',
-                   f'spot/account:{money_unit}'
-                   ],
-                  state,
-                  use_trade_key=True)
+
+    if API_VERSION == 5:
+        ws_channels = [
+            {'channel': 'account', 'ccy': money_unit},
+            {'channel': 'account', 'ccy': coin_unit},
+            {'channel': 'orders', 'instType': 'SPOT', 'instId': INSTRUMENT[VALUTA_IDX].upper()}
+        ]
+        ws = OkexWSV5(ws_channels, state, use_trade_key=True, channel='private')
+    else:
+        ws_channels = [f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
+                       f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
+                       f'spot/account:{coin_unit}',
+                       f'spot/account:{money_unit}'
+                       ]
+        ws = OkexWSV3(ws_channels, state, use_trade_key=True)
+
     g1 = gevent.spawn(ws.ws_create)
     g2 = schedule_rotate_trend_file(trend.reopen)
     gevent.sleep(5)

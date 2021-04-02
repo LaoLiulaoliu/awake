@@ -329,9 +329,16 @@ class State(object):
         for i in message:
             if i['state'] == 'live':
                 state = 0
+                timestamp = int(i['cTime'])
+                side = 0 if i['side'] == 'buy' else 1
+                self.trade.append([int(i['ordId']), timestamp, np.float64(i['px']),
+                                   np.float64(i['sz']), side, state])
             elif i['state'] == 'partially_filled':
                 state = 1
+                self.trade.append([int(i['ordId']), 0, 0, 0, 0, state])
             elif i['state'] == 'filled':
                 state = 2
+                self.trade.append([int(i['ordId']), 0, 0, 0, 0, state])
             elif i['state'] == 'canceled':
                 state = -1
+                self.trade.append([int(i['ordId']), 0, 0, 0, 0, state])
