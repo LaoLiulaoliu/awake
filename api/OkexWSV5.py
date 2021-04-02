@@ -93,7 +93,7 @@ class OkexWSV5(HttpUtil):
 
     def on_message(self, message):
         data = json.loads(message)
-        if 'arg' in data:
+        if 'data' in data:
             channel = data['arg']['channel']
             if channel == 'tickers':
                 self.state.parse_ticker_v5(data['data'])
