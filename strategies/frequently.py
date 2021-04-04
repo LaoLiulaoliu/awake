@@ -5,6 +5,7 @@ import gevent
 import time
 import logging
 import numpy as np
+from collections import defaultdict
 from api.apiwrapper import cancel_order, place_batch_orders, cancel_batch_orders
 from const import INSTRUMENT, VALUTA_IDX
 
@@ -68,6 +69,21 @@ def parse_buy_sell_pair(state, buy_sell_pair):
         logger.info(f'exit: buy_sell_pair: {buy_sell_pair}, remove pair: {remove_pair}')
         state.show_trade_len()
 
+def best_buy_sell_price_duplicate(buy_price, buy_prices, sell_price, sell_prices, enobs):
+    """
+    buy_prices: {186: [1861, 1865, 1868], 191: [1911, 1913]}
+    """
+    buy_key = int(buy_price * 10 ** (enobs - 1))
+    buy_value = int(buy_price * 10 ** enobs)
+    sell_key = int(sell_price * 10 ** (enobs - 1))
+    sell_value = int(sell_price * 10 ** enobs)
+
+    if buy_value in buy_prices[buy_key] or sell_value in sell_prices[sell_key]:
+        return True
+    else:
+        buy_prices[buy_key].add(buy_value)
+        sell_prices[sell_key].add(sell_value)
+        return False
 
 def strategy(state, enobs=3):
     """ Need ticker, account, order in websocket API, please set in awake.py
@@ -77,6 +93,8 @@ def strategy(state, enobs=3):
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
     buy_sell_pair = []
     ongoing_num = 10
+    buy_prices = defaultdict(set)
+    sell_prices = defaultdict(set)
 
     while True:
         parse_buy_sell_pair(state, buy_sell_pair)
@@ -87,8 +105,9 @@ def strategy(state, enobs=3):
         timestamp, current_price, best_ask, best_bid = state.get_latest_trend()
         best_ask_size, best_bid_size = state.get_best_size()
         if timestamp > last_time:
+            last_time = timestamp
+
             if coin < 1:
-                last_time = timestamp
                 continue
 
             if best_ask - 10 ** -enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
@@ -101,7 +120,6 @@ def strategy(state, enobs=3):
                     f'buy_price: {buy_price}, sell_price: {sell_price}, size: {size}, coin: {coin}, {len(buy_sell_pair)} > {ongoing_num}')
                 if size > 0 and buy_price < money:
                     if len(buy_sell_pair) > ongoing_num:
-                        last_time = timestamp
                         continue
 
                     order_ids = place_batch_orders([
@@ -120,9 +138,10 @@ def strategy(state, enobs=3):
                                 side = 'buy' if i == 0 else 'sell'
                                 logger.info(
                                     f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
-                        last_time = timestamp
                         continue
 
-                    buy_sell_pair.append((int(time.time()), order_ids[0], order_ids[1]))
-                    gevent.sleep(np.random.randint(15, 25))
-            last_time = timestamp
+                    if best_buy_sell_price_duplicate(buy_price, buy_prices, sell_price, sell_prices, enobs):
+                        continue
+                    else:
+                        buy_sell_pair.append((int(time.time()), order_ids[0], order_ids[1]))
+                        gevent.sleep(np.random.randint(15, 25))
