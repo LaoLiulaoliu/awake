@@ -76,7 +76,7 @@ def strategy(state, enobs=3):
     last_time, last_trade_price, best_ask, best_bid = state.get_latest_trend()
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
     buy_sell_pair = []
-    ongoing_num = 6
+    ongoing_num = 10
 
     while True:
         parse_buy_sell_pair(state, buy_sell_pair)
@@ -94,8 +94,8 @@ def strategy(state, enobs=3):
             if best_ask - 10 ** -enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
                 limit = max(round(np.random.normal(2, 1), enobs), 1)
                 size = int(min(best_ask_size, best_bid_size, limit))  # hold coin < market bid coin
-                buy_price = round(best_bid - 10 ** -enobs, enobs)  # buy before sell
-                sell_price = round(best_ask + 10 ** -enobs, enobs)
+                buy_price = round(best_bid - 2 * 10 ** -enobs, enobs)  # buy before sell
+                sell_price = round(best_ask + 2 * 10 ** -enobs, enobs)
                 logger.info(
                     f'buy_price: {buy_price}, sell_price: {sell_price}, size: {size}, coin: {coin}, {len(buy_sell_pair)} > {ongoing_num}')
                 if size > 0 and buy_price < money:

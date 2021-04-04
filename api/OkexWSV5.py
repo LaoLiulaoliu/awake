@@ -75,8 +75,8 @@ class OkexWSV5(HttpUtil):
 
     def on_error(self, error):
         """ If reconnect, on_open after create.
-        ws_on_error:  <websocket._app.WebSocketApp object at 0x7f15f860ce50> Connection is already closed.
-        ws_on_open:  ['spot/ticker:ALPHA-USDT']
+        ws_on_error:  <websocket._app.WebSocketApp object at 0x7fd942687f40> [Errno 104] Connection reset by peer
+        ws_on_open:  [{'channel': 'tickers', 'instId': 'ALPHA-USDT'}]
         """
         print('ws_on_error: ', self.__connection, error)
         self.ws_create()
@@ -84,8 +84,6 @@ class OkexWSV5(HttpUtil):
 
     def on_close(self):
         """ error occure before close
-        ws_on_error <websocket._app.WebSocketApp object at 0x7f69baf2be80> Connection is already closed.
-        ws_on_close <websocket._app.WebSocketApp object at 0x7f69baf2be80> ['spot/ticker:ALPHA-USDT']
         """
         print('ws_on_close', self.__connection, self.__ws_subs)
         self.ws_create()
