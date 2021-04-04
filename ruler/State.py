@@ -288,7 +288,7 @@ class State(object):
             print(i['side'], i['trade_id'], i['size'], i['price'])
 
     def show_trade_len(self):
-        self.trade.print_trade_length_info()
+        logger.info(f'trade length: {self.trade.get_trade_length()}')
 
     def parse_depth5_v3(self, message):
         """ ticker is slow, need depth5 for high frequency
