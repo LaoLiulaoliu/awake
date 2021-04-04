@@ -94,6 +94,7 @@ def strategy(state, enobs=3):
             if best_ask - 10 ** -enobs * 3 >= best_bid:  # e.g best_ask: 7, best_bid: 4, 2 slots between them
                 limit = max(round(np.random.normal(2, 1), enobs), 1)
                 size = int(min(best_ask_size, best_bid_size, limit))  # hold coin < market bid coin
+                size = 1 if size < 1 else size
                 buy_price = round(best_bid - 2 * 10 ** -enobs, enobs)  # buy before sell
                 sell_price = round(best_ask + 2 * 10 ** -enobs, enobs)
                 logger.info(
