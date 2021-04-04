@@ -311,9 +311,10 @@ class State(object):
 
             timestamp = int(i['ts'])
             current_price = np.float64(i['last'])
-            self.trend.append((timestamp, current_price, np.float64(i['askPx']), np.float64(i['bidPx'])))
-            self.best_size[0] = np.float64(i['askSz'])
-            self.best_size[1] = np.float64(i['bidSz'])
+            self.trend.append((timestamp, current_price,
+                               np.float64(i['askPx']), np.float64(i['bidPx']),
+                               np.float64(i['askSz']), np.float64(i['bidSz'])))
+
             self.event.set()  # set flag to true
 
     def parse_account_v5(self, message):
