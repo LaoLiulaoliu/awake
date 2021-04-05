@@ -12,13 +12,15 @@ from const import INSTRUMENT, VALUTA_IDX
 logger = logging.getLogger()
 
 
-def parse_buy_sell_pair(state, buy_sell_pair):
+def parse_buy_sell_pair(state, buy_sell_pair, buy_prices, sell_prices):
     remove_pair = []
-    if remove_pair or buy_sell_pair:
-        logger.info(f'enter: buy_sell_pair: {buy_sell_pair}, remove pair: {remove_pair}')
+    if len(buy_sell_pair) > 0:
+        logger.info(f'enter: buy_sell_pair: {buy_sell_pair}')
         state.show_trade_len()
 
-    for timestamp, buy_order_id, sell_order_id in buy_sell_pair:
+    for k, v in buy_sell_pair.items():
+        timestamp, buy_order_id, sell_order_id = k
+
         buy_trade = state.get_order_by_id(buy_order_id)
         sell_trade = state.get_order_by_id(sell_order_id)
         buy_state = int(buy_trade[-1])
@@ -30,7 +32,7 @@ def parse_buy_sell_pair(state, buy_sell_pair):
             logger.info(f'both filled: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
 
         elif {buy_state, sell_state} == {0}:
-            # cancel in [15, 25]s, aviod a lot orders, but may miss opportunity.
+            # cancel in [15, 24]s, aviod a lot orders, but may miss opportunity.
             cancel_batch_orders((buy_order_id, sell_order_id))
             state.delete_canceled_orders((buy_order_id, sell_order_id))
             remove_pair.append((timestamp, buy_order_id, sell_order_id))
@@ -64,10 +66,22 @@ def parse_buy_sell_pair(state, buy_sell_pair):
             logger.info(
                 f'both unknown[{buy_trade[-1]}, {sell_trade[-1]}]: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
 
-    [buy_sell_pair.remove(i) for i in remove_pair]
-    if remove_pair or buy_sell_pair:
+    for i in remove_pair:
+        buy_price, sell_price = buy_sell_pair.pop(i)
+        delete_buy_sell_price_from_recorder(buy_price, buy_prices, sell_price, sell_prices)
+
+    if remove_pair or len(buy_sell_pair) > 0:
         logger.info(f'exit: buy_sell_pair: {buy_sell_pair}, remove pair: {remove_pair}')
         state.show_trade_len()
+
+def delete_buy_sell_price_from_recorder(buy_price, buy_prices, sell_price, sell_prices):
+    buy_key = int(buy_price * 10 ** (enobs - 1))
+    buy_value = int(buy_price * 10 ** enobs)
+    sell_key = int(sell_price * 10 ** (enobs - 1))
+    sell_value = int(sell_price * 10 ** enobs)
+
+    buy_prices[buy_key].remove(buy_value)
+    sell_prices[sell_key].remove(sell_value)
 
 def best_buy_sell_price_duplicate(buy_price, buy_prices, sell_price, sell_prices, enobs):
     """
@@ -91,13 +105,14 @@ def strategy(state, enobs=3):
     """
     last_time, last_trade_price, best_ask, best_bid = state.get_latest_trend()
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
-    buy_sell_pair = []
+
+    buy_sell_pair = defaultdict(tuple)
     ongoing_num = 10
     buy_prices = defaultdict(set)
     sell_prices = defaultdict(set)
 
     while True:
-        parse_buy_sell_pair(state, buy_sell_pair)
+        parse_buy_sell_pair(state, buy_sell_pair, buy_prices, sell_prices)
         available = state.get_available()
         coin = available[coin_unit]
         money = available[money_unit]
@@ -143,5 +158,5 @@ def strategy(state, enobs=3):
                     if best_buy_sell_price_duplicate(buy_price, buy_prices, sell_price, sell_prices, enobs):
                         continue
                     else:
-                        buy_sell_pair.append((int(time.time()), order_ids[0], order_ids[1]))
-                        gevent.sleep(np.random.randint(15, 25))
+                        buy_sell_pair[(int(time.time()), order_ids[0], order_ids[1])] = (buy_price, sell_price)
+                        gevent.sleep(np.random.randint(15, 24))
