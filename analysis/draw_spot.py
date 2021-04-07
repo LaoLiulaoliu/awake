@@ -71,7 +71,7 @@ def draw_trend_txt(fname, col_dim=4):
     trend = Numpd(fname, col_dim)
     if col_dim == 2:
         trend.trend_load()
-    elif col_dim == 4:
+    elif col_dim == 6:
         trend.trend_full_load()
 
     for i, data in trend.iterator(reverse=True):
