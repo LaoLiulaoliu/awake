@@ -82,9 +82,9 @@ class OkexWSV3(HttpUtil):
         ws_on_error:  <websocket._app.WebSocketApp object at 0x7f15f860ce50> Connection is already closed.
         ws_on_open:  ['spot/ticker:ALPHA-USDT']
         """
-        print('ws_on_error: ', self.__connection, error)
+        print('ws_on_error: ', int(time.time()), self.__connection, error)
         self.ws_create()
-        print('ws_on_error reconnected which will not be print.', time.time())
+        print('ws_on_error reconnected which will not be print.')
 
     def on_close(self):
         """ error occure before close
