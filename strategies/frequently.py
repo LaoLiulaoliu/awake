@@ -12,7 +12,7 @@ from const import INSTRUMENT, VALUTA_IDX
 logger = logging.getLogger()
 
 
-def parse_buy_sell_pair(state, buy_sell_pair, buy_prices, sell_prices):
+def parse_buy_sell_pair(state, buy_sell_pair, buy_prices, sell_prices, enobs):
     remove_pair = []
     if len(buy_sell_pair) > 0:
         logger.info(f'enter: buy_sell_pair: {buy_sell_pair}')
@@ -68,13 +68,13 @@ def parse_buy_sell_pair(state, buy_sell_pair, buy_prices, sell_prices):
 
     for i in remove_pair:
         buy_price, sell_price = buy_sell_pair.pop(i)
-        delete_buy_sell_price_from_recorder(buy_price, buy_prices, sell_price, sell_prices)
+        delete_buy_sell_price_from_recorder(buy_price, buy_prices, sell_price, sell_prices, enobs)
 
     if remove_pair or len(buy_sell_pair) > 0:
         logger.info(f'exit: buy_sell_pair: {buy_sell_pair}, remove pair: {remove_pair}')
         state.show_trade_len()
 
-def delete_buy_sell_price_from_recorder(buy_price, buy_prices, sell_price, sell_prices):
+def delete_buy_sell_price_from_recorder(buy_price, buy_prices, sell_price, sell_prices, enobs):
     buy_key = int(buy_price * 10 ** (enobs - 1))
     buy_value = int(buy_price * 10 ** enobs)
     sell_key = int(sell_price * 10 ** (enobs - 1))
@@ -112,7 +112,7 @@ def strategy(state, enobs=3):
     sell_prices = defaultdict(set)
 
     while True:
-        parse_buy_sell_pair(state, buy_sell_pair, buy_prices, sell_prices)
+        parse_buy_sell_pair(state, buy_sell_pair, buy_prices, sell_prices, enobs)
         available = state.get_available()
         coin = available[coin_unit]
         money = available[money_unit]
