@@ -27,22 +27,31 @@
             datas.map(function(item, index, _) {
                 source.push(arrToNumber(item));
             });
+            const dimensions = [{name: 'time', type: 'ordinal'}, 'price', 'ask', 'bid'];
+
+            console.log(source);
 
             myChart.setOption({
                 title: {text: 'backtesting'},
                 dataset: {
-                    dimensions: ['time', 'price', 'ask', 'bid'],
+                    dimensions: dimensions,
                     source: source
                 },
                 xAxis: {
-                    type: 'value'
+                    type: 'value',
+                    splitLine: {lineStyle: {type: 'dashed'}}
                 },
                 yAxis: {
                     type: 'value'
                 },
                 series: [{
-                    type: 'line',
-                    seriesLayoutBy: 'column'
+                    type: 'scatter',
+                    symbolSize: 20,
+                    encode: {
+                        x: 'time',
+                        y: 'price',
+                        tooltip: [0, 1],
+                    }
                 }]
 
             });
