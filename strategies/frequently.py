@@ -32,7 +32,7 @@ def parse_buy_sell_pair(state, buy_sell_pair, buy_prices, sell_prices, enobs):
             logger.info(f'both filled: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
 
         elif {buy_state, sell_state} == {0}:
-            # cancel in [15, 24]s, aviod a lot orders, but may miss opportunity.
+            # cancel in [13, 24]s, aviod a lot orders, but may miss opportunity.
             cancel_batch_orders((buy_order_id, sell_order_id))
             state.delete_canceled_orders((buy_order_id, sell_order_id))
             remove_pair.append((timestamp, buy_order_id, sell_order_id))
@@ -159,4 +159,5 @@ def strategy(state, enobs=3):
                         continue
                     else:
                         buy_sell_pair[(int(time.time()), order_ids[0], order_ids[1])] = (buy_price, sell_price)
-                        gevent.sleep(np.random.randint(15, 24))
+                        logger.info(f'buy_sell_pair: {buy_sell_pair.keys()}, buy_prices: {buy_prices}, sell_prices: {sell_prices}')
+                        gevent.sleep(np.random.randint(13, 24))
