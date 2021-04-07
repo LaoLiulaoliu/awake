@@ -78,9 +78,9 @@ class OkexWSV5(HttpUtil):
         ws_on_error:  <websocket._app.WebSocketApp object at 0x7fd942687f40> [Errno 104] Connection reset by peer
         ws_on_open:  [{'channel': 'tickers', 'instId': 'ALPHA-USDT'}]
         """
-        print('ws_on_error: ', self.__connection, error)
+        print('ws_on_error: ', int(time.time()), self.__connection, error)
         self.ws_create()
-        print('ws_on_error reconnected which will not be print.', time.time())
+        print('ws_on_error reconnected which will not be print.')
 
     def on_close(self):
         """ error occure before close
