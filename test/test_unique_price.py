@@ -30,6 +30,24 @@ def best_buy_sell_price_duplicate(buy_price, buy_prices, sell_price, sell_prices
         sell_prices[sell_key].add(sell_value)
         return False
 
+def parse_price(buy_sell_pair, buy_prices, sell_prices, enobs):
+    # after filled or timeout
+    remove_pair = []
+
+    for k, v in buy_sell_pair.items():
+        buy_price, sell_price = v
+        if buy_price - 1.73 < 1e-5:
+            pass
+        else:
+            remove_pair.append(k)
+            break
+
+    for i in remove_pair:
+        buy_price, sell_price = buy_sell_pair.pop(i)
+        delete_buy_sell_price_from_recorder(buy_price, buy_prices, sell_price, sell_prices, enobs)
+
+        print('del: ', buy_price, buy_prices, sell_price, sell_prices)
+
 
 def main(enobs=3):
     buy_prices = defaultdict(set)
@@ -38,7 +56,7 @@ def main(enobs=3):
 
     prices = [1.732, 1.734, 1.735, 1.736, 1.732, 1.734, 1.735]
     for p in prices:
-        remove_pair = []
+        parse_price(buy_sell_pair, buy_prices, sell_prices, enobs)
 
         buy_price = round(p - 2 * 10 ** -enobs, enobs)
         sell_price = round(p + 2 * 10 ** -enobs, enobs)
@@ -51,15 +69,5 @@ def main(enobs=3):
             buy_sell_pair[int(time.time())] = (buy_price, sell_price)
             time.sleep(1)
 
-            # after filled or timeout
-            for k, v in buy_sell_pair.items():
-                remove_pair.append(k)
-                break
-
-            for i in remove_pair:
-                buy_price, sell_price = buy_sell_pair.pop(i)
-                delete_buy_sell_price_from_recorder(buy_price, buy_prices, sell_price, sell_prices, enobs)
-
-        print('del: ', buy_price, buy_prices, sell_price, sell_prices)
 
 main()
