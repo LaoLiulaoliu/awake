@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+    <title>ECharts</title>
+    <script src="https://cdn.staticfile.org/echarts/5.0.2/echarts.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+</head>
+<body>
+    <div id="main" style="width:600px; height:400px;"></div>
+    <script type="text/javascript">
+
+        function arrToNumber(arr) {
+            return arr.map(Number).filter(Boolean);
+        }
+
+        var myChart = echarts.init(document.getElementById('main'));
+        myChart.showLoading();
+
+        $.get('http://172.17.34.8:5926/backtesting', function(datas) {
+            myChart.hideLoading();
+            datas = JSON.parse(datas);
+
+            source = [];
+            datas.map(function(item, index, _) {
+                source.push(arrToNumber(item));
+            });
+
+            myChart.setOption({
+                title: {text: 'backtesting'},
+                dataset: {
+                    dimensions: ['time', 'price', 'ask', 'bid'],
+                    source: source
+                },
+                xAxis: {
+                    type: 'value'
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [{
+                    type: 'line',
+                    seriesLayoutBy: 'column'
+                }]
+
+            });
+        })
+    </script>
+</body>
+</html>
