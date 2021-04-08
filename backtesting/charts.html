@@ -13,9 +13,7 @@
     <script type="text/javascript">
 
         function arrToNumber(arr) {
-            a = arr.map(Number).filter(Boolean);
-            a[0] = Math.round(a[0] / 1000);
-            return a;
+            return arr.map(Number).filter(Boolean);
         }
 
         var myChart = echarts.init(document.getElementById('main'));
@@ -29,7 +27,7 @@
             datas.map(function(item, index, _) {
                 source.push(arrToNumber(item));
             });
-            const dimensions = [{name: 'time', type: 'ordinal'}, 'price', 'ask', 'bid'];
+            const dimensions = ['time', 'price', 'ask', 'bid'];
 
             console.log(source);
 
@@ -39,15 +37,27 @@
                     dimensions: dimensions,
                     source: source
                 },
+                grid: {
+                    containLabel: true
+                },
                 xAxis: {
-                    type: 'value',
+                    type: 'time',
                     name: 'time',
                     scale: true,
-                    axisLabel: {rotate: 50, interval: 0}
+                    splitLine: { show: false },
+                    splitNumber: 13,
+                    axisLabel: {
+                        rotate: 45,
+                        interval: 0,
+                        formatter: function(value, index) {
+                            return new Date(value).toISOString().substring(0, 19);
+                        }
+                    }
                 },
                 yAxis: {
                     type: 'value',
-                    name: 'price'
+                    name: 'price',
+                    axisLine: {show: true}
                 },
                 series: [{
                     type: 'scatter',
