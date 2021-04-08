@@ -67,13 +67,27 @@
                 }],
                 dataZoom: [
                     {
-                        type: 'slider'//x轴
+                        type: 'slider'
                     },
                     {
-                        type: 'inside',//x轴
+                        type: 'inside',
                         zoomOnMouseWheel:'alt'
                     }
-                ]
+                ],
+
+                toolbox:{
+                    orient: 'horizontal',
+                    feature:{
+                        restore: {
+                            title: "restore",   
+                        }
+                    },
+                    itemSize: 18,
+                    iconStyle: {
+                        textAlign: 'right',
+                    }
+                }
+
             });
         })
     </script>
