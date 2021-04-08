@@ -107,7 +107,7 @@ def strategy(state, enobs=3):
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
 
     buy_sell_pair = defaultdict(tuple)
-    ongoing_num = 12
+    ongoing_num = 13
     buy_prices = defaultdict(set)
     sell_prices = defaultdict(set)
 
