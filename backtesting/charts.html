@@ -61,13 +61,21 @@
                 },
                 series: [{
                     type: 'scatter',
-                    symbolSize: 1,
+                    symbolSize: 3,
                     encode: {
                         x: 'time',
                         y: 'price'
                     }
-                }]
-
+                }],
+                dataZoom: [
+                    {
+                        type: 'slider'//x轴
+                    },
+                    {
+                        type: 'inside',//x轴
+                        zoomOnMouseWheel:'alt'
+                    }
+                ]
             });
         })
     </script>
