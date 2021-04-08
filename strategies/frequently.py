@@ -96,9 +96,9 @@ def best_buy_sell_price_duplicate(buy_price, buy_prices, sell_price, sell_prices
         logger.info(f'True: buy_prices: {buy_price}, {buy_prices}, sell_prices: {sell_price}, {sell_prices}')
         return True
     else:
-        logger.info(f'False: buy_prices: {buy_price}, {buy_prices}, sell_prices: {sell_price}, {sell_prices}')
         buy_prices[buy_key].add(buy_value)
         sell_prices[sell_key].add(sell_value)
+        logger.info(f'False: buy_prices: {buy_price}, {buy_prices}, sell_prices: {sell_price}, {sell_prices}')
         return False
 
 def strategy(state, enobs=3):
@@ -157,8 +157,10 @@ def strategy(state, enobs=3):
                                     f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
                         continue
 
-                    if best_buy_sell_price_duplicate(buy_price, buy_prices, sell_price, sell_prices, enobs):
+                    if best_buy_sell_price_duplicate(buy_price, buy_prices, sell_price, sell_prices, enobs) is True:
+                        logger.info(f'buy_sell_pair not do add')
                         continue
                     else:
+                        logger.info(f'buy_sell_pair add new: {buy_price}, {sell_price}')
                         buy_sell_pair[(int(time.time()), order_ids[0], order_ids[1])] = (buy_price, sell_price)
                         gevent.sleep(np.random.randint(13, 24))
