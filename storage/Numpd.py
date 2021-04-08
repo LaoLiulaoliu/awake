@@ -58,13 +58,20 @@ class Numpd(Numpp):
             timestamp, price = line.split(self.sep)
             self.push_back((int(timestamp), np.float64(price)))
 
-    def trend_full_load(self):
+    def trend_full_new_load(self):
         self.fp.seek(0, 0)
         for line in self.fp:
             timestamp, price, ask_price, bid_price, ask_size, bid_size = line.split(self.sep)
             self.push_back((int(timestamp), np.float64(price),
                            np.float64(ask_price), np.float64(bid_price),
                            np.float64(ask_size), np.float64(bid_size)))
+
+    def trend_full_load(self):
+        self.fp.seek(0, 0)
+        for line in self.fp:
+            timestamp, price, ask_price, bid_price = line.split(self.sep)
+            self.push_back((int(timestamp), np.float64(price),
+                           np.float64(ask_price), np.float64(bid_price)))
 
     def append(self, line_list):
         try:
