@@ -158,9 +158,9 @@ def strategy(state, enobs=3):
                         continue
 
                     if best_buy_sell_price_duplicate(buy_price, buy_prices, sell_price, sell_prices, enobs) is True:
-                        logger.info(f'buy_sell_pair not do add')
+                        logger.info(f'buy_sell_pair not do add buy: {buy_price}, sell: {sell_price}')
                         continue
                     else:
-                        logger.info(f'buy_sell_pair add new: {buy_price}, {sell_price}')
+                        logger.info(f'buy_sell_pair add new buy: {buy_price}, sell: {sell_price}')
                         buy_sell_pair[(int(time.time()), order_ids[0], order_ids[1])] = (buy_price, sell_price)
                         gevent.sleep(np.random.randint(13, 24))
