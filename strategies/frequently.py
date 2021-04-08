@@ -32,7 +32,7 @@ def parse_buy_sell_pair(state, buy_sell_pair, buy_prices, sell_prices, enobs):
             logger.info(f'both filled: {buy_trade[2]}, {buy_trade[3]}, {sell_trade[2]}, {sell_trade[3]}')
 
         elif {buy_state, sell_state} == {0}:
-            # cancel in [13, 24]s, aviod a lot orders, but may miss opportunity.
+            # cancel in [15, 24]s, aviod a lot orders, but may miss opportunity.
             cancel_batch_orders((buy_order_id, sell_order_id))
             state.delete_canceled_orders((buy_order_id, sell_order_id))
             remove_pair.append((timestamp, buy_order_id, sell_order_id))
@@ -93,12 +93,10 @@ def best_buy_sell_price_duplicate(buy_price, buy_prices, sell_price, sell_prices
     sell_value = int(sell_price * 10 ** enobs)
 
     if buy_value in buy_prices[buy_key] or sell_value in sell_prices[sell_key]:
-        logger.info(f'True: buy_prices: {buy_price}, {buy_prices}, sell_prices: {sell_price}, {sell_prices}')
         return True
     else:
         buy_prices[buy_key].add(buy_value)
         sell_prices[sell_key].add(sell_value)
-        logger.info(f'False: buy_prices: {buy_price}, {buy_prices}, sell_prices: {sell_price}, {sell_prices}')
         return False
 
 def strategy(state, enobs=3):
@@ -109,7 +107,7 @@ def strategy(state, enobs=3):
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
 
     buy_sell_pair = defaultdict(tuple)
-    ongoing_num = 4
+    ongoing_num = 10
     buy_prices = defaultdict(set)
     sell_prices = defaultdict(set)
 
@@ -139,6 +137,9 @@ def strategy(state, enobs=3):
                     if len(buy_sell_pair) > ongoing_num:
                         continue
 
+                    if best_buy_sell_price_duplicate(buy_price, buy_prices, sell_price, sell_prices, enobs):
+                        continue
+
                     order_ids = place_batch_orders([
                         {'price': buy_price, 'size': size, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
                         {'price': sell_price, 'size': size, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
@@ -157,10 +158,5 @@ def strategy(state, enobs=3):
                                     f'{side} failed, buy_price: {buy_price}, sell_price: {sell_price}, size: {size}')
                         continue
 
-                    if best_buy_sell_price_duplicate(buy_price, buy_prices, sell_price, sell_prices, enobs) is True:
-                        logger.info(f'buy_sell_pair not do add buy: {buy_price}, sell: {sell_price}')
-                        continue
-                    else:
-                        logger.info(f'buy_sell_pair add new buy: {buy_price}, sell: {sell_price}')
-                        buy_sell_pair[(int(time.time()), order_ids[0], order_ids[1])] = (buy_price, sell_price)
-                        gevent.sleep(np.random.randint(13, 24))
+                    buy_sell_pair[(int(time.time()), order_ids[0], order_ids[1])] = (buy_price, sell_price)
+                    gevent.sleep(np.random.randint(9, 19))
