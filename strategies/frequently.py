@@ -93,8 +93,10 @@ def best_buy_sell_price_duplicate(buy_price, buy_prices, sell_price, sell_prices
     sell_value = int(sell_price * 10 ** enobs)
 
     if buy_value in buy_prices[buy_key] or sell_value in sell_prices[sell_key]:
+        logger.info(f'True: buy_prices: {buy_price}, {buy_prices}, sell_prices: {sell_price}, {sell_prices}')
         return True
     else:
+        logger.info(f'False: buy_prices: {buy_price}, {buy_prices}, sell_prices: {sell_price}, {sell_prices}')
         buy_prices[buy_key].add(buy_value)
         sell_prices[sell_key].add(sell_value)
         return False
@@ -159,5 +161,4 @@ def strategy(state, enobs=3):
                         continue
                     else:
                         buy_sell_pair[(int(time.time()), order_ids[0], order_ids[1])] = (buy_price, sell_price)
-                        logger.info(f'buy_sell_pair: {buy_sell_pair}, buy_prices: {buy_price}, {buy_prices}, sell_prices: {sell_price}, {sell_prices}')
                         gevent.sleep(np.random.randint(13, 24))
