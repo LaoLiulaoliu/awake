@@ -54,17 +54,46 @@
                 },
                 yAxis: {
                     type: 'value',
-                    name: 'price',
+                    name: 'trend',
+                    scale: true,
                     axisLine: {show: true}
                 },
-                series: [{
-                    type: 'scatter',
-                    symbolSize: 3,
-                    encode: {
-                        x: 'time',
-                        y: 'price'
+                tooltip: {
+                    show: true, // 提示框，鼠标悬浮交互时的信息提示，是否显示
+                    trigger: 'axis', // 触发类型，默认数据触发，可选为：'item' | 'axis'
+                },
+                legend: {
+                    data: ['price', 'ask', 'bid']
+                },
+                series: [
+                    {
+                        name: 'price',
+                        type: 'scatter',
+                        symbolSize: 1,
+                        encode: {
+                            x: 'time',
+                            y: 'price'
+                        }
+                    },
+                    {
+                        name: 'ask',
+                        type: 'scatter',
+                        symbolSize: 1,
+                        encode: {
+                            x: 'time',
+                            y: 'ask'
+                        }
+                    },
+                    {
+                        name: 'bid',
+                        type: 'scatter',
+                        symbolSize: 1,
+                        encode: {
+                            x: 'time',
+                            y: 'bid'
+                        }
                     }
-                }],
+                ],
                 dataZoom: [
                     {
                         type: 'slider'
@@ -74,8 +103,7 @@
                         zoomOnMouseWheel:'alt'
                     }
                 ],
-
-                toolbox:{
+                toolbox: {
                     orient: 'horizontal',
                     feature:{
                         restore: {
