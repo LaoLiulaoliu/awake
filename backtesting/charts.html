@@ -9,17 +9,19 @@
     <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
 </head>
 <body>
-    <div id="main" style="width:600px; height:400px;"></div>
+    <div id="main" style="width:800px; height:500px;"></div>
     <script type="text/javascript">
 
         function arrToNumber(arr) {
-            return arr.map(Number).filter(Boolean);
+            a = arr.map(Number).filter(Boolean);
+            a[0] = Math.round(a[0] / 1000);
+            return a;
         }
 
         var myChart = echarts.init(document.getElementById('main'));
         myChart.showLoading();
 
-        $.get('http://172.17.34.8:5926/backtesting', function(datas) {
+        $.get('http://172.17.34.10:5926/backtesting', function(datas) {
             myChart.hideLoading();
             datas = JSON.parse(datas);
 
@@ -40,6 +42,7 @@
                 xAxis: {
                     type: 'value',
                     name: 'time',
+                    scale: true,
                     axisLabel: {rotate: 50, interval: 0}
                 },
                 yAxis: {
@@ -48,11 +51,10 @@
                 },
                 series: [{
                     type: 'scatter',
-                    symbolSize: 20,
+                    symbolSize: 1,
                     encode: {
                         x: 'time',
-                        y: 'price',
-                        tooltip: [0, 1],
+                        y: 'price'
                     }
                 }]
 
