@@ -19,7 +19,7 @@
         var myChart = echarts.init(document.getElementById('main'));
         myChart.showLoading();
 
-        $.get('http://172.17.34.10:5926/backtesting', function(datas) {
+        $.get('http://127.0.0.1:5926/backtesting', function(datas) {
             myChart.hideLoading();
             datas = JSON.parse(datas);
 
@@ -65,34 +65,16 @@
                     trigger: 'axis', // 触发类型，默认数据触发，可选为：'item' | 'axis'
                 },
                 legend: {
-                    data: ['price', 'ask', 'bid']
+                    data: ['price']
                 },
                 series: [
                     {
                         name: 'price',
                         type: 'scatter',
-                        symbolSize: 1,
+                        symbolSize: 3,
                         encode: {
                             x: 'time',
                             y: 'price'
-                        }
-                    },
-                    {
-                        name: 'ask',
-                        type: 'scatter',
-                        symbolSize: 1,
-                        encode: {
-                            x: 'time',
-                            y: 'ask'
-                        }
-                    },
-                    {
-                        name: 'bid',
-                        type: 'scatter',
-                        symbolSize: 1,
-                        encode: {
-                            x: 'time',
-                            y: 'bid'
                         }
                     }
                 ],

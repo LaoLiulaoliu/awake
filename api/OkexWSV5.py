@@ -85,7 +85,7 @@ class OkexWSV5(HttpUtil):
     def on_close(self):
         """ error occure before close
         """
-        print('ws_on_close', self.__connection, self.__ws_subs)
+        print('ws_on_close', int(time.time()), self.__connection, self.__ws_subs)
         self.ws_create()
         print(f'on close reconnect, connection: {self.__connection}')
 

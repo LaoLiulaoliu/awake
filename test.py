@@ -13,7 +13,7 @@ from test.numpd_test import numpd_test
 from api.OkexSpotV3 import OkexSpotV3
 from api.OkexWSV3 import OkexWSV3
 from api.apiwrapper import place_batch_orders
-from backtesting.run import r20210219
+from backtesting.r20210219 import r20210219
 from const import TREND_NAME_TIME, INSTRUMENT
 from storage.Numpd import Numpd
 from ruler.State import State

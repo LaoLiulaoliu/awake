@@ -8,7 +8,7 @@ CORS(app, resources=r'/*')
 
 @app.route('/backtesting')
 def echarts():
-    data_dir = '/mnt/e/trend/'
+    data_dir = '/Users/bishop/project/allsense/okex/trend_data/'
     files = os.listdir(data_dir)
     files.sort()
 
