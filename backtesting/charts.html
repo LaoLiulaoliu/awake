@@ -4,104 +4,127 @@
     <meta charset="utf-8">
     <meta http-equiv="Access-Control-Allow-Origin" content="*" />
     <title>ECharts</title>
+    <script src="./static/laydate.js"></script>
     <script src="https://cdn.staticfile.org/echarts/5.0.2/echarts.min.js"></script>
     <script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.js"></script>
-    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
 </head>
 <body>
+    <div type="datetime" id="datehead" style="border:1px solid black; width: 300px"></div>
     <div id="main" style="width:1024px; height:768px;"></div>
+
     <script type="text/javascript">
 
         function arrToNumber(arr) {
             return arr.map(Number).filter(Boolean);
         }
 
+        function drawPicture(beginDate, endDate) {
+            $.get('http://127.0.0.1:5926/backtesting/date/'.concat(beginDate, '/' , endDate), function(datas) {
+                myChart.hideLoading();
+                datas = JSON.parse(datas);
+
+                source = [];
+                datas.map(function(item, index, _) {
+                    source.push(arrToNumber(item));
+                });
+                const dimensions = ['time', 'price', 'ask', 'bid'];
+
+                myChart.setOption({
+                    title: {text: 'backtesting'},
+                    dataset: {
+                        dimensions: dimensions,
+                        source: source
+                    },
+                    grid: {
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'time',
+                        name: 'time',
+                        scale: true,
+                        splitLine: { show: true },
+                        splitNumber: 13,
+                        axisLabel: {
+                            rotate: 45,
+                            interval: 0,
+                            formatter: function(value, index) {
+                                return new Date(value).toISOString().substring(0, 19);
+                            }
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: 'trend',
+                        scale: true,
+                        max: 'dataMax',
+                        min: 'dataMin',
+                        axisLine: {show: true}
+                    },
+                    tooltip: {
+                        show: true, // 提示框，鼠标悬浮交互时的信息提示，是否显示
+                        trigger: 'axis', // 触发类型，默认数据触发，可选为：'item' | 'axis'
+                    },
+                    legend: {
+                        data: ['price']
+                    },
+                    series: [
+                        {
+                            name: 'price',
+                            type: 'scatter',
+                            symbolSize: 3,
+                            encode: {
+                                x: 'time',
+                                y: 'price'
+                            }
+                        }
+                    ],
+                    dataZoom: [
+                        {
+                            type: 'slider'
+                        },
+                        {
+                            type: 'inside',
+                            zoomOnMouseWheel:'alt'
+                        }
+                    ],
+                    toolbox: {
+                        orient: 'horizontal',
+                        feature:{
+                            restore: {
+                                title: "restore",
+                            }
+                        },
+                        itemSize: 18,
+                        iconStyle: {
+                            textAlign: 'right',
+                        }
+                    }
+
+                });
+            });
+        }
+
+
         var myChart = echarts.init(document.getElementById('main'));
         myChart.showLoading();
+        var ppp = 1;
+        var ins = laydate.render({
+            elem: '#datehead',
+            type: 'datetime',
+            range: '~',
+            value: '2021-04-08 00:00:00 ~ 2021-04-09 00:00:00',
+            min: '2021-03-20',
+            max: 1,
+            lang: 'en',
+            done: function(value, beginDate, endDate) {
+                insDate = value.split('~');
+                drawPicture(insDate[0].trim().replace(' ', 'T'), insDate[1].trim().replace(' ', 'T'));
+            }
+        });
 
-        $.get('http://127.0.0.1:5926/backtesting', function(datas) {
-            myChart.hideLoading();
-            datas = JSON.parse(datas);
-
-            source = [];
-            datas.map(function(item, index, _) {
-                source.push(arrToNumber(item));
-            });
-            const dimensions = ['time', 'price', 'ask', 'bid'];
-
-            myChart.setOption({
-                title: {text: 'backtesting'},
-                dataset: {
-                    dimensions: dimensions,
-                    source: source
-                },
-                grid: {
-                    containLabel: true
-                },
-                xAxis: {
-                    type: 'time',
-                    name: 'time',
-                    scale: true,
-                    splitLine: { show: false },
-                    splitNumber: 13,
-                    axisLabel: {
-                        rotate: 45,
-                        interval: 0,
-                        formatter: function(value, index) {
-                            return new Date(value).toISOString().substring(0, 19);
-                        }
-                    }
-                },
-                yAxis: {
-                    type: 'value',
-                    name: 'trend',
-                    scale: true,
-                    max: 'dataMax',
-                    min: 'dataMin',
-                    axisLine: {show: true}
-                },
-                tooltip: {
-                    show: true, // 提示框，鼠标悬浮交互时的信息提示，是否显示
-                    trigger: 'axis', // 触发类型，默认数据触发，可选为：'item' | 'axis'
-                },
-                legend: {
-                    data: ['price']
-                },
-                series: [
-                    {
-                        name: 'price',
-                        type: 'scatter',
-                        symbolSize: 3,
-                        encode: {
-                            x: 'time',
-                            y: 'price'
-                        }
-                    }
-                ],
-                dataZoom: [
-                    {
-                        type: 'slider'
-                    },
-                    {
-                        type: 'inside',
-                        zoomOnMouseWheel:'alt'
-                    }
-                ],
-                toolbox: {
-                    orient: 'horizontal',
-                    feature:{
-                        restore: {
-                            title: "restore",   
-                        }
-                    },
-                    itemSize: 18,
-                    iconStyle: {
-                        textAlign: 'right',
-                    }
-                }
-
-            });
-        })
+        insDate = ins.config.value.split('~');
+        drawPicture(insDate[0].trim().replace(' ', 'T'),
+                    insDate[1].trim().replace(' ', 'T'));
     </script>
 </body>
 </html>
