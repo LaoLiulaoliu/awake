@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# demand: 1. web server for stop; 2. backtesting for more profit
+# demand: 1. web server for stop
 
 import logging
 import gevent
