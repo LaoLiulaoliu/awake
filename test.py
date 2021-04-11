@@ -69,6 +69,7 @@ def main(argv):
             #     {'price': 10.72, 'size': 0.1, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
             # ]
             # print(place_batch_orders(orders))
+            spot.kline(INSTRUMENT[VALUTA_IDX], 900)
         elif opt in ('-s', '--socket'):
 
             trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 4)
