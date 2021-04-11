@@ -225,4 +225,4 @@ def grid():
     init = INIT_MONEY + INIT_COIN * init_price
     final = final_money + final_coin * final_price
     print(available)
-    print(f'init money: {init}, final money: {final}, annualized: {100 * precent(init, final)}')
+    print(f'init money: {init}, final money: {final}, annualized: {100 * annualized(init, final)}')
