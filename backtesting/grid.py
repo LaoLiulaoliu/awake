@@ -72,7 +72,7 @@ def stop_loss(money_remain, ratio=STOP_LOSS_RATIO):
     while True:
         if money_remain < INIT_MONEY * ratio:
             alarm(f'money remain: {money_remain}, init money: {INIT_MONEY}. Sleep 900s and operate by hand')
-            gevent.sleep(900)
+            gevent.sleep(0)
         else:
             break
 
