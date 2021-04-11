@@ -23,7 +23,7 @@ AVERAGE_ASK_BID_SIZE = 7.5  # also refer to min_size
 effective_number_of_bits = 3
 
 GRID_NUM = int((high_price - low_price) / SPACING_PRICE)
-BOARD_LOT = 1  # max(round(INIT_COIN / GRID_NUM, effective_number_of_bits), AVERAGE_ASK_BID_SIZE)
+BOARD_LOT = max(round(INIT_COIN / GRID_NUM, effective_number_of_bits), AVERAGE_ASK_BID_SIZE)
 COIN_UNIT, MONEY_UNIT = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
 SLEEP = 0
 
@@ -204,7 +204,7 @@ def strategy(state, enobs=3):
 
 
 def precent(source, target):
-    return abs(source - target) / source
+    return (source - target) / source
 
 def grid():
     print({COIN_UNIT: INIT_COIN, MONEY_UNIT: INIT_MONEY})
