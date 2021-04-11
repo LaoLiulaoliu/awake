@@ -14,6 +14,7 @@ from api.OkexSpotV3 import OkexSpotV3
 from api.OkexWSV3 import OkexWSV3
 from api.apiwrapper import place_batch_orders
 from backtesting.r20210219 import r20210219
+from backtesting.grid import grid
 from const import TREND_NAME_TIME, INSTRUMENT
 from storage.Numpd import Numpd
 from ruler.State import State
@@ -86,7 +87,8 @@ def main(argv):
             from backtesting import frequently_add
             frequently_add.main()
         elif opt in ('-r', '--run'):
-            r20210219('TREND_2021-02-24.txt')
+            grid()
+            # r20210219('TREND_2021-02-24.txt')
         else:
             print(None)
 

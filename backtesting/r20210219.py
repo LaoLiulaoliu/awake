@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import time
-from ruler.FakeState import FakeState
-from ruler.FakeTrade import FakeTrade
+from .FakeState import FakeState
+from .FakeTrade import FakeTrade
 from const import INSTRUMENT, VALUTA_IDX, TRADE_NAME
 
 
