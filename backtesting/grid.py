@@ -83,13 +83,18 @@ def strategy(state, enobs=3):
     When the price fluctuates rapidly, use ticker price will cause inversion of buy_price and sell_price,
     Use deal price passed by order API.
     """
+    init_price = 0
+    final_price = 0
+
     for i, r in state.get_latest_trend():
         last_time, last_trade_price, best_ask, best_bid = r
         buy_sell_pair = grid_init_orders(state, float(last_trade_price), enobs)
+        init_price = float(last_trade_price)
         break
 
     for i, r in state.get_latest_trend():
         last_time, last_trade_price, best_ask, best_bid = r
+        final_price = float(last_trade_price)
         state_order_id, last_trade_price, order_state = state.get_order_change(float(last_trade_price))
         if state_order_id == 0 and last_trade_price == 0 and order_state == 0:
             continue
@@ -195,9 +200,15 @@ def strategy(state, enobs=3):
                     gevent.sleep(SLEEP)
                     success = False
                     continue
+    return init_price, final_price
 
+
+def precent(source, target):
+    return abs(source - target) / source
 
 def grid():
+    print({COIN_UNIT: INIT_COIN, MONEY_UNIT: INIT_MONEY})
+
     trend = FakeTrend('2021-03-24', '2021-04-10')
     trade = FakeTrade(TRADE_NAME.format(VALUTA_IDX))
     state = FakeState(trend, trade)
@@ -205,4 +216,12 @@ def grid():
     state.set_unit(COIN_UNIT, MONEY_UNIT)
     state.set_available(INIT_COIN, INIT_MONEY)
 
-    strategy(state, 3)
+    init_price, final_price = strategy(state, 3)
+
+    available = state.get_available()
+    final_coin = available[COIN_UNIT]
+    final_money = available[MONEY_UNIT]
+
+    init = INIT_MONEY + INIT_COIN * init_price
+    final = final_money + final_coin * final_price
+    print(f'init money: {init}, final money: {final}, {100 * precent(init, final)}')
