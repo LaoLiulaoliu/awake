@@ -203,8 +203,8 @@ def strategy(state, enobs=3):
     return init_price, final_price
 
 
-def precent(source, target):
-    return (source - target) / source
+def annualized(source, target):
+    return -(source - target) / source
 
 def grid():
     print({COIN_UNIT: INIT_COIN, MONEY_UNIT: INIT_MONEY})
@@ -224,4 +224,5 @@ def grid():
 
     init = INIT_MONEY + INIT_COIN * init_price
     final = final_money + final_coin * final_price
-    print(f'init money: {init}, final money: {final}, {100 * precent(init, final)}')
+    print(available)
+    print(f'init money: {init}, final money: {final}, annualized: {100 * precent(init, final)}')
