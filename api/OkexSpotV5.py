@@ -21,7 +21,7 @@ class OkexSpotV5(object):
 
     def get_server_time(self):
         """
-        {'iso': '2021-02-18T08:50:44.924Z', 'epoch': '1613638244.924'}
+        {"ts":"1597026383085"}
         """
         endpoint = 'api/v5/public/time'
         data = self.http.httpGet(endpoint)
