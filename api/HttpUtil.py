@@ -79,7 +79,7 @@ class HttpUtil(object):
         timestamp = self.timestamp()
         signature = self.signature(timestamp, 'GET', endpoint, '')
         headers = self.get_header(signature, timestamp)
-        print(self.__url + endpoint)
+        # print(self.__url + endpoint)
 
         response = self.session.request('GET', self.__url + endpoint, headers=headers, timeout=10)
         return response.json()
