@@ -27,13 +27,13 @@ class OkexSpotV5(object):
         data = self.http.httpGet(endpoint)
         print(data['data'][0]['ts'])
 
-    def candles(self, instrument_id, bar='15m', before='', after=''):
+    def candles(self, instrument_id, bar='15m', before='', after='', limit=100):
         """  Maximum of 1440 latest entries
         param instrument_id: need uppercase
         param bar: [1m/3m/5m/15m/30m/1H/2H/4H/6H/12H/1D/1W/1M/3M/6M/1Y]
         """
         path = '/api/v5/market/candles'
-        params = {'instId': instrument_id, 'bar': bar}
+        params = {'instId': instrument_id, 'bar': bar, 'limit': limit}
         if before:
             params['before'] = before
         if after:
