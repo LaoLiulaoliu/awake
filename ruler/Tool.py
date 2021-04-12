@@ -45,3 +45,11 @@ class Tool(object):
         now = datetime.now()
         t = now.isoformat('T', 'milliseconds')
         return t + 'Z'
+
+    @staticmethod
+    def percent(source, target):
+        return -(source - target) / source
+
+    @staticmethod
+    def target(source, rate=0.15):
+        return source * rate + source

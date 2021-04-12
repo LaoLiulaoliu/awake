@@ -11,6 +11,7 @@ import getopt
 from datetime import datetime
 from test.numpd_test import numpd_test
 from api.OkexSpotV3 import OkexSpotV3
+from api.OkexSpotV5 import OkexSpotV5
 from api.OkexWSV3 import OkexWSV3
 from api.apiwrapper import place_batch_orders
 from backtesting.r20210219 import r20210219
@@ -62,14 +63,16 @@ def main(argv):
             # print(spot.orderbook(INSTRUMENT[VALUTA_IDX], 0.1, 10))
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], '6494679719429120')) bingo
             # print(spot.orders(2, INSTRUMENT[VALUTA_IDX]))
-            print(spot.orders(2, INSTRUMENT[VALUTA_IDX], after=6691638396674048))
+            # print(spot.orders(2, INSTRUMENT[VALUTA_IDX], after=6691638396674048))
 
             # orders = [
             #     {'price': 0.71, 'size': 0.1, 'side': 'buy', 'instrument_id': INSTRUMENT[VALUTA_IDX]},
             #     {'price': 10.72, 'size': 0.1, 'side': 'sell', 'instrument_id': INSTRUMENT[VALUTA_IDX]}
             # ]
             # print(place_batch_orders(orders))
-            spot.kline(INSTRUMENT[VALUTA_IDX], 900)
+
+            spot5 = OkexSpotV5(use_trade_key=True)
+            print(spot5.kline(INSTRUMENT[VALUTA_IDX], '15m'))
         elif opt in ('-s', '--socket'):
 
             trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 4)
