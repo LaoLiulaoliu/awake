@@ -237,12 +237,16 @@ class OkexSpotV5(object):
             params.update({'limit': limit})
         return self.http.httpGet(path, params)
 
-    def kline(self, instrument_id, interval=60, start='', end=''):
+    def kline(self, instrument_id, bar='15m', before='', after=''):
         """  Maximum of 1440 latest entries
-        param interval: [60/180/300/900/1800/3600/7200/14400/21600/43200/86400/604800]
+        param bar: [1m/3m/5m/15m/30m/1H/2H/4H/6H/12H/1D/1W/1M/3M/6M/1Y]
         """
-        path = '/api/spot/v3/instruments/{}/candles'.format(instrument_id)
-        params = {'granularity': interval, 'start': start, 'end': end}
+        path = '/api/v5/market/candles'
+        params = {'instId': instrument_id, 'bar': bar}
+        if before:
+            params['before'] = before
+        if after:
+            params['after'] = before
         return self.http.httpGet(path, params)
 
     def kline_history(self, instrument_id, interval=60, start='', end=''):
