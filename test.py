@@ -72,7 +72,7 @@ def main(argv):
             # print(place_batch_orders(orders))
 
             spot5 = OkexSpotV5(use_trade_key=True)
-            print(spot5.kline(INSTRUMENT[VALUTA_IDX], '15m'))
+            print(spot5.kline(INSTRUMENT[VALUTA_IDX].upper(), '15m'))
         elif opt in ('-s', '--socket'):
 
             trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 4)
