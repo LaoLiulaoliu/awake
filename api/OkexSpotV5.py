@@ -249,12 +249,15 @@ class OkexSpotV5(object):
             params['after'] = before
         return self.http.httpGet(path, params)
 
-    def kline_history(self, instrument_id, interval=60, start='', end=''):
+    def kline_history(self, instrument_id, bar='15m', before='', after=''):
         """ historical candels of 9 major currencies are provided: BTC, ETH, LTC, ETC, XRP, EOS, BCH, BSV, TRX.
-        param interval: [60/180/300/900/1800/3600/7200/14400/21600/43200/86400/604800]
         """
-        path = '/api/spot/v3/instruments/{}/history/candles'.format(instrument_id)
-        params = {'granularity': interval, 'start': start, 'end': end}
+        path = '/api/v5/market/history-candles'
+        params = {'instId': instrument_id, 'bar': bar}
+        if before:
+            params['before'] = before
+        if after:
+            params['after'] = before
         return self.http.httpGet(path, params)
 
     def orderbook(self, instrument_id=INSTRUMENT[0], depth=0.1, size=200):
