@@ -27,7 +27,7 @@ class OkexSpotV5(object):
         data = self.http.httpGet(endpoint)
         print(data['data'][0]['ts'])
 
-    def kline(self, instrument_id, bar='15m', before='', after=''):
+    def candles(self, instrument_id, bar='15m', before='', after=''):
         """  Maximum of 1440 latest entries
         param instrument_id: need uppercase
         param bar: [1m/3m/5m/15m/30m/1H/2H/4H/6H/12H/1D/1W/1M/3M/6M/1Y]
@@ -37,18 +37,18 @@ class OkexSpotV5(object):
         if before:
             params['before'] = before
         if after:
-            params['after'] = before
+            params['after'] = after
         return self.http.httpGet(path, params)
 
-    def kline_history(self, instrument_id, bar='15m', before='', after=''):
-        """ historical candels of 9 major currencies are provided: BTC, ETH, LTC, ETC, XRP, EOS, BCH, BSV, TRX.
+    def candles_history(self, instrument_id, bar='15m', before='', after='', limit=100):
+        """ historical candels of 10 major currencies are provided in spot: OKB, BTC, ETH, LTC, ETC, XRP, EOS, BCH, BSV, TRX.
         """
         path = '/api/v5/market/history-candles'
-        params = {'instId': instrument_id, 'bar': bar}
+        params = {'instId': instrument_id, 'bar': bar, 'limit': limit}
         if before:
             params['before'] = before
         if after:
-            params['after'] = before
+            params['after'] = after
         return self.http.httpGet(path, params)
 
 

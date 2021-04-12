@@ -13,7 +13,8 @@ INSTRUMENT = {
     4: 'flow-usdt',
     5: 'glm-usdt',
     6: 'luna-usdt',
-    7: 'mask-usdt'
+    7: 'mask-usdt',
+    8: 'okb-usdt'
 }
 VALUTA_IDX = 3
 API_VERSION = 3

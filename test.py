@@ -51,7 +51,7 @@ def main(argv):
                 gevent.sleep(10)
 
         elif opt in ('-o', '--spot'):
-            VALUTA_IDX = 3
+            VALUTA_IDX = 0
             spot = OkexSpotV3(use_trade_key=True)
             # print(spot.open_orders(INSTRUMENT[VALUTA_IDX]))
             # print(spot.order_details(6717741436522499, INSTRUMENT[VALUTA_IDX]))
@@ -72,7 +72,8 @@ def main(argv):
             # print(place_batch_orders(orders))
 
             spot5 = OkexSpotV5(use_trade_key=True)
-            print(spot5.kline(INSTRUMENT[VALUTA_IDX].upper(), '15m'))
+            # print(spot5.candles(INSTRUMENT[VALUTA_IDX].upper(), '15m'))
+            print(spot5.candles_history(INSTRUMENT[VALUTA_IDX].upper(), '15m', after='1618127100000', limit=10))
         elif opt in ('-s', '--socket'):
 
             trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 4)

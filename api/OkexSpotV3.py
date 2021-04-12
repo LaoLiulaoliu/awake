@@ -239,7 +239,7 @@ class OkexSpotV3(object):
             params.update({'limit': limit})
         return self.http.httpGet(path, params)
 
-    def kline(self, instrument_id, interval=60, start='', end=''):
+    def candles(self, instrument_id, interval=60, start='', end=''):
         """  Maximum of 1440 latest entries
         param interval: [60/180/300/900/1800/3600/7200/14400/21600/43200/86400/604800]
         """
@@ -247,7 +247,7 @@ class OkexSpotV3(object):
         params = {'granularity': interval, 'start': start, 'end': end}
         return self.http.httpGet(path, params)
 
-    def kline_history(self, instrument_id, interval=60, start='', end=''):
+    def candles_history(self, instrument_id, interval=60, start='', end=''):
         """ historical candels of 9 major currencies are provided: BTC, ETH, LTC, ETC, XRP, EOS, BCH, BSV, TRX.
         param interval: [60/180/300/900/1800/3600/7200/14400/21600/43200/86400/604800]
         """

@@ -181,44 +181,6 @@ class OkAPI:
         params = {'instrument_id': instrument_id, 'order_id': orderid}
         return self.httpPost(path, params)
 
-    def signature(self, timestamp, method, request_path, body, secret_key):
-        if str(body) == '{}' or str(body) == 'None':
-            body = ''
-        message = str(timestamp) + str.upper(method) + request_path + str(body)
-        mac = hmac.new(bytes(secret_key, encoding='utf8'), bytes(message, encoding='utf-8'), digestmod='sha256')
-        d = mac.digest()
-        return base64.b64encode(d)
-
-    @retry(stop_max_attempt_number=3)
-    def httpGet(self, path, data=None):
-        if data:
-            path = path + self.parse_params_to_str(data)
-        url = self.__baseUrl + path
-        timestamp = self.timestamp()
-        header = self.get_header(self.__apikey, self.signature(timestamp, 'GET', path, '', self.__secretkey),
-                                 timestamp, self.__passphrase)
-        try:
-            response = requests.get(url, headers=header, timeout=15)
-        except Exception as e:
-            print("Exception: ", e)
-            raise Exception(e)
-
-        return response.json()
-
-    @retry(stop_max_attempt_number=3)
-    def httpPost(self, path, data):
-        url = self.__baseUrl + path
-        body = json.dumps(data)
-        timestamp = self.timestamp()
-        header = self.get_header(self.__apikey, self.signature(timestamp, 'POST', path, body, self.__secretkey),
-                                 timestamp, self.__passphrase)
-        try:
-            response = requests.post(url, data=body, headers=header)
-        except Exception as e:
-            raise Exception(e)
-
-        return response.json()
-
     def httpDelete(self, path, data):
         if data:
             path = path + self.parse_params_to_str(data)
@@ -233,29 +195,6 @@ class OkAPI:
 
         return response.json()
 
-    def inflate(self, data):
-        decompress = zlib.decompressobj(
-            -zlib.MAX_WBITS  # see above
-        )
-        inflated = decompress.decompress(data)
-        inflated += decompress.flush()
-        return inflated
-
-    def login(self, ws):
-        ts = str(int(datetime.datetime.now().timestamp()))
-        sign = self.signature(ts, 'GET', '/users/self/verify', None, self.__secretkey)
-        sub = {'op': 'login', 'args': [self.__apikey, self.__passphrase, ts, sign.decode("utf-8")]}
-        ws.send(json.dumps(sub))
-
-    def on_open(self):
-        print('ok_on_open', self.__ws_subs)
-        self.login(self.__sub_connect)
-        time.sleep(0.1)
-        s = []
-        for sub_config in self.__ws_subs:
-            s.append('{}/{}:{}'.format(sub_config.trade_kind, sub_config.frequency,
-                                       sub_config.instrument_id))
-        self.__sub_connect.send(json.dumps({'op': 'subscribe', 'args': s}))
 
     def on_message(self, message):
         data = json.loads(self.inflate(message))
@@ -305,61 +244,6 @@ class OkAPI:
                     s.append('{}/{}:{}'.format(sub_config.trade_kind, sub_config.frequency,
                                                sub_config.instrument_id))
                 self.__sub_connect.send(json.dumps({'op': 'subscribe', 'args': s}))
-
-    def on_close(self):
-        print('ok_on_close', self.__sub_connect, self.__ws_subs)
-        self.__sub_connect = None
-
-        # if len(self.__ws_subs) > 0:
-        #     time.sleep(1)
-        #     self.__ws_sub_create()
-
-    def on_error(self, error):
-        print('ok_on_error', self.__sub_connect, error)
-
-    def ws_sub(self, sub_list):
-        s = []
-        for sub_config in sub_list:
-            if sub_config not in self.__ws_subs:
-                self.__ws_subs.append(sub_config)
-                s.append(sub_config)
-
-        # if not self.__sub_connect:
-        #     self.__ws_sub_create()
-
-        if self.__sub_connect:
-            w_s = []
-            for sub in s:
-                w_s.append('{}/{}:{}'.format(sub.trade_kind, sub.frequency, sub.instrument_id))
-            self.__sub_connect.send(json.dumps({'op': 'subscribe', 'args': w_s}))
-        else:
-            # threading.stack_size(1024 * 1024 * 100)
-            t = threading.Thread(target=self.__ws_sub_create)
-            t.start()
-
-    def ws_unsub(self, unsub_list):
-        s = []
-        for sub_config in unsub_list:
-            s.append('{}/{}:{}'.format(sub_config.trade_kind, sub_config.frequency,
-                                       sub_config.instrument_id))
-            self.__ws_subs.remove(sub_config)
-        self.__sub_connect.send(json.dumps({'op': 'unsubscribe', 'args': s}))
-
-        # if len(self.__ws_subs) == 0:
-        #     self.__sub_connect.close()
-
-    def __ws_sub_create(self):
-        try:
-            self.__sub_connect = WebSocketApp(WS_URL,
-                                              on_message=self.on_message,
-                                              on_close=self.on_close,
-                                              on_error=self.on_error)
-            self.__sub_connect.on_open = self.on_open
-            self.__sub_connect.run_forever(ping_interval=20)
-        except Exception as e:
-            print('异常了--ok--__ws_sub_create', e)
-            time.sleep(5)
-            self.__ws_sub_create()
 
 
 if __name__ == '__main__':
