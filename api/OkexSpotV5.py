@@ -23,9 +23,9 @@ class OkexSpotV5(object):
         """
         {'iso': '2021-02-18T08:50:44.924Z', 'epoch': '1613638244.924'}
         """
-        endpoint = '/api/general/v3/time'
+        endpoint = 'api/v5/public/time'
         data = self.http.httpGet(endpoint)
-        print(data)
+        print(data['data'][0]['ts'])
 
     def instruments(self):
         """ lots of this kind of data
