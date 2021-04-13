@@ -159,4 +159,4 @@ def strategy(state, enobs=3):
                         continue
 
                     buy_sell_pair[(int(time.time()), order_ids[0], order_ids[1])] = (buy_price, sell_price)
-                    gevent.sleep(np.random.randint(15, 24))
+                    gevent.sleep(np.random.randint(15, 25))
