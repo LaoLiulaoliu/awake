@@ -107,7 +107,7 @@ def strategy(state, enobs=3):
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
 
     buy_sell_pair = defaultdict(tuple)
-    ongoing_num = 20
+    ongoing_num = 25
     buy_prices = defaultdict(set)
     sell_prices = defaultdict(set)
 
@@ -159,4 +159,4 @@ def strategy(state, enobs=3):
                         continue
 
                     buy_sell_pair[(int(time.time()), order_ids[0], order_ids[1])] = (buy_price, sell_price)
-                    gevent.sleep(np.random.randint(15, 25))
+                    gevent.sleep(np.random.randint(20, 30))
