@@ -16,6 +16,7 @@ from api.OkexWSV3 import OkexWSV3
 from api.apiwrapper import place_batch_orders
 from backtesting.r20210219 import r20210219
 from backtesting.grid import grid
+from backtesting.FakeCandles import access_data
 from const import TREND_NAME_TIME, INSTRUMENT
 from storage.Numpd import Numpd
 from ruler.State import State
@@ -25,7 +26,7 @@ from ruler.Scheduler import Scheduler
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, 'afnors', ['numpd=', 'spot=', 'run=', 'socket='])
+        opts, args = getopt.getopt(argv, 'acfnors', ['numpd=', 'spot=', 'run=', 'socket='])
     except getopt.GetoptError:
         print('test.py -n')
         sys.exit(2)
@@ -49,6 +50,12 @@ def main(argv):
             while True:
                 print('main thread')
                 gevent.sleep(10)
+
+        elif opt in ('-c', '--candle'):
+            data = access_data(1610542800000, 1613221200000, '1H')
+            import orjson
+            with open('btc-data', 'w') as fd:
+                fd.write(orjson.dumps(data).decode('utf-8'))
 
         elif opt in ('-o', '--spot'):
             VALUTA_IDX = 0
