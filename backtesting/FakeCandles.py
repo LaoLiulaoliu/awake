@@ -36,4 +36,6 @@ def get_candles(before, after='', bar='15m'):
             last_time = i[0]
         if last_time < before:
             return data
+        yield data
+        data = OrderedDict()
         time.sleep(0.1)

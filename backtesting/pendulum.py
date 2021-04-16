@@ -4,8 +4,8 @@ from db.pgwrapper import PGWrapper
 
 
 def get_candle_data():
-    begin = '2021-04-15T21:00:00'
-    end = '2021-04-16T01:00:00'
+    begin = '2017-12-01T21:00:00'
+    end = '2021-04-16T17:00:00'
     begin = Tool.convert_time_utc(begin)
     end = Tool.convert_time_utc(end)
     return get_candles(begin, end, '1H')
@@ -15,13 +15,10 @@ def connect_db():
     table = 'eth_usdt_1H'
     pg = PGWrapper(db, 'postgres', 'whocares')
 
-    data = get_candle_data()
-    while True:
-        try:
-            timestamp, candle = data.popitem(last=True)
+    for data in get_candle_data():
+        for timestamp, candle in reversed(data.items()):
             candle.append(int(timestamp))
             pg.insert_list(table,
                         ['open', 'high', 'low', 'close', 'vol', 'volCcy', 'timestamp'],
                         candle)
-        except KeyError:
-            break
+            print(candle)

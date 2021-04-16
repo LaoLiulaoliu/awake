@@ -14,9 +14,9 @@ INSTRUMENT = {
     5: 'glm-usdt',
     6: 'luna-usdt',
     7: 'mask-usdt',
-    8: 'okb-usdt'
+    8: 'trx-usdt'
 }
-VALUTA_IDX = 1
+VALUTA_IDX = 8
 API_VERSION = 3
 LOG_DIR = 'logs'
 
