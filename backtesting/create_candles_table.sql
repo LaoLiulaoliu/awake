@@ -1,3 +1,5 @@
+create database candles;
+grant all on DATABASE candles to postgres;
 \c candles
 create table eth_usdt_1H (
   timestamp bigint primary key,
