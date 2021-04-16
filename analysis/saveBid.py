@@ -4,7 +4,7 @@
 import time
 from datetime import datetime
 
-from analysis.KVDB import KVDB
+from db.KVDB import KVDB
 from api.OkexSpotV3 import OkexSpotV3
 from const import INSTRUMENT
 

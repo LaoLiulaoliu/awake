@@ -1,6 +1,6 @@
 from ruler.Tool import Tool
 from backtesting.FakeCandles import get_candles
-from backtesting.pgwrapper import PGWrapper
+from db.pgwrapper import PGWrapper
 
 
 def get_candle_data():

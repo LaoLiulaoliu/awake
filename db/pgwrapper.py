@@ -3,7 +3,7 @@
 # Author: Yuande Liu <miraclecome (at) gmail.com>
 
 
-from backtesting.pgpool import PGPool
+from db.pgpool import PGPool
 
 class PGWrapper(PGPool):
     def __init__(self,

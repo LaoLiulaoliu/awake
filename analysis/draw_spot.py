@@ -12,7 +12,7 @@ print(__name__, __package__)
 
 
 def get_leveldb_data(key):
-    from .KVDB import KVDB
+    from db.KVDB import KVDB
     X = 'x'
     Y = 'y'
     data = {X: [], Y: []}
