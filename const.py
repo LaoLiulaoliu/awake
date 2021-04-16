@@ -16,7 +16,7 @@ INSTRUMENT = {
     7: 'mask-usdt',
     8: 'okb-usdt'
 }
-VALUTA_IDX = 3
+VALUTA_IDX = 1
 API_VERSION = 3
 LOG_DIR = 'logs'
 

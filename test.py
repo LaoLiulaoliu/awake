@@ -16,7 +16,8 @@ from api.OkexWSV3 import OkexWSV3
 from api.apiwrapper import place_batch_orders
 from backtesting.r20210219 import r20210219
 from backtesting.grid import grid
-from backtesting.FakeCandles import access_data
+from backtesting.FakeCandles import get_candles
+from backtesting.pendulum import connect_db
 from const import TREND_NAME_TIME, INSTRUMENT
 from storage.Numpd import Numpd
 from ruler.State import State
@@ -26,7 +27,7 @@ from ruler.Scheduler import Scheduler
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, 'acfnors', ['numpd=', 'spot=', 'run=', 'socket='])
+        opts, args = getopt.getopt(argv, 'acfnorsz', ['numpd=', 'spot=', 'run=', 'socket='])
     except getopt.GetoptError:
         print('test.py -n')
         sys.exit(2)
@@ -52,7 +53,7 @@ def main(argv):
                 gevent.sleep(10)
 
         elif opt in ('-c', '--candle'):
-            data = access_data(1610542800000, 1613221200000, '1H')
+            data = get_candles(1610542800000, 1613221200000, '1H')
             import orjson
             with open('btc-data', 'w') as fd:
                 fd.write(orjson.dumps(data).decode('utf-8'))
@@ -101,8 +102,10 @@ def main(argv):
         elif opt in ('-r', '--run'):
             grid()
             # r20210219('TREND_2021-02-24.txt')
+        elif opt in ('-z', '--zz'):
+            connect_db()
         else:
-            print(None)
+            pass
 
 
 if __name__ == '__main__':

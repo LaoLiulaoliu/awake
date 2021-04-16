@@ -41,6 +41,10 @@ class Tool(object):
         return int(datetime.strptime(time_str, '%Y-%m-%dT%H:%M:%S.%f%z').timestamp() * precision)
 
     @staticmethod
+    def convert_time_utc(time_str, precision=1000):
+        return int(datetime.strptime(time_str, '%Y-%m-%dT%H:%M:%S').timestamp() * precision)
+
+    @staticmethod
     def get_timestamp():
         now = datetime.now()
         t = now.isoformat('T', 'milliseconds')
