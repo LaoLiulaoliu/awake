@@ -65,8 +65,8 @@ class PGPool(object):
               If we hava several hosts, we can random choice one to connect
         """
         db = psycopg2.connect(database=self.dbname,
-                                user=self.user, password=self.password,
-                                host=self.host, port=self.port)
+                            user=self.user, password=self.password,
+                            host=self.host, port=self.port)
         if 'psycopg2.extras' in sys.modules:
             psycopg2.extras.register_hstore(db)
         return db

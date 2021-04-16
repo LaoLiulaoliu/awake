@@ -13,15 +13,15 @@ def get_candle_data():
 def connect_db():
     db = 'candles'
     table = 'eth_usdt_1H'
-    pg = PGWrapper(db)
+    pg = PGWrapper(db, 'postgres', 'whocares')
 
     data = get_candle_data()
     while True:
         try:
             timestamp, candle = data.popitem(last=True)
             values = dict(zip(['open', 'high', 'low', 'close', 'vol', 'volCcy'], candle))
-            values['timestamp'] = int(candle[0])
+            values['timestamp'] = int(timestamp)
             print(values)
-            # pg.insert(table, values)
+            pg.insert(table, values)
         except KeyError:
             break
