@@ -97,6 +97,27 @@ class PGWrapper(PGPool):
         else:
             return sql, values
 
+    def insert_list(self, table, names, values, execute=True):
+        """.. :py:method::
+
+        Usage::
+
+            >>> insert('hospital', ['id', 'province'], ['12de3wrv', 'shanghai'])
+            insert into hospital (id, province) values ('12de3wrv', 'shanghai');
+
+        :param string table: table name
+        :param list names: name
+        :param list values: value
+        :param bool execute: if not execute, return sql and variables
+        :rtype: tuple
+
+        """
+        sql = "insert into " + table + " ({}) values ({});"
+        sql = sql.format(', '.join(names), ', '.join(['%s']*len(values)))
+        if execute:
+            super(PGWrapper, self).execute(sql, values, result=False)
+        else:
+            return sql, values
 
     def delete(self, table, condition):
         """.. :py:method::

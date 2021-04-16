@@ -19,9 +19,9 @@ def connect_db():
     while True:
         try:
             timestamp, candle = data.popitem(last=True)
-            values = dict(zip(['open', 'high', 'low', 'close', 'vol', 'volCcy'], candle))
-            values['timestamp'] = int(timestamp)
-            print(values)
-            pg.insert(table, values)
+            candle.append(int(timestamp))
+            pg.insert_list(table,
+                        ['open', 'high', 'low', 'close', 'vol', 'volCcy', 'timestamp'],
+                        candle)
         except KeyError:
             break
