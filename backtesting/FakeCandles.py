@@ -30,6 +30,9 @@ def get_candles(before, after='', bar='15m'):
     while True:
         r = spot5.candles_history(INSTRUMENT[VALUTA_IDX].upper(), bar, after=last_time)
         last_time = None
+
+        # if r['data'] == []:
+        #     print(r)
         for i in r['data']:
             data[i[0]] = i[1:]
         else:
