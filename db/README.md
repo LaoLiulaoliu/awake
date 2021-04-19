@@ -25,8 +25,8 @@
     ALTER DEFAULT PRIVILEGES GRANT SELECT ON TABLES TO PUBLIC;
     ALTER DEFAULT PRIVILEGES GRANT INSERT ON TABLES TO jameson;
 
-    sudo -u postgres psql -U postgres -d candles -f create_candles_table.sql
-    sudo -u postgres psql -U postgres candles < create_candles_table.sql
+    sudo -u postgres psql -U postgres -d candles -f create_candles_eth.sql
+    sudo -u postgres psql -U postgres candles < create_candles_eth.sql
 
 #### role
 
