@@ -42,6 +42,7 @@ class OkexSpotV5(object):
 
     def candles_history(self, instrument_id, bar='15m', before='', after='', limit=100):
         """ historical candels of 10 major currencies are provided in spot: OKB, BTC, ETH, LTC, ETC, XRP, EOS, BCH, BSV, TRX.
+            币币和永续到2019-10-01之后，交割到2019-07-01之后
         """
         path = '/api/v5/market/history-candles'
         params = {'instId': instrument_id, 'bar': bar, 'limit': limit}
