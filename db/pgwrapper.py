@@ -152,14 +152,12 @@ class PGWrapper(PGPool):
 
             parse the condition, support string and dictonary
         """
-        if isinstance(condition, bytes):
+        if isinstance(condition, str):
             sql = " where {}".format(condition)
         elif isinstance(condition, dict):
             conditions = []
             for k, v in condition.items():
-                if isinstance(v, unicode):
-                    v = v.encode('utf-8')
-                s = "{}='{}'".format(k, v) if isinstance(v, bytes) else "{}={}".format(k, v)
+                s = "{}='{}'".format(k, v) if isinstance(v, str) else "{}={}".format(k, v)
                 conditions.append(s)
             sql = " where {}".format(', '.join(conditions))
         else:
