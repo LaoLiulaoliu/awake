@@ -5,20 +5,20 @@
 
 from db.pgpool import PGPool
 
+
 class PGWrapper(PGPool):
     def __init__(self,
-            dbname='postgres',
-            user='postgres',
-            password='',
-            host='127.0.0.1',
-            port=5432,
-            poolsize=3,
-            maxretries=5,
-            debug=False):
+                 dbname='postgres',
+                 user='postgres',
+                 password='',
+                 host='127.0.0.1',
+                 port=5432,
+                 poolsize=3,
+                 maxretries=5,
+                 debug=False):
         super(PGWrapper, self).__init__(dbname, user, password,
                                         host, port, poolsize,
                                         maxretries, debug)
-
 
     def select(self, table, args='*', condition=None, control=None):
         """.. :py:method:: select
@@ -38,7 +38,6 @@ class PGWrapper(PGPool):
         sql = 'select {} from {}'.format(args, table)
         sql += self.parse_condition(condition) + (' {};'.format(control) if control else ';')
         return super(PGWrapper, self).execute(sql, result=True).results
-
 
     def update(self, table, kwargs, condition=None):
         """.. :py:method:: update
@@ -73,7 +72,6 @@ class PGWrapper(PGPool):
         sql += self.parse_condition(condition) + ";"
         super(PGWrapper, self).execute(sql, values, result=False)
 
-
     def insert(self, table, kwargs, execute=True):
         """.. :py:method::
 
@@ -90,8 +88,8 @@ class PGWrapper(PGPool):
         """
         sql = "insert into " + table + " ({}) values ({});"
         keys, values = [], []
-        [ (keys.append(k), values.append(v)) for k, v in kwargs.items() ]
-        sql = sql.format(', '.join(keys), ', '.join(['%s']*len(values)))
+        [(keys.append(k), values.append(v)) for k, v in kwargs.items()]
+        sql = sql.format(', '.join(keys), ', '.join(['%s'] * len(values)))
         if execute:
             super(PGWrapper, self).execute(sql, values, result=False)
         else:
@@ -113,7 +111,7 @@ class PGWrapper(PGPool):
 
         """
         sql = "insert into " + table + " ({}) values ({});"
-        sql = sql.format(', '.join(names), ', '.join(['%s']*len(values)))
+        sql = sql.format(', '.join(names), ', '.join(['%s'] * len(values)))
         if execute:
             super(PGWrapper, self).execute(sql, values, result=False)
         else:
@@ -132,7 +130,6 @@ class PGWrapper(PGPool):
         sql += self.parse_condition(condition) + ";"
         super(PGWrapper, self).execute(sql, result=False)
 
-
     def insert_inexistence(self, table, kwargs, condition):
         """.. :py:method::
 
@@ -144,12 +141,11 @@ class PGWrapper(PGPool):
         """
         sql = "insert into " + table + " ({}) "
         select = "select {} "
-        condition = "where not exists (select 1 from " + table + "{} limit 1);".format( self.parse_condition(condition) )
+        condition = "where not exists (select 1 from " + table + "{} limit 1);".format(self.parse_condition(condition))
         keys, values = [], []
-        [ (keys.append(k), values.append(v)) for k, v in kwargs.items() ]
-        sql = sql.format(', '.join(keys)) + select.format( ', '.join(['%s']*len(values)) ) + condition
+        [(keys.append(k), values.append(v)) for k, v in kwargs.items()]
+        sql = sql.format(', '.join(keys)) + select.format(', '.join(['%s'] * len(values))) + condition
         super(PGWrapper, self).execute(sql, values, result=False)
-
 
     def parse_condition(self, condition):
         """.. :py:method::
@@ -170,8 +166,6 @@ class PGWrapper(PGPool):
             sql = ""
         return sql
 
-
-
     def select_join(self, table, field, join_table, join_field):
         """.. :py:method::
 
@@ -181,19 +175,18 @@ class PGWrapper(PGPool):
             select hospital.id from hospital left join department on hospital.id=department.hospid where department.hospid is null;
 
         """
-        sql = "select {table}.{field} from {table} left join {join_table} "\
-              "on {table}.{field}={join_table}.{join_field} "\
+        sql = "select {table}.{field} from {table} left join {join_table} " \
+              "on {table}.{field}={join_table}.{join_field} " \
               "where {join_table}.{join_field} is null;".format(table=table,
                                                                 field=field,
                                                                 join_table=join_table,
                                                                 join_field=join_field)
         return super(PGWrapper, self).execute(sql, result=True).results
 
-
     def joint(self, table, fields,
-                    join_table, join_fields,
-                    condition_field, condition_join_field,
-                    join_method='left_join'):
+              join_table, join_fields,
+              condition_field, condition_join_field,
+              join_method='left_join'):
         """.. :py:method::
 
         Usage::
@@ -204,13 +197,13 @@ class PGWrapper(PGPool):
         """
         import string
         fields = map(string.strip, fields.split(','))
-        select = ', '.join( ['u.{}'.format(field) for field in fields] )
+        select = ', '.join(['u.{}'.format(field) for field in fields])
         join_fields = map(string.strip, join_fields.split(','))
-        join_select = ', '.join( ['v.{}'.format(field) for field in join_fields] )
+        join_select = ', '.join(['v.{}'.format(field) for field in join_fields])
 
-        sql = "select {select}, {join_select} from {table} as u {join_method}"\
-               " {join_table} as v on u.{condition_field}="\
-               "v.{condition_join_field};".format(select=select,
+        sql = "select {select}, {join_select} from {table} as u {join_method}" \
+              " {join_table} as v on u.{condition_field}=" \
+              "v.{condition_join_field};".format(select=select,
                                                  join_select=join_select,
                                                  table=table,
                                                  join_method=join_method,
@@ -218,4 +211,3 @@ class PGWrapper(PGPool):
                                                  condition_field=condition_field,
                                                  condition_join_field=condition_join_field)
         return super(PGWrapper, self).execute(sql, result=True).results
-

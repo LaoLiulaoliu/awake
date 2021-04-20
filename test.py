@@ -17,7 +17,7 @@ from api.apiwrapper import place_batch_orders
 from backtesting.r20210219 import r20210219
 from backtesting.grid import grid
 from backtesting.FakeCandles import get_candles
-from backtesting.pendulum import connect_db
+from backtesting.pendulum import load_candles
 from const import TREND_NAME_TIME, INSTRUMENT
 from storage.Numpd import Numpd
 from ruler.State import State
@@ -89,9 +89,9 @@ def main(argv):
             state = State(trend, trade=None)
 
             ws = OkexWSV3(['spot/account:ALPHA',
-                         'spot/account:USDT',
-                         'spot/order:BSV-USDT',
-                         'spot/depth5:ALPHA-USDT'], state, use_trade_key=True)
+                           'spot/account:USDT',
+                           'spot/order:BSV-USDT',
+                           'spot/depth5:ALPHA-USDT'], state, use_trade_key=True)
             greenlet = gevent.spawn(ws.ws_create)
             # ws.subscription(['spot/depth:BTC-USDT'])
             print('websocket created, can do sth in the following coroutine')
@@ -103,7 +103,7 @@ def main(argv):
             grid()
             # r20210219('TREND_2021-02-24.txt')
         elif opt in ('-z', '--zz'):
-            connect_db()
+            load_candles('trx', '1H', end='2021-04-18T01:00:00')
         else:
             pass
 
