@@ -39,7 +39,8 @@ def get_candles(before, after='', bar='15m'):
             except UnboundLocalError:
                 print(r)
         if last_time < before:
-            return data
+            yield data
+            break
         yield data
         data = OrderedDict()
         time.sleep(0.1)

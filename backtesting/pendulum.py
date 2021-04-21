@@ -12,12 +12,12 @@ def get_candles_insert_db(pg, table, begin, end, gap):
     for data in get_candles(begin, end, gap):
         for timestamp, candle in data.items():
             timestamp = int(timestamp)
-            datas[timestamp] = candle
-            candle.append(timestamp)
-            pg.insert_list(table,
-                           ['open', 'high', 'low', 'close', 'vol', 'volCcy', 'timestamp'],
-                           candle)
-    print(datas)
+            if begin < timestamp < end:
+                datas[timestamp] = candle[:]
+                candle.insert(0, timestamp)
+                pg.insert_list(table,
+                               ['timestamp', 'open', 'high', 'low', 'close', 'vol', 'volCcy'],
+                               candle)
     return datas
 
 
@@ -56,14 +56,15 @@ def load_candles(name='trx', gap='1H', begin=None, end=None):
     candle_data = OrderedDict()
 
     min_time, max_time = pg.select(table, 'min(timestamp), max(timestamp)')[0]
+    print('min_time: ', min_time, 'max_time: ', max_time)
     if min_time is None or max_time is None:
         candle_data = get_candles_insert_db(pg, table, begin, end, gap)
+
     else:
         select_min_time = min_time if begin < min_time else begin
         select_max_time = max_time if end > max_time else end
 
         if begin < min_time:
-            print('begin: ', begin, max_time)
             candle_data = get_candles_insert_db(pg, table, begin, min_time, gap)
 
         if select_min_time < select_max_time:
@@ -74,6 +75,5 @@ def load_candles(name='trx', gap='1H', begin=None, end=None):
             candle_data.update({i[0]: i[1:] for i in r})
 
         if end > max_time:
-            print('end: ', end, max_time)
             candle_data.update(get_candles_insert_db(pg, table, max_time, end, gap))
         check_time_order(candle_data)

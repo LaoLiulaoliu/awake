@@ -103,7 +103,7 @@ def main(argv):
             grid()
             # r20210219('TREND_2021-02-24.txt')
         elif opt in ('-z', '--zz'):
-            load_candles('trx', '1H', end='2021-04-19T03:00:00')
+            load_candles('trx', '1H', end='2021-04-19T08:00:00')
         else:
             pass
 
