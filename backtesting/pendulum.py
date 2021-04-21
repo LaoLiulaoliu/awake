@@ -76,4 +76,6 @@ def load_candles(name='trx', gap='1H', begin=None, end=None):
 
         if end > max_time:
             candle_data.update(get_candles_insert_db(pg, table, max_time, end, gap))
-        check_time_order(candle_data)
+
+    check_time_order(candle_data)
+    return candle_data
