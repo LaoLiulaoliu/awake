@@ -71,7 +71,7 @@ def main():
         greenlets.append(gevent.spawn(ws2.ws_create))
 
         spot5 = OkexSpotV5(use_trade_key=True)
-        schedule_candle_minute(partial(spot5.candles, INSTRUMENT[VALUTA_IDX].upper(), bar='1m', limit=2))
+        schedule_candle_minute(partial(spot5.candles, INSTRUMENT[VALUTA_IDX].upper(), '1m', limit=5))
     else:
         ws_channels = [f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
                        f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
