@@ -10,11 +10,11 @@ class Scheduler(object):
         pass
 
     def execute(self, method, arg):
-        job = gevent.spawn(method, arg)
+        job = gevent.spawn(method, arg) if arg is None else gevent.spawn(method)
 
     def run(self, schedules):
         while True:
-             # cost 0.00003s empty, 0.0005 loaded in mac 2.4G
+            # cost 0.00003s empty, 0.0005 loaded in mac 2.4G
             [self.execute(s.method, s.get_arg()) for s in schedules if s.timematch()]
 
             # assume this for loop can be finished in less than one minute
