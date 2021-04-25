@@ -13,7 +13,7 @@ class Scheduler(object):
         self.crons.append(cron)
 
     def execute(self, method, arg):
-        job = gevent.spawn(method, arg) if arg is None else gevent.spawn(method)
+        job = gevent.spawn(method) if arg is None else gevent.spawn(method, arg)
 
     def run(self):
         while True:
