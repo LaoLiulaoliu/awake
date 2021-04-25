@@ -67,9 +67,9 @@ def main():
             {'channel': 'account', 'ccy': coin_unit},
             {'channel': 'orders', 'instType': 'SPOT', 'instId': INSTRUMENT[VALUTA_IDX].upper()}
         ]
-        ws2 = OkexWSV5(ws_channels, state, use_trade_key=True, channel='private')
+#        ws2 = OkexWSV5(ws_channels, state, use_trade_key=True, channel='private')
         greenlets.append(gevent.spawn(ws1.ws_create))
-        greenlets.append(gevent.spawn(ws2.ws_create))
+#        greenlets.append(gevent.spawn(ws2.ws_create))
 
         schedule_candle_minute(partial(candles.get_latest_candles, INSTRUMENT[VALUTA_IDX].upper(), '1m', limit=5))
     else:
