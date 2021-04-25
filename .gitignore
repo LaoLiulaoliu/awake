@@ -8,6 +8,7 @@ tradesecret*
 2021-*T*/
 .vscode/
 .idea/
+logs/
 
 *.txt
 *.png

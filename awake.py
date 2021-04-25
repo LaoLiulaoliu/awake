@@ -25,24 +25,23 @@ from const import TREND_NAME_TIME, INSTRUMENT, TRADE_NAME, VALUTA_IDX, API_VERSI
 import monitor.log
 
 
-def schedule_run(method, arg, crontab):
-    cron = Cron(method, arg)
-    cron.time_sets(crontab)
+scheduler = Scheduler()
 
-    s = Scheduler()
-    return gevent.spawn(s.run, [cron])
+
+def schedule_candle_minute(method):
+    crontab = '* * * * *'
+    cron = Cron(method)
+    cron.time_sets(crontab)
+    scheduler.add(cron)
 
 
 def schedule_rotate_trend_file(method):
     """ 00:00 utc everyday
     """
     crontab = '0 0 * * *'
-    return schedule_run(method, TREND_NAME_TIME, crontab)
-
-
-def schedule_candle_minute(method):
-    crontab = '* * * * *'
-    return schedule_run(method, None, crontab)
+    cron = Cron(method, TREND_NAME_TIME)
+    cron.time_sets(crontab)
+    scheduler.add(cron)
 
 
 def main():
@@ -72,7 +71,7 @@ def main():
         greenlets.append(gevent.spawn(ws2.ws_create))
 
         spot5 = OkexSpotV5(use_trade_key=True)
-        get_minute_candle = partial(spot5.candles(INSTRUMENT[VALUTA_IDX], '1m', limit=2))
+        schedule_candle_minute(partial(spot5.candles(INSTRUMENT[VALUTA_IDX], '1m', limit=2)))
     else:
         ws_channels = [f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
                        f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',
@@ -82,7 +81,8 @@ def main():
         ws = OkexWSV3(ws_channels, state, use_trade_key=True)
         greenlets.append(gevent.spawn(ws.ws_create))
 
-    greenlets.append(schedule_rotate_trend_file(trend.reopen))
+    schedule_rotate_trend_file(trend.reopen)
+    greenlets.append(gevent.spawn(scheduler.run))
     gevent.sleep(5)
 
     enobs = 3
