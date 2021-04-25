@@ -35,10 +35,9 @@ def schedule_candle_minute(method):
     scheduler.add(cron)
 
 
-def schedule_rotate_trend_file(method):
+def schedule_rotate_trend_file(method, crontab='0 0 * * *'):
     """ 00:00 utc everyday
     """
-    crontab = '0 0 * * *'
     cron = Cron(method, TREND_NAME_TIME)
     cron.time_sets(crontab)
     scheduler.add(cron)
@@ -49,6 +48,7 @@ def main():
     """
     trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 6)  # 4: parse_ticker 6: parse_ticker_detail
     trend.trend_full_load()
+    candles = Numpd('candles_1m.txt', 7)
 
     trade = Trade(TRADE_NAME.format(VALUTA_IDX))
     trade.load()
@@ -72,6 +72,7 @@ def main():
 
         spot5 = OkexSpotV5(use_trade_key=True)
         schedule_candle_minute(partial(spot5.candles, INSTRUMENT[VALUTA_IDX].upper(), '1m', limit=5))
+        schedule_rotate_trend_file(candles.flush, '0 1 * * *')
     else:
         ws_channels = [f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
                        f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',

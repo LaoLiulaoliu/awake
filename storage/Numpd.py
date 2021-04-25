@@ -31,6 +31,13 @@ class Numpd(Numpp):
     def flush(self):
         self.fp.flush()
 
+    def append(self, line_list):
+        try:
+            self.push_back(line_list)
+            self.fp.write(self.sep.join(map(str, line_list)) + '\n')
+        except Exception as e:
+            print(f'Numpd::append exception is: {e}, data: {line_list}')
+
     def reopen(self, f_new_name):
         if self.fp:
             self.fp.close()
@@ -72,10 +79,3 @@ class Numpd(Numpp):
             timestamp, price, ask_price, bid_price = line.split(self.sep)
             self.push_back((int(timestamp), np.float64(price),
                            np.float64(ask_price), np.float64(bid_price)))
-
-    def append(self, line_list):
-        try:
-            self.push_back(line_list)
-            self.fp.write(self.sep.join(map(str, line_list)) + '\n')
-        except Exception as e:
-            print(f'Numpd::append exception is: {e}, data: {line_list}')
