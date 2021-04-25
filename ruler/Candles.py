@@ -12,7 +12,7 @@ class Candles(object):
         self.spot5 = OkexSpotV5(use_trade_key=True)
         self.candles = Zhurong(fname)
 
-    def get_latest_candles(self, instrument_id, bar, limit=5):
+    def get_latest_candles(self, instrument_id, bar, limit):
         r = self.spot5.candles(instrument_id, bar, limit=limit)
         if 'data' in r:
             self.parse_candles(r['data'])
@@ -21,7 +21,7 @@ class Candles(object):
         """return data sort by time from large to small
         """
         candle = self.candles.last()
-        last_timestamp = candle[0]
+        last_timestamp = candle[0] if candle else 0
 
         for i in reversed(message):
             timestamp = int(i[0])

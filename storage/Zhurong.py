@@ -47,6 +47,9 @@ class Zhurong(object):
         self.flush_candles()
 
     def last(self):
-        item = self.data.popitem(last=True)  # LIFO
-        self.data[item[0]] = item[1:]
-        return item
+        try:
+            item = self.data.popitem(last=True)  # LIFO
+            self.data[item[0]] = item[1:]
+            return item
+        except KeyError:  # 'dictionary is empty'
+            return
