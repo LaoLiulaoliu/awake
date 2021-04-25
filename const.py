@@ -11,13 +11,13 @@ INSTRUMENT = {
     2: 'doge-usdt',
     3: 'alpha-usdt',
     4: 'flow-usdt',
-    5: 'glm-usdt',
+    5: 'btt-usdt',
     6: 'luna-usdt',
     7: 'mask-usdt',
     8: 'trx-usdt'
 }
-VALUTA_IDX = 8
-API_VERSION = 3
+VALUTA_IDX = 5
+API_VERSION = 5
 LOG_DIR = 'logs'
 
 TREND_NAME = 'trend_{}.txt'
