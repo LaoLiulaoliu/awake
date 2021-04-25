@@ -12,9 +12,9 @@ from functools import partial
 
 from api.OkexWSV3 import OkexWSV3
 from api.OkexWSV5 import OkexWSV5
-from api.OkexSpotV5 import OkexSpotV5
 from api.instruments import ENOBs
 from storage.Numpd import Numpd
+from ruler.Candles import Candles
 from ruler.State import State
 from ruler.Cron import Cron
 from ruler.Scheduler import Scheduler
@@ -48,12 +48,13 @@ def main():
     """
     trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 6)  # 4: parse_ticker 6: parse_ticker_detail
     trend.trend_full_load()
-    candles = Numpd('candles_1m.txt', 7)
 
     trade = Trade(TRADE_NAME.format(VALUTA_IDX))
     trade.load()
 
     state = State(trend, trade)
+
+    candles = Candles('candles_1m.txt')
 
     greenlets = []
     coin_unit, money_unit = list(map(str.upper, INSTRUMENT[VALUTA_IDX].split('-')))
@@ -70,9 +71,7 @@ def main():
         greenlets.append(gevent.spawn(ws1.ws_create))
         greenlets.append(gevent.spawn(ws2.ws_create))
 
-        spot5 = OkexSpotV5(use_trade_key=True)
-        schedule_candle_minute(partial(spot5.candles, INSTRUMENT[VALUTA_IDX].upper(), '1m', limit=5))
-        schedule_rotate_trend_file(candles.flush, '0 1 * * *')
+        schedule_candle_minute(partial(candles.get_latest_candles, INSTRUMENT[VALUTA_IDX].upper(), '1m', limit=5))
     else:
         ws_channels = [f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
                        f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',

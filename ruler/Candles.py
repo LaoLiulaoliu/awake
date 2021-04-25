@@ -4,17 +4,16 @@
 import numpy as np
 from storage.Zhurong import Zhurong
 from api.OkexSpotV5 import OkexSpotV5
-from const import INSTRUMENT, VALUTA_IDX
 
 
 class Candles(object):
 
-    def __init__(self):
+    def __init__(self, fname):
         self.spot5 = OkexSpotV5(use_trade_key=True)
-        self.candles = Zhurong('candles_1m.txt')
+        self.candles = Zhurong(fname)
 
-    def get_latest_candles(self):
-        r = self.spot5.candles(INSTRUMENT[VALUTA_IDX].upper(), '1m', limit=5)
+    def get_latest_candles(self, instrument_id, bar, limit=5):
+        r = self.spot5.candles(instrument_id, bar, limit=limit)
         if 'data' in r:
             self.parse_candles(r['data'])
 

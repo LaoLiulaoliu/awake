@@ -7,6 +7,7 @@ from collections import OrderedDict
 class Zhurong(object):
     def __init__(self, fname, sep='\t'):
         self.data = OrderedDict()
+        self.flush_count = 0
 
         self.fp = None
         self.fname = fname
@@ -25,6 +26,12 @@ class Zhurong(object):
     def flush(self):
         self.fp.flush()
 
+    def flush_candles(self):
+        self.flush_count += 1
+        if 63 & self.flush_count == 0:
+            self.flush()
+            self.flush_count = 0
+
     def append(self, line_list):
         """Keep 1440 candles in memory, that is 1 day long.
         """
@@ -33,9 +40,11 @@ class Zhurong(object):
             self.fp.write(self.sep.join(map(str, line_list)) + '\n')
         except Exception as e:
             print(f'Zhurong::append exception is: {e}, data: {line_list}')
-        
+
         if self.data.__len__() - 1440 > 0:
             self.data.popitem(last=False)  # FIFO
+
+        self.flush_candles()
 
     def last(self):
         item = self.data.popitem(last=True)  # LIFO
