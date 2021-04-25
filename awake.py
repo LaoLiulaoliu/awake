@@ -47,7 +47,7 @@ def schedule_rotate_trend_file(method):
 def main():
     """ websocket is IO bound, strategy is CPU bound. strategy will block websocket in gevent.
     """
-    trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 4)  # 4: parse_ticker 6: parse_ticker_detail
+    trend = Numpd(eval(TREND_NAME_TIME, globals(), {}), 6)  # 4: parse_ticker 6: parse_ticker_detail
     trend.trend_full_load()
 
     trade = Trade(TRADE_NAME.format(VALUTA_IDX))
@@ -71,7 +71,7 @@ def main():
         greenlets.append(gevent.spawn(ws2.ws_create))
 
         spot5 = OkexSpotV5(use_trade_key=True)
-        schedule_candle_minute(partial(spot5.candles(INSTRUMENT[VALUTA_IDX], '1m', limit=2)))
+        schedule_candle_minute(partial(spot5.candles, INSTRUMENT[VALUTA_IDX].upper(), bar='1m', limit=2))
     else:
         ws_channels = [f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
                        f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',

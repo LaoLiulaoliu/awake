@@ -45,4 +45,4 @@ class Cron(object):
                t.weekday() in self.tsets['dayofweek']
 
     def get_arg(self):
-        return eval(self.arg, globals(), {}) if self.arg is None else None
+        return None if self.arg is None else eval(self.arg, globals(), {})

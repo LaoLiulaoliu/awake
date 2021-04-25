@@ -18,7 +18,7 @@ class Scheduler(object):
     def run(self):
         while True:
             # cost 0.00003s empty, 0.0005 loaded in mac 2.4G
-            [self.execute(s.method, s.get_arg()) for s in self.schedules if s.timematch()]
+            [self.execute(s.method, s.get_arg()) for s in self.crons if s.timematch()]
 
             # assume this for loop can be finished in less than one minute
             gevent.sleep(60 - datetime.utcnow().second)
