@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from storage.Numpd import Numpd
+from storage.Zhurong import Zhurong
 from api.OkexSpotV5 import OkexSpotV5
 from const import INSTRUMENT, VALUTA_IDX
 
@@ -11,7 +11,7 @@ class Candles(object):
 
     def __init__(self):
         self.spot5 = OkexSpotV5(use_trade_key=True)
-        self.candles = Numpd('candles_1m.txt', 7)
+        self.candles = Zhurong('candles_1m.txt')
 
     def get_latest_candles(self):
         r = self.spot5.candles(INSTRUMENT[VALUTA_IDX].upper(), '1m', limit=5)
@@ -22,10 +22,9 @@ class Candles(object):
         """return data sort by time from large to small
         """
         candle = self.candles.last()
-        last_timestamp = int(candle[0])
+        last_timestamp = candle[0]
 
         for i in reversed(message):
             timestamp = int(i[0])
             if last_timestamp < timestamp:
-                i = list(map(np.float64, i))
-                self.candles.append(i)
+                self.candles.append([timestamp] + list(map(np.float64, i[1:])))
