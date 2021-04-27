@@ -48,7 +48,7 @@ def check_time_order(data):
             break
 
 
-def load_candles(name='trx', gap='1H', begin=None, end=None):
+def load_candles(name='trx', gap='1h', begin=None, end=None):
     table = f'{name}_usdt_{gap}'
     begin, end = get_min_max_begin_end(begin, end)
 
@@ -79,3 +79,23 @@ def load_candles(name='trx', gap='1H', begin=None, end=None):
 
     check_time_order(candle_data)
     return candle_data
+
+
+def calculate_index(pg, table, begin, end):
+    data = pg.select(table,
+                  'timestamp, open, high, low, close',
+                  f'timestamp>={begin} and timestamp<={end}',
+                  'order by timestamp asc')
+
+    ol, hl, ll, cl = data[0][1:5]
+    for i in data[1:]:
+        o, h, l, c = i[1:5]
+        increase = (c - cl) / cl * 100
+        amplitude = (h - l) / cl * 100
+        up = (c - o) / o * 100
+        volatility = (h - l) / l * 100
+        ol, hl, ll, cl = o, h, l, c
+
+        pg.update(table,
+                  {'increase': increase, 'amplitude': amplitude, 'up': up, 'volatility': volatility},
+                  {'timestamp': i[0]})

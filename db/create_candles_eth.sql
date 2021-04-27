@@ -1,7 +1,7 @@
 create database candles;
 grant all on DATABASE candles to postgres;
 \c candles
-create table eth_usdt_1H (
+create table eth_usdt_1h (
   timestamp bigint primary key,
   open varchar(16) not null,
   high varchar(16) not null,
@@ -15,7 +15,7 @@ create table eth_usdt_1H (
   volatility float8
 );
 
-create table eth_usdt_15M (
+create table eth_usdt_15m (
   timestamp bigint primary key,
   open varchar(16) not null,
   high varchar(16) not null,
