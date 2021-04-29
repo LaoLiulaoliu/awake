@@ -3,8 +3,8 @@ from collections import OrderedDict
 from const import INSTRUMENT, VALUTA_IDX
 from api.OkexSpotV5 import OkexSpotV5
 
-
 spot5 = OkexSpotV5(use_trade_key=True)
+
 
 def get_candles(before, after='', bar='15m'):
     """ ts, o, h, l, c, vol, volCcy

@@ -18,16 +18,18 @@ from backtesting.r20210219 import r20210219
 from backtesting.grid import grid
 from backtesting.FakeCandles import get_candles
 from db.candles import load_candles
-from const import TREND_NAME_TIME, INSTRUMENT
+from strategies.dqn import run_dqn
+
 from storage.Numpd import Numpd
 from ruler.State import State
 from ruler.Cron import Cron
 from ruler.Scheduler import Scheduler
+from const import TREND_NAME_TIME, INSTRUMENT
 
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, 'acfnorsz', ['numpd=', 'spot=', 'run=', 'socket='])
+        opts, args = getopt.getopt(argv, 'acflnorsz', ['numpd=', 'spot=', 'run=', 'socket='])
     except getopt.GetoptError:
         print('test.py -n')
         sys.exit(2)
@@ -57,6 +59,9 @@ def main(argv):
             import orjson
             with open('btc-data', 'w') as fd:
                 fd.write(orjson.dumps(data).decode('utf-8'))
+
+        elif opt in ('-l'):
+            load_candles('trx', '1m', end='2021-04-28T11:00:00')
 
         elif opt in ('-o', '--spot'):
             VALUTA_IDX = 0
@@ -103,7 +108,7 @@ def main(argv):
             grid()
             # r20210219('TREND_2021-02-24.txt')
         elif opt in ('-z', '--zz'):
-            load_candles('trx', '1m', end='2021-04-28T11:00:00')
+            run_dqn()
         else:
             pass
 
