@@ -10,7 +10,7 @@ from db.pgwrapper import PGWrapper
 def get_candles_insert_db(pg, table, begin, end, gap):
     datas = OrderedDict()
     for data in get_candles(begin, end, gap):
-        for timestamp, candle in data.items():
+        for timestamp, candle in reversed(data.items()):
             timestamp = int(timestamp)
             if begin < timestamp < end:
                 datas[timestamp] = candle[:]
@@ -38,6 +38,16 @@ def get_min_max_begin_end(begin, end):
     return begin, end
 
 
+def fill_gap(begin, end, gap):
+    if gap == '1m':
+        gap = 60 * TIME_PRECISION
+    elif gap == '15m':
+        gap = 900 * TIME_PRECISION
+    elif gap == '1H':
+        gap = 3600 * TIME_PRECISION
+    return begin + gap, end - gap
+
+
 def check_time_order(data):
     base_time = 0
     for i in data.items():
@@ -48,9 +58,10 @@ def check_time_order(data):
             break
 
 
-def load_candles(name='trx', gap='1h', begin=None, end=None):
+def load_candles(name='trx', gap='1H', begin=None, end=None):
     table = f'{name}_usdt_{gap}'
     begin, end = get_min_max_begin_end(begin, end)
+    begin, end = fill_gap(begin, end, gap)
 
     pg = PGWrapper('candles', 'postgres', 'whocares')
     candle_data = OrderedDict()

@@ -17,7 +17,7 @@ from api.apiwrapper import place_batch_orders
 from backtesting.r20210219 import r20210219
 from backtesting.grid import grid
 from backtesting.FakeCandles import get_candles
-from backtesting.pendulum import load_candles
+from db.candles import load_candles
 from const import TREND_NAME_TIME, INSTRUMENT
 from storage.Numpd import Numpd
 from ruler.State import State
@@ -103,7 +103,7 @@ def main(argv):
             grid()
             # r20210219('TREND_2021-02-24.txt')
         elif opt in ('-z', '--zz'):
-            load_candles('trx', '1m', end='2021-04-26T08:00:00')
+            load_candles('trx', '1m', end='2021-04-28T11:00:00')
         else:
             pass
 
