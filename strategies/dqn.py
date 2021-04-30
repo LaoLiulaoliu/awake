@@ -247,5 +247,6 @@ def run_dqn():
               'avg profits %.2f' % avg_profits,
               'epsilon %.2f' % agent.epsilon)
 
+    agent.save_model()
     x = [i + 1 for i in range(epochs)]
     plt.plot(x, profits)
