@@ -127,10 +127,10 @@ class Agent(object):
     epsilon探索率ϵ。即策略是以1−ϵ的概率选择当前最大价值的动作，以ϵ的概率随机选择新动作。
     """
     def __init__(self, gamma, epsilon, lr, input_dims, batch_size, n_actions=3,
-                 max_mem_size=1000000, eps_end=0.01, eps_dec=5e-4):
+                 max_mem_size=1000000, eps_min=0.01, eps_dec=5e-4):
         self.gamma = gamma
         self.epsilon = epsilon
-        self.eps_min = eps_end
+        self.eps_min = eps_min
         self.eps_dec = eps_dec
         self.lr = lr
         self.n_actions = n_actions
@@ -208,20 +208,20 @@ class Agent(object):
 
         # 第batch_index行，取action_batch列,对state_batch中的每一组输入，输出action对应的Q值,batchsize行，1列的Q值
         q_eval = self.Q_eval.forward(state_batch)[batch_index, action_batch]
-        q_next = self.Q_eval.forward(new_state_batch)
+        q_next = self.Q_eval.forward(new_state_batch)  # (64, 10) -> (64, 3)
         q_next[terminal_batch] = 0.0  # 如果是最终状态，则将q值置为0
         q_target = reward_batch + self.gamma * torch.max(q_next, dim=1)[0]
         loss = self.Q_eval.loss(q_target, q_eval).to(self.Q_eval.device)
         loss.backward()
         self.Q_eval.optimizer.step()
 
-        self.epsilon = self.epsilon - self.eps_dec if self.epsilon > self.eps_min \
-            else self.eps_min
+        self.epsilon = self.epsilon - self.eps_dec \
+            if self.epsilon > self.eps_min else self.eps_min
 
 
 def run_dqn():
     environ = Environment()
-    agent = Agent(gamma=0.9, epsilon=0.9, lr=0.003, input_dims=[10], batch_size=64, n_actions=3, eps_end=0.03)
+    agent = Agent(gamma=0.9, epsilon=1.0, lr=0.003, input_dims=[10], batch_size=64, n_actions=3, eps_min=0.03)
     profits, eps_history = [], []
     epochs = 100
 
