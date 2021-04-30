@@ -1,10 +1,10 @@
 import math
+import joblib
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn.functional as F
 import mxnet as mx
-import tensorflow as tf
 import matplotlib.pyplot as plt
 
 from db.candles import load_candles
@@ -96,16 +96,16 @@ class Environment(object):
                 True if self.barpos == self.data.shape[0] - 1 else False)
 
 
-class DeepQNetwork(torch.nn.Module):
-    def __init__(self, lr, input_dims, fc1_dims, fc2_dims, n_actions):
-        super(DeepQNetwork, self).__init__()
+class DeepQNet(torch.nn.Module):
+    def __init__(self, input_dims, fc1_dims, fc2_dims, n_actions, lr):
+        super(DeepQNet, self).__init__()
         self.lr = lr
         self.input_dims = input_dims
         self.fc1_dims = fc1_dims
         self.fc2_dims = fc2_dims
         self.n_actions = n_actions
 
-        self.fc1 = torch.nn.Linear(*self.input_dims, self.fc1_dims)  # an affine operation: y = Wx + b
+        self.fc1 = torch.nn.Linear(self.input_dims, self.fc1_dims)  # an affine operation: y = Wx + b
         self.fc2 = torch.nn.Linear(self.fc1_dims, self.fc2_dims)
         self.fc3 = torch.nn.Linear(self.fc2_dims, self.n_actions)
         self.optimizer = torch.optim.Adam(self.parameters(), lr=lr)
@@ -123,16 +123,23 @@ class DeepQNetwork(torch.nn.Module):
         return actions
 
 
-class DeepQNet(mx.gluon.nn.Block):
-    def __init__(self, input_dims, fc1_dims, fc2_dims, n_actions):
-        super(DeepQNet, self).__init__()
+class DeepQNetwork(mx.gluon.nn.Block):
+    def __init__(self, input_dims, fc1_dims, fc2_dims, n_actions, learning_rate):
+        super(DeepQNetwork, self).__init__()
         self.input_dims = input_dims
         self.fc1_dims = fc1_dims
         self.fc2_dims = fc2_dims
         self.n_actions = n_actions
 
+        self.fc1 = mx.gluon.nn.Dense(self.fc1_dims, activation='relu')  # an affine operation: y = Wx + b
+        self.fc2 = mx.gluon.nn.Dense(self.fc2_dims, activation='relu')
+        self.fc3 = mx.gluon.nn.Dense(self.n_actions)
+
+        self.optimizer = mx.gluon.Trainer(self.collect_params(), 'adam', {'learning_rate': learning_rate})
+        self.loss = mx.gluon.loss.L2Loss()
+
     def forward(self, inputs):
-        return
+        return self.fc3(self.fc2(self.fc1(inputs)))
 
 
 class Agent(object):
@@ -152,21 +159,25 @@ class Agent(object):
         self.batch_size = batch_size
         self.mem_cntr = 0
 
-        self.Q_eval = DeepQNetwork(self.lr, input_dims=input_dims, n_actions=self.n_actions,
-                                   fc1_dims=256, fc2_dims=256)
+        self.Q_eval = DeepQNet(input_dims, 256, 256, self.n_actions, self.lr)
 
-        self.state_memory = np.zeros((self.mem_size, *input_dims), dtype=np.float32)
-        self.new_state_memory = np.zeros((self.mem_size, *input_dims), dtype=np.float32)
+        self.state_memory = np.zeros((self.mem_size, input_dims), dtype=np.float32)
+        self.new_state_memory = np.zeros((self.mem_size, input_dims), dtype=np.float32)
 
         self.action_memory = np.zeros(self.mem_size, dtype=np.int32)
         self.reward_memory = np.zeros(self.mem_size, dtype=np.float32)
         self.terminal_memory = np.zeros(self.mem_size, dtype=np.bool)
 
     def save_model(self):
-        torch.save(self.Q_eval, 'DNN_Params')
+        params = self.Q_eval._collect_params_with_prefix()
+        model = {key: val._reduce() for key, val in params.items()}
+        joblib.dump(model, 'DNN_Params.m')
 
     def load_model(self):
-        self.Q_eval = torch.load('DNN_Params')
+        model = joblib.load('DNN_Params.m')
+        params = self.Q_eval._collect_params_with_prefix()
+        for name in model:
+            params[name]._load_init(model[name], mx.cpu(), cast_dtype=False, dtype_source='current')
 
     # 存储记忆
     def store_transition(self, state, action, reward, state_, done):
@@ -187,6 +198,7 @@ class Agent(object):
             state = torch.tensor(observation).to(self.Q_eval.device)
             # 放到神经网络模型里面得到action的Q值vector
             actions = self.Q_eval.forward(state)
+            print(state.shape, actions.shape, actions)
             action = torch.argmax(actions).item()
         else:
             # epsilon概率执行随机动作
@@ -225,6 +237,7 @@ class Agent(object):
         q_next = self.Q_eval.forward(new_state_batch)  # (64, 10) -> (64, 3)
         q_next[terminal_batch] = 0.0  # 如果是最终状态，则将q值置为0
         q_target = reward_batch + self.gamma * torch.max(q_next, dim=1)[0]
+
         loss = self.Q_eval.loss(q_target, q_eval).to(self.Q_eval.device)
         loss.backward()
         self.Q_eval.optimizer.step()
@@ -235,7 +248,7 @@ class Agent(object):
 
 def run_dqn():
     environ = Environment()
-    agent = Agent(gamma=0.9, epsilon=1.0, lr=0.003, input_dims=[10], batch_size=64, n_actions=3, eps_min=0.03)
+    agent = Agent(gamma=0.9, epsilon=1.0, lr=0.003, input_dims=10, batch_size=64, n_actions=3, eps_min=0.03)
     profits, eps_history = [], []
     epochs = 100
 
