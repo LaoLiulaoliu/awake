@@ -57,3 +57,12 @@ class Tool(object):
     @staticmethod
     def target(source, rate=0.15):
         return source * rate + source
+
+    @staticmethod
+    def average_price(price_amount):
+        balance = 0.0
+        coin = 0.0
+        for price, amount in price_amount.items():
+            balance += price * amount
+            coin += amount
+        return balance / coin
