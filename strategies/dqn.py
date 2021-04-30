@@ -10,7 +10,7 @@ from db.candles import load_candles
 
 class Environment(object):
     def __init__(self):
-        candle_data = load_candles('trx', '1m', end='2021-04-28T11:00:00')
+        candle_data = load_candles('trx', '1m', begin='2021-01-01T11:00:00', end='2021-04-28T11:00:00')
         self.data = pd.DataFrame(candle_data.values(),
                                  index=candle_data.keys(),
                                  columns=['open', 'high', 'low', 'close', 'vol', 'volCcy'],
@@ -91,7 +91,7 @@ class Environment(object):
 
         return (observation,
                 self.day_profit,
-                True if self.barpos == self.data.shape[1] - 1 else False)
+                True if self.barpos == self.data.shape[0] - 1 else False)
 
 
 class DeepQNetwork(torch.nn.Module):
@@ -195,8 +195,6 @@ class Agent(object):
 
         # 随机生成一个batch的memory index，可重复抽取
         batch = np.random.choice(max_mem, self.batch_size, replace=False)
-
-        # int序列array，0~batch_size
         batch_index = np.arange(self.batch_size, dtype=np.int32)
 
         # 从state memory中抽取一个batch
@@ -205,7 +203,7 @@ class Agent(object):
         reward_batch = torch.tensor(self.reward_memory[batch]).to(self.Q_eval.device)
         terminal_batch = torch.tensor(self.terminal_memory[batch]).to(self.Q_eval.device)  # 存储是否结束的bool型变量
 
-        # action_batch = T.tensor(self.action_memory[batch]).to(self.Q_eval.device)
+        # action_batch = torch.tensor(self.action_memory[batch]).to(self.Q_eval.device)
         action_batch = self.action_memory[batch]
 
         # 第batch_index行，取action_batch列,对state_batch中的每一组输入，输出action对应的Q值,batchsize行，1列的Q值
@@ -223,7 +221,7 @@ class Agent(object):
 
 def run_dqn():
     environ = Environment()
-    agent = Agent(gamma=0.9, epsilon=1.0, lr=0.003, input_dims=[10], batch_size=64, n_actions=3, eps_end=0.03)
+    agent = Agent(gamma=0.9, epsilon=0.9, lr=0.003, input_dims=[10], batch_size=64, n_actions=3, eps_end=0.03)
     profits, eps_history = [], []
     epochs = 100
 
@@ -240,14 +238,14 @@ def run_dqn():
             agent.learn()
             observation = observation_
 
-            # 保存一下每局的收益，最后画个图
-            profits.append(profit)
-            eps_history.append(agent.epsilon)
-            avg_profits = np.mean(profits[-100:])
+        # 保存一下每局的收益，最后画个图
+        profits.append(profit)
+        eps_history.append(agent.epsilon)
+        avg_profits = np.mean(profits[-100:])
 
-            print('episode', i, 'profits %.2f' % profit,
-                  'avg profits %.2f' % avg_profits,
-                  'epsilon %.2f' % agent.epsilon)
+        print('episode', i, 'profits %.2f' % profit,
+              'avg profits %.2f' % avg_profits,
+              'epsilon %.2f' % agent.epsilon)
 
-            x = [i + 1 for i in range(epochs)]
-            plt.plot(x, profits)
+    x = [i + 1 for i in range(epochs)]
+    plt.plot(x, profits)
