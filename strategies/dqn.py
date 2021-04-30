@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn.functional as F
+import mxnet as mx
+import tensorflow as tf
 import matplotlib.pyplot as plt
 
 from db.candles import load_candles
@@ -121,6 +123,18 @@ class DeepQNetwork(torch.nn.Module):
         return actions
 
 
+class DeepQNet(mx.gluon.nn.Block):
+    def __init__(self, input_dims, fc1_dims, fc2_dims, n_actions):
+        super(DeepQNet, self).__init__()
+        self.input_dims = input_dims
+        self.fc1_dims = fc1_dims
+        self.fc2_dims = fc2_dims
+        self.n_actions = n_actions
+
+    def forward(self, inputs):
+        return
+
+
 class Agent(object):
     """
     gamma的折扣率它必须介于0和1之间。越大，折扣越小。意味着学习，agent 更关心长期奖励。另一方面，gamma越小，折扣越大。意味着 agent 更关心短期奖励。
@@ -228,6 +242,7 @@ def run_dqn():
     for i in range(epochs):
         profit = 0
         done = False
+        # can add env_list if have multiple stocks
         observation = environ.reset()
         while not done:
             print('barpos: ', environ.barpos)
