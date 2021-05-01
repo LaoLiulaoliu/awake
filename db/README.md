@@ -21,6 +21,7 @@
     # sudo su - postgres -c "createuser jameson"
     # sudo su - postgres -c "createdb candles"
     sudo -u postgres psql
+    psql -U postgres
     CREATE ROLE jameson with login password 'volatility' createdb;
     ALTER DEFAULT PRIVILEGES GRANT SELECT ON TABLES TO PUBLIC;
     ALTER DEFAULT PRIVILEGES GRANT INSERT ON TABLES TO jameson;
