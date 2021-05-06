@@ -130,12 +130,14 @@ class DeepQNetwork(mx.gluon.nn.Block):
         self.fc1_dims = fc1_dims
         self.fc2_dims = fc2_dims
         self.n_actions = n_actions
+        self.learning_rate = learning_rate
 
         self.fc1 = mx.gluon.nn.Dense(self.fc1_dims, activation='relu')  # an affine operation: y = Wx + b
         self.fc2 = mx.gluon.nn.Dense(self.fc2_dims, activation='relu')
         self.fc3 = mx.gluon.nn.Dense(self.n_actions)
 
-        self.optimizer = mx.gluon.Trainer(self.collect_params(), 'adam', {'learning_rate': learning_rate})
+    def init(self):
+        self.optimizer = mx.gluon.Trainer(self.collect_params(), 'adam', {'learning_rate': self.learning_rate})
         self.loss = mx.gluon.loss.L2Loss()
 
     def forward(self, inputs):
@@ -159,7 +161,9 @@ class Agent(object):
         self.batch_size = batch_size
         self.mem_cntr = 0
 
-        self.Q_eval = DeepQNet(input_dims, 256, 256, self.n_actions, self.lr)
+        self.Q_eval = DeepQNetwork(input_dims, 256, 256, self.n_actions, self.lr)
+        self.Q_eval.initialize(mx.init.Xavier())
+        self.Q_eval.init()
 
         self.state_memory = np.zeros((self.mem_size, input_dims), dtype=np.float32)
         self.new_state_memory = np.zeros((self.mem_size, input_dims), dtype=np.float32)
@@ -195,11 +199,11 @@ class Agent(object):
     def choose_action(self, observation):
         if np.random.random() > self.epsilon:
             # 随机0-1，即1-epsilon的概率执行以下操作,最大价值操作
-            state = torch.tensor(observation)
+            state = mx.nd.array([observation])  # (1, 10)
             # 放到神经网络模型里面得到action的Q值vector
             actions = self.Q_eval.forward(state)
-            print(state.shape, actions.shape, actions)
-            action = torch.argmax(actions).item()
+            action = int(mx.nd.argmax(actions).asscalar())
+            print(action, actions)
         else:
             # epsilon概率执行随机动作
             action = np.random.choice(self.n_actions)
@@ -214,7 +218,7 @@ class Agent(object):
             return
 
         # 初始化梯度0
-        self.Q_eval.optimizer.zero_grad()
+        # self.Q_eval.optimizer.zero_grad()
 
         # 得到memory大小，不超过mem_size
         max_mem = min(self.mem_cntr, self.mem_size)
@@ -224,21 +228,20 @@ class Agent(object):
         batch_index = np.arange(self.batch_size, dtype=np.int32)
 
         # 从state memory中抽取一个batch
-        state_batch = torch.tensor(self.state_memory[batch]).to(self.Q_eval.device)
-        new_state_batch = torch.tensor(self.new_state_memory[batch]).to(self.Q_eval.device)
-        reward_batch = torch.tensor(self.reward_memory[batch]).to(self.Q_eval.device)
-        terminal_batch = torch.tensor(self.terminal_memory[batch]).to(self.Q_eval.device)  # 存储是否结束的bool型变量
+        state_batch = mx.nd.array(self.state_memory[batch])
+        new_state_batch = mx.nd.array(self.new_state_memory[batch])
+        reward_batch = mx.nd.array(self.reward_memory[batch])
+        terminal_batch = self.terminal_memory[batch]  # 存储是否结束的bool型变量
 
-        # action_batch = torch.tensor(self.action_memory[batch]).to(self.Q_eval.device)
         action_batch = self.action_memory[batch]
 
-        # 第batch_index行，取action_batch列,对state_batch中的每一组输入，输出action对应的Q值,batchsize行，1列的Q值
+        # 第batch_index行，取action_batch列,对state_batch中的每一组输入，输出action对应的Q值, (batchsize行，1列)
         q_eval = self.Q_eval.forward(state_batch)[batch_index, action_batch]
-        q_next = self.Q_eval.forward(new_state_batch)  # (64, 10) -> (64, 3)
+        q_next = self.Q_eval.forward(new_state_batch).asnumpy()  # (64, 10) -> (64, 3)
         q_next[terminal_batch] = 0.0  # 如果是最终状态，则将q值置为0
-        q_target = reward_batch + self.gamma * torch.max(q_next, dim=1)[0]
+        q_target = reward_batch + mx.nd.array(self.gamma * np.max(q_next, axis=1))
 
-        loss = self.Q_eval.loss(q_target, q_eval).to(self.Q_eval.device)
+        loss = self.Q_eval.loss(q_target, q_eval)
         loss.backward()
         self.Q_eval.optimizer.step()
 
@@ -248,7 +251,7 @@ class Agent(object):
 
 def run_dqn():
     environ = Environment()
-    agent = Agent(gamma=0.9, epsilon=1.0, lr=0.003, input_dims=10, batch_size=64, n_actions=3, eps_min=0.03)
+    agent = Agent(gamma=0.9, epsilon=0.5, lr=0.003, input_dims=10, batch_size=64, n_actions=3, eps_min=0.03)
     profits, eps_history = [], []
     epochs = 100
 

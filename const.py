@@ -16,7 +16,7 @@ INSTRUMENT = {
     7: 'mask-usdt',
     8: 'trx-usdt'
 }
-VALUTA_IDX = 6
+VALUTA_IDX = 8
 API_VERSION = 5
 LOG_DIR = 'logs'
 
