@@ -2,8 +2,8 @@ import math
 import joblib
 import numpy as np
 import pandas as pd
-import torch
-import torch.nn.functional as F
+# import torch
+# import torch.nn.functional as F
 import mxnet as mx
 import matplotlib.pyplot as plt
 
@@ -96,31 +96,31 @@ class Environment(object):
                 True if self.barpos == self.data.shape[0] - 1 else False)
 
 
-class DeepQNet(torch.nn.Module):
-    def __init__(self, input_dims, fc1_dims, fc2_dims, n_actions, lr):
-        super(DeepQNet, self).__init__()
-        self.lr = lr
-        self.input_dims = input_dims
-        self.fc1_dims = fc1_dims
-        self.fc2_dims = fc2_dims
-        self.n_actions = n_actions
+# class DeepQNet(torch.nn.Module):
+#     def __init__(self, input_dims, fc1_dims, fc2_dims, n_actions, lr):
+#         super(DeepQNet, self).__init__()
+#         self.lr = lr
+#         self.input_dims = input_dims
+#         self.fc1_dims = fc1_dims
+#         self.fc2_dims = fc2_dims
+#         self.n_actions = n_actions
 
-        self.fc1 = torch.nn.Linear(self.input_dims, self.fc1_dims)  # an affine operation: y = Wx + b
-        self.fc2 = torch.nn.Linear(self.fc1_dims, self.fc2_dims)
-        self.fc3 = torch.nn.Linear(self.fc2_dims, self.n_actions)
-        self.optimizer = torch.optim.Adam(self.parameters(), lr=lr)
-        self.loss = torch.nn.MSELoss()
+#         self.fc1 = torch.nn.Linear(self.input_dims, self.fc1_dims)  # an affine operation: y = Wx + b
+#         self.fc2 = torch.nn.Linear(self.fc1_dims, self.fc2_dims)
+#         self.fc3 = torch.nn.Linear(self.fc2_dims, self.n_actions)
+#         self.optimizer = torch.optim.Adam(self.parameters(), lr=lr)
+#         self.loss = torch.nn.MSELoss()
 
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        self.to(self.device)
+#         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+#         self.to(self.device)
 
-    def forward(self, state):
-        state.to(self.device)
-        x = F.relu(self.fc1(state.to(torch.float32)))
-        x = F.relu(self.fc2(x))
-        actions = self.fc3(x)
+#     def forward(self, state):
+#         state.to(self.device)
+#         x = F.relu(self.fc1(state.to(torch.float32)))
+#         x = F.relu(self.fc2(x))
+#         actions = self.fc3(x)
 
-        return actions
+#         return actions
 
 
 class DeepQNetwork(mx.gluon.nn.Block):
@@ -195,7 +195,7 @@ class Agent(object):
     def choose_action(self, observation):
         if np.random.random() > self.epsilon:
             # 随机0-1，即1-epsilon的概率执行以下操作,最大价值操作
-            state = torch.tensor(observation).to(self.Q_eval.device)
+            state = torch.tensor(observation)
             # 放到神经网络模型里面得到action的Q值vector
             actions = self.Q_eval.forward(state)
             print(state.shape, actions.shape, actions)
