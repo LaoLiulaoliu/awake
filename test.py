@@ -61,7 +61,7 @@ def main(argv):
                 fd.write(orjson.dumps(data).decode('utf-8'))
 
         elif opt in ('-l'):
-            load_candles('okb', '1H', end='2021-04-28T11:00:00')
+            load_candles('okb', '1m', end='2021-05-06T01:00:00')
 
         elif opt in ('-o', '--spot'):
             VALUTA_IDX = 0
