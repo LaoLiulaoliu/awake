@@ -12,7 +12,7 @@ from db.candles import load_candles
 
 class Environment(object):
     def __init__(self):
-        candle_data = load_candles('trx', '1m', begin='2021-01-01T11:00:00', end='2021-04-28T11:00:00')
+        candle_data = load_candles('trx', '15m', end='2021-05-07T04:00:00')
         self.data = pd.DataFrame(candle_data.values(),
                                  index=candle_data.keys(),
                                  columns=['open', 'high', 'low', 'close', 'vol', 'volCcy'],
@@ -137,6 +137,7 @@ class DeepQNetwork(mx.gluon.nn.Block):
         self.fc3 = mx.gluon.nn.Dense(self.n_actions)
 
     def init(self):
+        self.initialize(mx.init.Xavier())
         self.optimizer = mx.gluon.Trainer(self.collect_params(), 'adam', {'learning_rate': self.learning_rate})
         self.loss = mx.gluon.loss.L2Loss()
 
@@ -162,7 +163,6 @@ class Agent(object):
         self.mem_cntr = 0
 
         self.Q_eval = DeepQNetwork(input_dims, 256, 256, self.n_actions, self.lr)
-        self.Q_eval.initialize(mx.init.Xavier())
         self.Q_eval.init()
 
         self.state_memory = np.zeros((self.mem_size, input_dims), dtype=np.float32)

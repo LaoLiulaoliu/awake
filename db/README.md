@@ -36,7 +36,7 @@
 
 #### dump & restore
 
-    pg_dump -h 127.0.0.1 -U postgres -p 5432 -d candles -Fp -t okb_usdt_15m > /tmp/okb_15.dmp
+    pg_dump -h 127.0.0.1 -U postgres -p 5432 -t okb_usdt_15m -f okb_15.dmp -Fc candles
     pg_restore -h 127.0.0.1 -p 5432 -d candles -v /tmp/okb_15.dmp
 
 #### problem

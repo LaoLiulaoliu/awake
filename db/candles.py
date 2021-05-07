@@ -38,14 +38,14 @@ def get_min_max_begin_end(begin, end):
     return begin, end
 
 
-def fill_gap(begin, end, gap):
+def fill_gap(point, gap, direction):
     if gap == '1m':
         gap = 60 * TIME_PRECISION
     elif gap == '15m':
         gap = 900 * TIME_PRECISION
     elif gap == '1H':
         gap = 3600 * TIME_PRECISION
-    return begin + gap, end - gap
+    return point + gap if direction == 'begin' else point - gap
 
 
 def check_time_order(data):
@@ -61,7 +61,6 @@ def check_time_order(data):
 def load_candles(name='trx', gap='1H', begin=None, end=None):
     table = f'{name}_usdt_{gap}'
     begin, end = get_min_max_begin_end(begin, end)
-    begin, end = fill_gap(begin, end, gap)
 
     pg = PGWrapper('candles', 'postgres', 'whocares')
     candle_data = OrderedDict()
@@ -85,7 +84,7 @@ def load_candles(name='trx', gap='1H', begin=None, end=None):
                           'order by timestamp asc')
             candle_data.update({i[0]: i[1:] for i in r})
 
-        if end > max_time:
+        if fill_gap(end, gap, 'end') > max_time:
             candle_data.update(get_candles_insert_db(pg, table, max_time, end, gap))
 
     check_time_order(candle_data)
