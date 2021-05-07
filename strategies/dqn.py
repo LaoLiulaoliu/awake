@@ -2,8 +2,6 @@ import math
 import joblib
 import numpy as np
 import pandas as pd
-# import torch
-# import torch.nn.functional as F
 import mxnet as mx
 import matplotlib.pyplot as plt
 
@@ -96,33 +94,6 @@ class Environment(object):
                 True if self.barpos == self.data.shape[0] - 1 else False)
 
 
-# class DeepQNet(torch.nn.Module):
-#     def __init__(self, input_dims, fc1_dims, fc2_dims, n_actions, lr):
-#         super(DeepQNet, self).__init__()
-#         self.lr = lr
-#         self.input_dims = input_dims
-#         self.fc1_dims = fc1_dims
-#         self.fc2_dims = fc2_dims
-#         self.n_actions = n_actions
-
-#         self.fc1 = torch.nn.Linear(self.input_dims, self.fc1_dims)  # an affine operation: y = Wx + b
-#         self.fc2 = torch.nn.Linear(self.fc1_dims, self.fc2_dims)
-#         self.fc3 = torch.nn.Linear(self.fc2_dims, self.n_actions)
-#         self.optimizer = torch.optim.Adam(self.parameters(), lr=lr)
-#         self.loss = torch.nn.MSELoss()
-
-#         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-#         self.to(self.device)
-
-#     def forward(self, state):
-#         state.to(self.device)
-#         x = F.relu(self.fc1(state.to(torch.float32)))
-#         x = F.relu(self.fc2(x))
-#         actions = self.fc3(x)
-
-#         return actions
-
-
 class DeepQNetwork(mx.gluon.nn.Block):
     def __init__(self, input_dims, fc1_dims, fc2_dims, n_actions, learning_rate):
         super(DeepQNetwork, self).__init__()
@@ -203,7 +174,6 @@ class Agent(object):
             # 放到神经网络模型里面得到action的Q值vector
             actions = self.Q_eval.forward(state)
             action = int(mx.nd.argmax(actions).asscalar())
-            print(action, actions)
         else:
             # epsilon概率执行随机动作
             action = np.random.choice(self.n_actions)
@@ -235,15 +205,16 @@ class Agent(object):
 
         action_batch = self.action_memory[batch]
 
-        # 第batch_index行，取action_batch列,对state_batch中的每一组输入，输出action对应的Q值, (batchsize行，1列)
-        q_eval = self.Q_eval.forward(state_batch)[batch_index, action_batch]
-        q_next = self.Q_eval.forward(new_state_batch).asnumpy()  # (64, 10) -> (64, 3)
-        q_next[terminal_batch] = 0.0  # 如果是最终状态，则将q值置为0
-        q_target = reward_batch + mx.nd.array(self.gamma * np.max(q_next, axis=1))
+        with mx.autograd.record():
+            # 第batch_index行，取action_batch列,对state_batch中的每一组输入，输出action对应的Q值, (batchsize行，1列)
+            q_eval = self.Q_eval.forward(state_batch)[batch_index, action_batch]
+            q_next = self.Q_eval.forward(new_state_batch).asnumpy()  # (64, 10) -> (64, 3)
+            q_next[terminal_batch] = 0.0  # 如果是最终状态，则将q值置为0
+            q_target = reward_batch + mx.nd.array(self.gamma * np.max(q_next, axis=1))
 
-        loss = self.Q_eval.loss(q_target, q_eval)
+            loss = self.Q_eval.loss(q_target, q_eval)
         loss.backward()
-        self.Q_eval.optimizer.step()
+        self.Q_eval.optimizer.step(self.batch_size)
 
         self.epsilon = self.epsilon - self.eps_dec \
             if self.epsilon > self.eps_min else self.eps_min
