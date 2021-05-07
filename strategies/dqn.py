@@ -12,7 +12,7 @@ from db.candles import load_candles
 
 class Environment(object):
     def __init__(self):
-        candle_data = load_candles('trx', '15m', end='2021-05-07T04:00:00')
+        candle_data = load_candles('trx', '1H', end='2021-05-07T04:00:00')
         self.data = pd.DataFrame(candle_data.values(),
                                  index=candle_data.keys(),
                                  columns=['open', 'high', 'low', 'close', 'vol', 'volCcy'],
