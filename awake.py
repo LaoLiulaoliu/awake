@@ -71,7 +71,7 @@ def main():
         greenlets.append(gevent.spawn(ws1.ws_create))
 #        greenlets.append(gevent.spawn(ws2.ws_create))
 
-        schedule_candle_minute(partial(candles.get_latest_candles, INSTRUMENT[VALUTA_IDX].upper(), '1m', 5))
+        schedule_candle_minute(partial(candles.get_latest_candles, INSTRUMENT[VALUTA_IDX].upper(), '1m', 1440))
     else:
         ws_channels = [f'spot/ticker:{INSTRUMENT[VALUTA_IDX].upper()}',
                        f'spot/order:{INSTRUMENT[VALUTA_IDX].upper()}',

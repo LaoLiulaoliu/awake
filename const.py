@@ -13,10 +13,10 @@ INSTRUMENT = {
     4: 'flow-usdt',
     5: 'btt-usdt',
     6: 'okb-usdt',
-    7: 'mask-usdt',
+    7: 'shib-usdt',
     8: 'trx-usdt'
 }
-VALUTA_IDX = 8
+VALUTA_IDX = 7
 API_VERSION = 5
 LOG_DIR = 'logs'
 
