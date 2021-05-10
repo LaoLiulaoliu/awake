@@ -14,6 +14,7 @@ logs/
 *.png
 
 .DS_Store
+*.m
 
 # C extensions
 *.so
