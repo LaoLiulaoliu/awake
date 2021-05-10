@@ -252,3 +252,7 @@ def run_dqn():
     agent.save_model()
     x = [i + 1 for i in range(epochs)]
     plt.plot(x, profits)
+
+def predict():
+    agent = Agent(gamma=0.9, epsilon=0.5, lr=0.003, input_dims=10, batch_size=64, n_actions=3, eps_min=0.03)
+    agent.load_model()
