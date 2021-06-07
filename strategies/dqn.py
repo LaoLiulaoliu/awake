@@ -22,7 +22,7 @@ class Environment(object):
 
         self.buy_fee_rate = 0.0008
         self.sell_fee_rate = 0.0008
-        self.order_size = 1000  # 订单大小
+        self.order_money = 1000  # 一次买多钱
 
         self.init = 10000
         self.fund = self.init
@@ -55,8 +55,8 @@ class Environment(object):
         current_price = self.data['close'].iloc[self.barpos]
         self.day_profit = self.position * current_price * self.data['pct_change'].iloc[self.barpos]
         if action == 0:
-            if self.fund > self.order_size:
-                buy_order = math.floor(self.order_size / current_price / 100) * 100
+            if self.fund > self.order_money:
+                buy_order = math.floor(self.order_money / current_price / 100) * 100
                 self.fund -= buy_order * current_price
 
                 buy_fee = buy_order * self.buy_fee_rate
@@ -66,8 +66,8 @@ class Environment(object):
                 print('buy:not enough fund')
 
         elif action == 1:
-            if self.position * current_price > self.order_size:
-                sell_order = math.ceil(self.order_size / current_price / 100) * 100
+            if self.position * current_price > self.order_money:
+                sell_order = math.ceil(self.order_money / current_price / 100) * 100
                 self.position -= sell_order
                 sell_fee = sell_order * current_price * self.sell_fee_rate
                 self.fund += sell_order * current_price - sell_fee
