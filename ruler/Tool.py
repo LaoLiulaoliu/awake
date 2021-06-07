@@ -65,4 +65,4 @@ class Tool(object):
         for price, amount in price_amount.items():
             balance += price * amount
             coin += amount
-        return balance / coin
+        return balance / coin, coin
