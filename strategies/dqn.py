@@ -181,7 +181,7 @@ class Agent(object):
         self.terminal_memory[index] = done
 
         self.mem_cnt += 1
-        print("store_transition index:", index)
+        # print("store_transition index:", index)
 
     def learn(self):
         """ 从记忆中抽取batch进行学习
