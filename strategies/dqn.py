@@ -29,7 +29,6 @@ class Environment(object):
         self.position = 0
         self.market_value = 0
 
-        self.balance = self.init
         self.total_profit = 0
         self.day_profit = 0
 
@@ -37,16 +36,15 @@ class Environment(object):
         self.barpos = 0
 
         self.init = 10000
-        self.fund = self.init
-        self.position = 0
-        self.market_value = 0
+        self.fund = self.init  # 现金
+        self.position = 0  # 仓
+        self.market_value = 0  # 总价值
 
-        self.balance = self.init
         self.total_profit = 0
         self.day_profit = 0
 
         observation = self.data.iloc[self.barpos].tolist()
-        observation.append(self.balance)
+        observation.append(self.market_value)
         observation.append(self.position)
         observation.append(self.fund)
         return observation
@@ -79,13 +77,12 @@ class Environment(object):
             print('keep still')
 
         # 重新计算持仓状况，不考虑除权除息
-        self.market_value = self.position * current_price
-        self.balance = self.market_value + self.fund
-        self.total_profit = self.balance - self.init
+        self.market_value = self.position * current_price + self.fund
+        self.total_profit = self.market_value - self.init
         self.barpos += 1
 
         observation = self.data.iloc[self.barpos].tolist()
-        observation.append(self.balance)
+        observation.append(self.market_value)
         observation.append(self.position)
         observation.append(self.fund)
 
@@ -96,6 +93,9 @@ class Environment(object):
 
 class DeepQNetwork(mx.gluon.nn.Block):
     def __init__(self, input_dims, fc1_dims, fc2_dims, n_actions, learning_rate):
+        """
+        n_actions: buy, sell, hold
+        """
         super(DeepQNetwork, self).__init__()
         self.input_dims = input_dims
         self.fc1_dims = fc1_dims
@@ -131,7 +131,7 @@ class Agent(object):
         self.n_actions = n_actions
         self.mem_size = max_mem_size
         self.batch_size = batch_size
-        self.mem_cntr = 0
+        self.mem_cnt = 0
 
         self.Q_eval = DeepQNetwork(input_dims, 256, 256, self.n_actions, self.lr)
         self.Q_eval.init()
@@ -154,36 +154,38 @@ class Agent(object):
         for name in model:
             params[name]._load_init(model[name], mx.cpu(), cast_dtype=False, dtype_source='current')
 
-    # 存储记忆
+    def choose_action(self, observation):
+        """ 1-epsilon的概率执行最大价值操作, epsilon概率执行随机动作.
+
+        observation, 状态state
+        """
+        if np.random.random() > self.epsilon:
+            state = mx.nd.array([observation])  # (1, 10)
+            # 神经网络模型得到action的Q value vector
+            actions = self.Q_eval.forward(state)
+            action = int(mx.nd.argmax(actions).asscalar())
+        else:
+            action = np.random.choice(self.n_actions)
+            print("random action:", action)
+        return action
+
     def store_transition(self, state, action, reward, state_, done):
-        index = self.mem_cntr % self.mem_size
+        """ 存储状态变化
+        """
+        index = self.mem_cnt % self.mem_size
         self.state_memory[index] = state
         self.new_state_memory[index] = state_
         self.reward_memory[index] = reward
         self.action_memory[index] = action
         self.terminal_memory[index] = done
 
-        self.mem_cntr += 1
+        self.mem_cnt += 1
         print("store_transition index:", index)
-
-    # observation就是状态state
-    def choose_action(self, observation):
-        if np.random.random() > self.epsilon:
-            # 随机0-1，即1-epsilon的概率执行以下操作,最大价值操作
-            state = mx.nd.array([observation])  # (1, 10)
-            # 放到神经网络模型里面得到action的Q值vector
-            actions = self.Q_eval.forward(state)
-            action = int(mx.nd.argmax(actions).asscalar())
-        else:
-            # epsilon概率执行随机动作
-            action = np.random.choice(self.n_actions)
-            print("random action:", action)
-        return action
 
     # 从记忆中抽取batch进行学习
     def learn(self):
         # memory counter小于一个batch大小的时候直接return
-        if self.mem_cntr < self.batch_size:
+        if self.mem_cnt < self.batch_size:
             print("learn:watching")
             return
 
@@ -191,7 +193,7 @@ class Agent(object):
         # self.Q_eval.optimizer.zero_grad()
 
         # 得到memory大小，不超过mem_size
-        max_mem = min(self.mem_cntr, self.mem_size)
+        max_mem = min(self.mem_cnt, self.mem_size)
 
         # 随机生成一个batch的memory index，可重复抽取
         batch = np.random.choice(max_mem, self.batch_size, replace=False)
