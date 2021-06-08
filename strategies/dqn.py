@@ -31,7 +31,7 @@ class Environment(object):
         self.market_value = 0
 
         self.total_profit = 0
-        self.day_profit = 0
+        self.day_profit = 0  # Reward of every step, can tunning
 
     def reset(self):
         self.barpos = 0
@@ -194,7 +194,7 @@ class Agent(object):
         # 得到memory大小，不超过mem_size
         max_mem = min(self.mem_cnt, self.mem_size)
 
-        # 随机生成一个batch的memory index，可重复抽取
+        # 随机生成一个batch的memory index，不可重复抽取
         batch = np.random.choice(max_mem, self.batch_size, replace=False)
         batch_index = np.arange(self.batch_size, dtype=np.int32)
 
@@ -202,12 +202,11 @@ class Agent(object):
         state_batch = mx.nd.array(self.state_memory[batch])
         new_state_batch = mx.nd.array(self.new_state_memory[batch])
         reward_batch = mx.nd.array(self.reward_memory[batch])
+        action_batch = self.action_memory[batch]
         terminal_batch = self.terminal_memory[batch]
 
-        action_batch = self.action_memory[batch]
-
         with mx.autograd.record():
-            # 第batch_index行，取action_batch列,对state_batch中的每一组输入，输出action对应的Q值, (batchsize行，1列)
+            # batch_index所有行，action_batch列，state_batch经过神经网络前向传播，输出(64, 3)，3个action选已经做的action对应的值为Q值
             q_eval = self.Q_eval.forward(state_batch)[batch_index, action_batch]
             q_next = self.Q_eval.forward(new_state_batch).asnumpy()  # (64, 10) -> (64, 3)
             q_next[terminal_batch] = 0.0  # 如果是最终状态，则将q值置为0
