@@ -142,7 +142,7 @@ class Agent(object):
 
         self.action_memory = np.zeros(self.mem_size, dtype=np.int32)
         self.reward_memory = np.zeros(self.mem_size, dtype=np.float32)
-        self.terminal_memory = np.zeros(self.mem_size, dtype=np.bool)
+        self.terminal_memory = np.zeros(self.mem_size, dtype=np.bool)  # 存储是否结束的bool型变量
 
     def save_model(self):
         params = self.Q_eval._collect_params_with_prefix()
@@ -202,7 +202,7 @@ class Agent(object):
         state_batch = mx.nd.array(self.state_memory[batch])
         new_state_batch = mx.nd.array(self.new_state_memory[batch])
         reward_batch = mx.nd.array(self.reward_memory[batch])
-        terminal_batch = self.terminal_memory[batch]  # 存储是否结束的bool型变量
+        terminal_batch = self.terminal_memory[batch]
 
         action_batch = self.action_memory[batch]
 
