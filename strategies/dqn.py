@@ -1,3 +1,4 @@
+import json
 import math
 import joblib
 import numpy as np
@@ -250,6 +251,9 @@ def run_dqn():
               'epsilon %.2f' % agent.epsilon)
 
     agent.save_model()
+    with open('profits.txt', 'w') as fd:
+        json.dump(profits, fd)
+
     x = [i + 1 for i in range(epochs)]
     plt.plot(x, profits)
 
