@@ -60,9 +60,9 @@ class Environment(object):
 
                 buy_fee = buy_order * self.buy_fee_rate
                 self.position += buy_order - buy_fee
-                print('buy:success')
-            else:
-                print('buy:not enough fund')
+            #     print('buy:success')
+            # else:
+            #     print('buy:not enough fund')
 
         elif action == 1:
             if self.position * current_price > self.order_money:
@@ -70,12 +70,12 @@ class Environment(object):
                 self.position -= sell_order
                 sell_fee = sell_order * current_price * self.sell_fee_rate
                 self.fund += sell_order * current_price - sell_fee
-                print("sell:success")
-            else:
-                print('sell:not enough stock')
+        #         print("sell:success")
+        #     else:
+        #         print('sell:not enough stock')
 
-        else:
-            print('keep still')
+        # else:
+        #     print('keep still')
 
         # 重新计算持仓状况，不考虑除权除息
         self.market_value = self.position * current_price + self.fund
@@ -167,7 +167,7 @@ class Agent(object):
             action = int(mx.nd.argmax(actions).asscalar())
         else:
             action = np.random.choice(self.n_actions)
-            print("random action:", action)
+            # print("random action:", action)
         return action
 
     def store_transition(self, state, action, reward, state_, done):
