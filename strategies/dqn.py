@@ -182,15 +182,13 @@ class Agent(object):
         self.mem_cnt += 1
         print("store_transition index:", index)
 
-    # 从记忆中抽取batch进行学习
     def learn(self):
-        # memory counter小于一个batch大小的时候直接return
+        """ 从记忆中抽取batch进行学习
+        """
+        # memory counter小于一个batch_size, 等待积累数据
         if self.mem_cnt < self.batch_size:
             print("learn:watching")
             return
-
-        # 初始化梯度0
-        # self.Q_eval.optimizer.zero_grad()
 
         # 得到memory大小，不超过mem_size
         max_mem = min(self.mem_cnt, self.mem_size)
@@ -234,7 +232,7 @@ def run_dqn():
         # can add env_list if have multiple stocks
         observation = environ.reset()
         while not done:
-            print('barpos: ', environ.barpos)
+            # as barpos increasing
             action = agent.choose_action(observation)
             observation_, reward, done = environ.step(action)
             profit = environ.total_profit
