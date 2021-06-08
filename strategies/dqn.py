@@ -194,7 +194,7 @@ class Agent(object):
         # 得到memory大小，不超过mem_size
         max_mem = min(self.mem_cnt, self.mem_size)
 
-        # 随机生成一个batch的memory index，不可重复抽取
+        # 随机生成一个batch的memory index，可重复抽取
         batch = np.random.choice(max_mem, self.batch_size, replace=False)
         batch_index = np.arange(self.batch_size, dtype=np.int32)
 
