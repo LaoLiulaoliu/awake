@@ -188,7 +188,7 @@ class Agent(object):
         """
         # memory counter小于一个batch_size, 等待积累数据
         if self.mem_cnt < self.batch_size:
-            print("learn:watching")
+            # print("learn:watching")
             return
 
         # 得到memory大小，不超过mem_size
