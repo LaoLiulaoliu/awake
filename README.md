@@ -7,5 +7,5 @@
 #### It have a high efficiency(nearly c) file storage method for the price change. 
 #### You can add rule to send message to DingTalk whenever meet emergency. Of course you need to setup the parameter like access_token for yourself. 
 
-#### Please run the code with python awake.py
+#### The configuration file is const.py. Please run the code with python awake.py
 #### Have fun!
