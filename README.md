@@ -1,5 +1,5 @@
 # awake
 
-A quantitative framework for okex.
-
-Not add other market yet.
+#### A quantitative framework.
+#### Now only support okex, not add other market yet.
+#### You can add strategies as a plugin in the code.
