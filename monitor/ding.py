@@ -22,7 +22,7 @@ def signature():
 
 
 def alarm(msg_str):
-    url = 'https://oapi.dingtalk.com/robot/send?access_token=910d021fa11f40e2c58a5998b177e60f274575ae1aa1cb322ae61bd387dae2b4'
+    url = 'https://oapi.dingtalk.com/robot/send?access_token=XXXX'
     data = json.dumps({'msgtype': 'text', 'text': {'content': '[awake] ' + msg_str}})
     r = requests.post(url + signature(),
                       data=data,
